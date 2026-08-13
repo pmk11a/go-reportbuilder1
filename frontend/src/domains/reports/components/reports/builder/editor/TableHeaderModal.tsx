@@ -161,7 +161,7 @@ export function TableHeaderModal({
                             </div>
                             
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
-                              <div className="lg:col-span-4 xl:col-span-5 space-y-1">
+                              <div className="lg:col-span-3 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">Label Kolom</label>
                                 <Input 
                                   placeholder="Contoh: No. Bukti" className="text-sm h-9"
@@ -173,7 +173,7 @@ export function TableHeaderModal({
                                   }}
                                 />
                               </div>
-                              <div className="lg:col-span-4 xl:col-span-3 space-y-1">
+                              <div className="lg:col-span-3 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">Perataan (Align)</label>
                                 <Select 
                                   value={hCol.align || 'center'}
@@ -190,6 +190,18 @@ export function TableHeaderModal({
                                     <SelectItem value="right">Kanan (Right)</SelectItem>
                                   </SelectContent>
                                 </Select>
+                              </div>
+                              <div className="lg:col-span-2 space-y-1">
+                                <label className="text-[10px] font-bold uppercase text-slate-500">Lebar (Width)</label>
+                                <Input 
+                                  placeholder="Auto" className="h-9 text-sm"
+                                  value={hCol.width || ''}
+                                  onChange={e => {
+                                    const newRows = [...localTable.headerRows];
+                                    newRows[rIdx][cIdx].width = e.target.value;
+                                    setLocalTable({...localTable, headerRows: newRows});
+                                  }}
+                                />
                               </div>
                               <div className="lg:col-span-2 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">ColSpan</label>
@@ -280,29 +292,31 @@ export function TableHeaderModal({
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="xl:col-span-3 space-y-1">
-                          <label className="text-[10px] font-bold uppercase text-slate-500">
-                            ID / Field
-                            {isPreviewing && <Loader2 className="w-3 h-3 inline-block ml-2 animate-spin text-indigo-500" />}
-                          </label>
-                          <Input 
-                            list={((dCol.type || 'field') === 'field' || (dCol.type || 'field') === 'formula') ? `columns-list-${cIdx}` : undefined}
-                            placeholder={(dCol.type || 'field') === 'formula' ? 'Alias (tanpa spasi)' : 'Contoh: no_rekening'} className="font-mono text-sm h-9"
-                            value={dCol.field}
-                            onChange={e => {
-                              const newCols = [...localTable.dataColumns];
-                              newCols[cIdx].field = e.target.value;
-                              setLocalTable({...localTable, dataColumns: newCols});
-                            }}
-                          />
-                          {((dCol.type || 'field') === 'field' || (dCol.type || 'field') === 'formula') && previewColumns.length > 0 && (
-                            <datalist id={`columns-list-${cIdx}`}>
-                              {previewColumns.map(col => (
-                                <option key={col} value={col} />
-                              ))}
-                            </datalist>
-                          )}
-                        </div>
+                        {(dCol.type || 'field') !== 'formula' && (
+                          <div className="xl:col-span-3 space-y-1">
+                            <label className="text-[10px] font-bold uppercase text-slate-500">
+                              ID / Field
+                              {isPreviewing && <Loader2 className="w-3 h-3 inline-block ml-2 animate-spin text-indigo-500" />}
+                            </label>
+                            <Input 
+                              list={((dCol.type || 'field') === 'field') ? `columns-list-${cIdx}` : undefined}
+                              placeholder="Contoh: no_rekening" className="font-mono text-sm h-9"
+                              value={dCol.field}
+                              onChange={e => {
+                                const newCols = [...localTable.dataColumns];
+                                newCols[cIdx].field = e.target.value;
+                                setLocalTable({...localTable, dataColumns: newCols});
+                              }}
+                            />
+                            {((dCol.type || 'field') === 'field') && previewColumns.length > 0 && (
+                              <datalist id={`columns-list-${cIdx}`}>
+                                {previewColumns.map(col => (
+                                  <option key={col} value={col} />
+                                ))}
+                              </datalist>
+                            )}
+                          </div>
+                        )}
                         <div className="xl:col-span-3 space-y-1">
                           <label className="text-[10px] font-bold uppercase text-slate-500">Format</label>
                           <Select 
@@ -353,13 +367,28 @@ export function TableHeaderModal({
                             }}
                           />
                         </div>
+                        <div className="xl:col-span-2 space-y-1 flex items-end pb-1.5">
+                          <label className="flex items-center gap-2 cursor-pointer group">
+                            <input 
+                              type="checkbox" 
+                              className={`rounded border-gray-300 w-4 h-4 cursor-pointer ${isDark ? 'bg-slate-800' : 'bg-white'}`}
+                              checked={dCol.isHeader || false}
+                              onChange={e => {
+                                const newCols = [...localTable.dataColumns];
+                                newCols[cIdx].isHeader = e.target.checked;
+                                setLocalTable({...localTable, dataColumns: newCols});
+                              }}
+                            />
+                            <span className="text-[10px] font-bold uppercase text-slate-500 group-hover:text-indigo-500 transition-colors">Jadikan Header (TH)</span>
+                          </label>
+                        </div>
                       </div>
                       
                       {(dCol.type || 'field') === 'formula' && (
                         <div className={`space-y-1.5 p-3 mt-1 rounded-lg border ${isDark ? 'bg-slate-900/50 border-slate-700/50' : 'bg-slate-50/50 border-slate-200/50'}`}>
                           <label className={`text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Rumus Formula</label>
                           <Input 
-                            placeholder="Contoh: ({riil_rp} + {chgb}) * 2" className={`font-mono text-sm h-9 ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}
+                            placeholder="Contoh: {tanggal:date} - {no_bukti}" className={`font-mono text-sm h-9 ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}
                             value={dCol.formula || ''}
                             onChange={e => {
                               const newCols = [...localTable.dataColumns];
@@ -367,7 +396,7 @@ export function TableHeaderModal({
                               setLocalTable({...localTable, dataColumns: newCols});
                             }}
                           />
-                          <p className={`text-[10px] leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Gunakan kurung kurawal <code>{`{field}`}</code> untuk merujuk ke field lain. Operator: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>( )</code>.</p>
+                          <p className={`text-[10px] leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Gunakan <code>{`{field}`}</code> untuk merujuk ke data. Sisipkan teks bebas di luar kurung. Contoh: <code>{`{tanggal:date} - {no_bukti}`}</code>.</p>
                         </div>
                       )}
                     </div>
@@ -390,11 +419,11 @@ export function TableHeaderModal({
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-500">Group By Field (Opsional)</label>
                   <Input 
-                    placeholder="Contoh: kode_cabang" className="text-sm"
+                    placeholder="Contoh: kode_cabang, divisi" className="text-sm"
                     value={localTable.grouping?.groupBy || ''}
                     onChange={e => setLocalTable({...localTable, grouping: {...localTable.grouping!, groupBy: e.target.value}})}
                   />
-                  <p className="text-[10px] text-slate-400">Field dari database untuk grouping baris.</p>
+                  <p className="text-[10px] text-slate-400">Gunakan koma (,) untuk beberapa field.</p>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-500">Label Sub-Total</label>
@@ -413,6 +442,34 @@ export function TableHeaderModal({
                 />
                 <label className="text-sm font-medium">Tampilkan Sub-Total (Sum)</label>
               </div>
+
+              <div className="flex items-center gap-2 mt-2">
+                <Checkbox 
+                  checked={localTable.showGrandTotal !== false}
+                  onChange={e => setLocalTable({...localTable, showGrandTotal: e.target.checked})}
+                />
+                <label className="text-sm font-medium">Tampilkan Grand Total</label>
+              </div>
+
+              {localTable.showGrandTotal !== false && localTable.grouping?.showSubtotal && (
+                <div className="flex items-center gap-2 mt-2 pl-6">
+                  <Checkbox 
+                    checked={localTable.grouping?.hideSubtotalIfSingleGroup || false}
+                    onChange={e => setLocalTable({...localTable, grouping: {...localTable.grouping!, hideSubtotalIfSingleGroup: e.target.checked}})}
+                  />
+                  <label className="text-sm font-medium text-slate-500">Sembunyikan Sub-Total jika hanya ada 1 grup</label>
+                </div>
+              )}
+
+              {localTable.grouping?.groupBy && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Checkbox 
+                    checked={localTable.grouping?.showOnlyFirstRowPerGroup || false}
+                    onChange={e => setLocalTable({...localTable, grouping: {...localTable.grouping!, showOnlyFirstRowPerGroup: e.target.checked}})}
+                  />
+                  <label className="text-sm font-medium">Tampilkan satu data (baris pertama) dari setiap grup</label>
+                </div>
+              )}
 
               {localTable.grouping?.showSubtotal && (
                 <div className="space-y-2 pt-2">
