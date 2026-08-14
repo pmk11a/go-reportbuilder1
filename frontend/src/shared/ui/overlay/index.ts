@@ -18,4 +18,4 @@ export { Accordion, type AccordionProps, type AccordionItem } from './accordion'
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './collapsible';
 export { Collapse, type CollapseProps } from './collapse';
 export { DeleteConfirmationDialog } from './delete-confirmation-dialog';
-export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogOverlay } from './dialog';
+export { Dialog, DialogTrigger, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogOverlay } from './dialog';

@@ -16,7 +16,6 @@ import type { IReportColumn } from '../types'
 // ============================================================
 
 const CURRENCY_LOCALE = 'id-ID'
-const DATE_LOCALE = 'id-ID'
 
 export function formatCell(value: any, formatType: IReportColumn['format_type']): string {
   if (value === null || value === undefined) return ''

@@ -2,6 +2,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each } from '@/shared/ui';
 import type { ILayoutFooter, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
+import { HelpGuide } from '../HelpGuide';
 
 export function FooterEditor({ config, onChange, reportConfig, setReportConfig, isDark }: { config: ILayoutFooter, onChange: any, reportConfig: Partial<IReportConfig>, setReportConfig: any, isDark: boolean }) {
   const rows = config.rows || [];
@@ -11,6 +12,17 @@ export function FooterEditor({ config, onChange, reportConfig, setReportConfig, 
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className={`text-lg font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Pengaturan Footer Layout</h2>
+        <HelpGuide title="Panduan Tab Footer">
+          <p>Tab <strong>Footer</strong> digunakan untuk mendesain bagian bawah (kaki) dari laporan Anda, biasanya berupa kolom-kolom tanda tangan.</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Footer Data Sources:</strong> Opsional, jika Anda butuh mengambil nama/jabatan penandatangan secara dinamis dari database.</li>
+            <li><strong>Footer Signatures:</strong> Klik "Add Footer Row" untuk menambah baris penandatangan. Tambahkan kolom (blok) tanda tangan di baris tersebut.</li>
+            <li>Di setiap blok tanda tangan, Anda bisa mengisi Title (misal: "Mengetahui"), Nama (misal: "Direktur Utama", atau panggil dari Dataset menggunakan <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">{`{NamaDataset.Field}`}</code>), dll.</li>
+          </ul>
+        </HelpGuide>
+      </div>
       <DataSourceManager
         config={reportConfig}
         onChange={setReportConfig}

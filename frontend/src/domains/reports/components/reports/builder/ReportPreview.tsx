@@ -1,6 +1,7 @@
 import type { ILayoutConfig, ILayoutHeader, ILayoutBody, ILayoutFooter, ILayoutColumn } from '@/domains/reports/types';
 import { Each, Show } from '@/shared/ui';
 import { formatCell } from '@/domains/reports/utils/exportHelpers';
+import { Fragment } from 'react';
 
 interface ReportPreviewProps {
   config: ILayoutConfig[];
@@ -14,6 +15,58 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
   const header = config.find(c => c.type === 'header') as ILayoutHeader;
   const body = config.find(c => c.type === 'body') as ILayoutBody;
   const footer = config.find(c => c.type === 'footer') as ILayoutFooter;
+
+  const processFormula = (formula: string, row: any) => {
+    if (!formula) return '';
+    let res = formula;
+    const regex = /\{([^}]+)\}/g;
+    res = res.replace(regex, (_match, p1) => {
+      const parts = p1.split(':');
+      const fieldName = parts[0];
+      const formatName = parts[1];
+      let val: any;
+
+      if (fieldName.includes('.')) {
+        const fieldParts = fieldName.split('.');
+        const targetDsName = fieldParts[0];
+        const targetField = fieldParts[1];
+        const targetDs = datasets ? datasets[targetDsName] : null;
+
+        if (targetField.startsWith('SUM(') && targetField.endsWith(')')) {
+          const sumExpression = targetField.substring(4, targetField.length - 1);
+          let sumFunc: (r: any) => any;
+          try {
+            if (/^[a-zA-Z0-9_]+$/.test(sumExpression)) {
+              sumFunc = (r: any) => parseFloat(r[sumExpression]) || 0;
+            } else {
+              sumFunc = new Function('r', `return ${sumExpression};`) as any;
+            }
+          } catch (e) {
+            console.error("Invalid SUM expression", sumExpression, e);
+            sumFunc = () => 0;
+          }
+          val = targetDs ? targetDs.reduce((acc: any, r: any) => {
+            try {
+              const res = sumFunc(r);
+              return acc + (parseFloat(res) || 0);
+            } catch (e) {
+              return acc;
+            }
+          }, 0) : 0;
+        } else {
+          val = targetDs && targetDs.length > 0 ? targetDs[0][targetField] : undefined;
+        }
+      } else {
+        val = row ? row[fieldName] : undefined;
+      }
+
+      if (formatName) {
+        val = formatCell(val, formatName as any);
+      }
+      return val !== undefined ? String(val) : '';
+    });
+    return res;
+  };
 
   const renderText = (col: ILayoutColumn) => {
     if (col.sourceType === 'system') {
@@ -127,7 +180,7 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                         colSpan={hCol.colSpan || 1}
                                         rowSpan={hCol.rowSpan || 1}
                                       >
-                                        {hCol.text}
+                                        {hCol.text && hCol.text.includes('{') ? processFormula(hCol.text, {}) : hCol.text}
                                       </th>
                                     )}
                                   </Each>
@@ -137,83 +190,142 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                           </thead>
                           <tbody>
                             {(() => {
-                              const dsName = col.table.dataset || 'default';
-                              const realData = datasets ? (datasets[dsName] || []) : null;
+                              if (!col.table.dataColumns || col.table.dataColumns.length === 0) return null;
+                              
+                              const dsName = col.table.dataset;
+                              let realData = datasets ? (dsName ? (datasets[dsName] || []) : [{}]) : null;
 
                               if (realData && realData.length > 0) {
+                                // 1. Group Data
+                                const groupByRaw = col.table.grouping?.groupBy;
+                                const groupByFields = groupByRaw ? groupByRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                let groupedRows: { key: string; rows: any[] }[] = [];
+                                if (groupByFields.length > 0) {
+                                  const groupsMap = new Map<string, any[]>();
+                                  for (const row of realData) {
+                                    const key = groupByFields.map(f => String(row[f] || '')).join(' | ');
+                                    if (!groupsMap.has(key)) groupsMap.set(key, []);
+                                    groupsMap.get(key)!.push(row);
+                                  }
+                                  groupedRows = Array.from(groupsMap.entries()).map(([key, rows]) => ({ key, rows }));
+                                } else {
+                                  groupedRows = [{ key: '', rows: realData }];
+                                }
+
+                                const showGrandTotal = col.table.showGrandTotal !== false;
+                                const hideSubtotalIfSingleGroup = col.table.grouping?.hideSubtotalIfSingleGroup === true;
+                                const isSingleGroup = groupedRows.length === 1;
+
+                                // Subtotal visibility check
+                                const showSubtotalForGroups = col.table.grouping?.showSubtotal && !(isSingleGroup && showGrandTotal && hideSubtotalIfSingleGroup);
+
+                                const firstSumColIdx = (col.table.dataColumns || []).findIndex(dCol => col.table.grouping?.subtotalColumns?.includes(dCol.field));
+                                const labelColspan = firstSumColIdx > 0 ? firstSumColIdx : 1;
+
                                 return (
                                   <>
-                                    <Each of={realData}>
-                                      {(row, rowIdx) => (
-                                        <tr key={rowIdx}>
-                                          <Each of={col.table.dataColumns || []}>
-                                            {(dCol, dCIdx) => {
-                                              let cellValue = row[dCol.field];
-                                              if (dCol.type === 'row_number') {
-                                                cellValue = rowIdx + 1;
-                                              } else {
-                                                cellValue = formatCell(cellValue, dCol.format as any);
-                                              }
-                                              return (
-                                                <td 
-                                                  key={dCIdx} 
-                                                  className="border border-gray-300 p-2"
-                                                  style={{ textAlign: dCol.align || 'left', width: dCol.width }}
-                                                >
-                                                  {cellValue}
-                                                </td>
-                                              )
-                                            }}
+                                    <Each of={groupedRows}>
+                                      {(group, gIdx) => (
+                                        <Fragment key={gIdx}>
+                                          {/* Group Header (if grouped) */}
+                                          {groupByFields.length > 0 && (
+                                            <tr className="bg-slate-50 text-slate-700">
+                                              <td colSpan={col.table.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-xs font-bold bg-gray-50">
+                                                [Group: {group.key}]
+                                              </td>
+                                            </tr>
+                                          )}
+
+                                          {/* Group Rows */}
+                                          <Each of={col.table.grouping?.showOnlyFirstRowPerGroup ? [group.rows[0]] : group.rows}>
+                                            {(row, rowIdx) => (
+                                              <tr key={rowIdx}>
+                                                <Each of={col.table.dataColumns || []}>
+                                                  {(dCol, dCIdx) => {
+                                                    let cellValue = row[dCol.field];
+                                                    if (dCol.type === 'row_number') {
+                                                      cellValue = rowIdx + 1; // Might need continuous index later, but ok for now
+                                                    } else if (dCol.type === 'formula' && dCol.formula) {
+                                                      cellValue = processFormula(dCol.formula, row);
+                                                    } else {
+                                                      cellValue = formatCell(cellValue, dCol.format as any);
+                                                    }
+                                                    if (dCol.isHeader) {
+                                                      return (
+                                                        <th 
+                                                          key={dCIdx} 
+                                                          className="border border-gray-300 p-2 font-bold bg-gray-100 text-gray-800"
+                                                          style={{ textAlign: dCol.align || 'center', width: dCol.width }}
+                                                        >
+                                                          {cellValue}
+                                                        </th>
+                                                      );
+                                                    }
+                                                    return (
+                                                      <td 
+                                                        key={dCIdx} 
+                                                        className="border border-gray-300 p-2"
+                                                        style={{ textAlign: dCol.align || 'left', width: dCol.width }}
+                                                      >
+                                                        {cellValue}
+                                                      </td>
+                                                    );
+                                                  }}
+                                                </Each>
+                                              </tr>
+                                            )}
                                           </Each>
-                                        </tr>
+
+                                          {/* Group Subtotal */}
+                                          {showSubtotalForGroups && (
+                                            <tr className="bg-slate-100 font-bold text-slate-800">
+                                              <Each of={col.table.dataColumns || []}>
+                                                {(dCol, dCIdx) => {
+                                                  if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
+                                                  const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
+                                                  const isLabelCell = dCIdx === 0;
+                                                  const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
+                                                  return (
+                                                    <td 
+                                                      key={`sub-${dCIdx}`} 
+                                                      className="border border-gray-300 p-2 bg-gray-100 text-xs"
+                                                      colSpan={isLabelCell ? labelColspan : 1}
+                                                      style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
+                                                    >
+                                                      {isSummed ? (datasets === undefined ? "999,999" : formatCell(group.rows.reduce((acc: number, r: any) => acc + (parseFloat(r[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? (col.table.grouping?.subtotalLabel || 'Sub Total') : "")}
+                                                    </td>
+                                                  );
+                                                }}
+                                              </Each>
+                                            </tr>
+                                          )}
+                                        </Fragment>
                                       )}
                                     </Each>
-                                    {col.table.grouping?.showSubtotal && (() => {
-                                      const firstSumColIdx = (col.table.dataColumns || []).findIndex(dCol => col.table.grouping?.subtotalColumns?.includes(dCol.field));
-                                      const labelColspan = firstSumColIdx > 0 ? firstSumColIdx : 1;
-                                      return (
-                                        <>
-                                          <tr className="bg-slate-100 font-bold text-slate-800">
-                                            <Each of={col.table.dataColumns || []}>
-                                              {(dCol, dCIdx) => {
-                                                if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
-                                                const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
-                                                const isLabelCell = dCIdx === 0;
-                                                return (
-                                                  <td 
-                                                    key={`sub-${dCIdx}`} 
-                                                    className="border border-gray-300 p-2 bg-gray-100 text-xs"
-                                                    colSpan={isLabelCell ? labelColspan : 1}
-                                                    style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
-                                                  >
-                                                    {isSummed ? "999,999" : (isLabelCell ? (col.table.grouping?.subtotalLabel || 'Sub Total') : "")}
-                                                  </td>
-                                                );
-                                              }}
-                                            </Each>
-                                          </tr>
-                                          <tr className="bg-slate-200 font-bold text-slate-900 border-t-2 border-slate-400">
-                                            <Each of={col.table.dataColumns || []}>
-                                              {(dCol, dCIdx) => {
-                                                if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
-                                                const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
-                                                const isLabelCell = dCIdx === 0;
-                                                return (
-                                                  <td 
-                                                    key={`grand-${dCIdx}`} 
-                                                    className="border border-gray-300 p-2 text-xs"
-                                                    colSpan={isLabelCell ? labelColspan : 1}
-                                                    style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
-                                                  >
-                                                    {isSummed ? "9,999,999" : (isLabelCell ? "Grand Total" : "")}
-                                                  </td>
-                                                );
-                                              }}
-                                            </Each>
-                                          </tr>
-                                        </>
-                                      );
-                                    })()}
+
+                                    {/* Grand Total */}
+                                    {showGrandTotal && (!isSingleGroup || (isSingleGroup && hideSubtotalIfSingleGroup)) && col.table.grouping?.showSubtotal && (
+                                      <tr className="bg-slate-200 font-bold text-slate-900 border-t-2 border-slate-400">
+                                        <Each of={col.table.dataColumns || []}>
+                                          {(dCol, dCIdx) => {
+                                            if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
+                                            const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
+                                            const isLabelCell = dCIdx === 0;
+                                            const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
+                                            return (
+                                              <td 
+                                                key={`grand-${dCIdx}`} 
+                                                className="border border-gray-300 p-2 text-xs"
+                                                colSpan={isLabelCell ? labelColspan : 1}
+                                                style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
+                                              >
+                                                {isSummed ? (datasets === undefined ? "9,999,999" : formatCell(realData.reduce((acc: number, r: any) => acc + (parseFloat(r[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? "Grand Total" : "")}
+                                              </td>
+                                            );
+                                          }}
+                                        </Each>
+                                      </tr>
+                                    )}
                                   </>
                                 );
                               }
@@ -248,16 +360,30 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                                 <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4 mx-auto" />
                                               </td>
                                             }>
-                                              {(dCol, dCIdx) => (
-                                                <td 
-                                                  key={dCIdx} 
-                                                  className="border border-gray-300 p-2"
-                                                  style={{ textAlign: dCol.align || 'left' }}
-                                                >
-                                                  <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4 mx-auto" 
-                                                      style={{ marginLeft: dCol.align === 'left' ? '0' : dCol.align === 'right' ? 'auto' : 'auto', marginRight: dCol.align === 'right' ? '0' : 'auto' }} />
-                                                </td>
-                                              )}
+                                              {(dCol, dCIdx) => {
+                                                if (dCol.isHeader) {
+                                                  return (
+                                                    <th 
+                                                      key={dCIdx} 
+                                                      className="border border-gray-300 p-2 font-bold bg-gray-100 text-gray-800"
+                                                      style={{ textAlign: dCol.align || 'center', width: dCol.width }}
+                                                    >
+                                                      <div className="h-3 bg-gray-300 rounded animate-pulse w-3/4 mx-auto" 
+                                                          style={{ marginLeft: dCol.align === 'left' ? '0' : dCol.align === 'right' ? 'auto' : 'auto', marginRight: dCol.align === 'right' ? '0' : 'auto' }} />
+                                                    </th>
+                                                  );
+                                                }
+                                                return (
+                                                  <td 
+                                                    key={dCIdx} 
+                                                    className="border border-gray-300 p-2"
+                                                    style={{ textAlign: dCol.align || 'left', width: dCol.width }}
+                                                  >
+                                                    <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4 mx-auto" 
+                                                        style={{ marginLeft: dCol.align === 'left' ? '0' : dCol.align === 'right' ? 'auto' : 'auto', marginRight: dCol.align === 'right' ? '0' : 'auto' }} />
+                                                  </td>
+                                                );
+                                              }}
                                             </Each>
                                           </tr>
                                         )}
@@ -273,6 +399,7 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                                   if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
                                                   const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
                                                   const isLabelCell = dCIdx === 0;
+                                                  const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
                                                   return (
                                                     <td 
                                                       key={`sub-${dCIdx}`} 
@@ -280,7 +407,7 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                                       colSpan={isLabelCell ? labelColspan : 1}
                                                       style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
                                                     >
-                                                      {isSummed ? "999,999" : (isLabelCell ? (col.table.grouping?.subtotalLabel || 'Sub Total') : "")}
+                                                      {isSummed ? (datasets === undefined ? "999,999" : formatCell((realData || []).reduce((acc: number, r: any) => acc + (parseFloat(r[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? (col.table.grouping?.subtotalLabel || 'Sub Total') : "")}
                                                     </td>
                                                   );
                                                 }}
@@ -292,6 +419,7 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                                   if (dCIdx > 0 && dCIdx < firstSumColIdx) return null;
                                                   const isSummed = col.table.grouping?.subtotalColumns?.includes(dCol.field);
                                                   const isLabelCell = dCIdx === 0;
+                                                  const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
                                                   return (
                                                     <td 
                                                       key={`grand-${dCIdx}`} 
@@ -299,7 +427,7 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                                                       colSpan={isLabelCell ? labelColspan : 1}
                                                       style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
                                                     >
-                                                      {isSummed ? "9,999,999" : (isLabelCell ? "Grand Total" : "")}
+                                                      {isSummed ? (datasets === undefined ? "9,999,999" : formatCell((realData || []).reduce((acc: number, r: any) => acc + (parseFloat(r[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? "Grand Total" : "")}
                                                     </td>
                                                   );
                                                 }}

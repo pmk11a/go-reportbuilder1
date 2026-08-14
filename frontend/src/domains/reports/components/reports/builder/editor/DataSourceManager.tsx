@@ -75,7 +75,18 @@ export function DataSourceManager({ config, onChange, isDark, scope, title, desc
                   </div>
                   <div className="space-y-1">
                     <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Nama Dataset</label>
-                    <Input value={ds.nama_dataset} onChange={e => updateSource(i, { nama_dataset: e.target.value })} placeholder="Misal: Periode Aktif" className={`h-9 rounded-xl text-xs ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`} />
+                    <Input 
+                      value={ds.nama_dataset} 
+                      onChange={e => {
+                        let val = e.target.value.toLowerCase().replace(/\s+/g, '_').replace(/^[0-9]+/, '');
+                        updateSource(i, { nama_dataset: val });
+                      }} 
+                      placeholder="Misal: periode_aktif" 
+                      className={`h-9 rounded-xl text-xs ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'} ${localDatasets.filter((d, idx) => d.nama_dataset === ds.nama_dataset && idx !== i).length > 0 ? 'border-red-500 ring-1 ring-red-500' : ''}`} 
+                    />
+                    {localDatasets.filter((d, idx) => d.nama_dataset === ds.nama_dataset && idx !== i).length > 0 && (
+                      <span className="text-[10px] text-red-500 font-medium">Nama dataset ini sudah digunakan (duplikat).</span>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-1 mb-3">

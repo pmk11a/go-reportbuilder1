@@ -23,7 +23,7 @@ import { useReportStore } from '../../../stores/reportStore'
 import { GenericBrowsePicker } from '@/domains/browse/components/browse/GenericBrowsePicker'
 import { Each, Show } from '@/shared/ui/layout'
 import { useThemeStore } from '@/shared/stores/themeStore'
-import { IReportFilterDefinition } from '../../../types'
+
 import { resolveFilterConfig, sortFiltersByPosisi, resolveInitialFilterValues } from '../../../utils/filterRenderer'
 
 interface BuilderFilterPanelProps {
@@ -34,7 +34,7 @@ interface BuilderFilterPanelProps {
 
 export function BuilderFilterPanel({ kodeMenu, filters, executeReport }: BuilderFilterPanelProps) {
   const filterValues = useReportStore((s: any) => s.filterValues)
-  const setFilterValue = useReportStore((s: any) => s.setFilterValue)
+
   const resetFilters = useReportStore((s: any) => s.resetFilters)
   const hydrateFilters = useReportStore((s: any) => s.hydrateFilters)
 
@@ -74,11 +74,6 @@ export function BuilderFilterPanel({ kodeMenu, filters, executeReport }: Builder
     executeReport.mutate(payload)
   }
 
-  // Get value for a filter, scoped to the current kodeMenu
-  const valueOf = (namaFilter: string): string => {
-    const v = (filterValues as any)[namaFilter]
-    return v === undefined || v === null ? '' : String(v)
-  }
 
   return (
     <Show

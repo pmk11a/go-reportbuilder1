@@ -38,19 +38,23 @@ export interface ILayoutDataColumn {
   align?: 'left' | 'center' | 'right'
   format?: string
   width?: string
+  isHeader?: boolean
 }
 
 export interface ILayoutTable {
   dataset: string
   style?: string
   tableLayout?: 'auto' | 'fixed'
+  showGrandTotal?: boolean
   headerRows: ILayoutColumn[][]
   dataColumns: ILayoutDataColumn[]
   grouping?: {
     groupBy: string
-    showSubtotal: boolean
+    showSubtotal?: boolean
     subtotalLabel?: string
     subtotalColumns?: string[]
+    hideSubtotalIfSingleGroup?: boolean
+    showOnlyFirstRowPerGroup?: boolean
   }
 }
 

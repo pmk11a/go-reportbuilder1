@@ -117,15 +117,6 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
     ]);
   }, [kodeMenu, komponenData]);
 
-  if (isLoading) {
-    return (
-      <div className={`flex flex-col items-center justify-center w-full h-screen ${isDark ? 'bg-slate-950 text-slate-300' : 'bg-slate-50 text-slate-600'}`}>
-        <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary-500" />
-        Memuat Konfigurasi Laporan...
-      </div>
-    );
-  }
-
   const handleSave = async () => {
     try {
       if (kodeMenu === 'new' || !reportId) {
@@ -316,6 +307,7 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
               layoutConfig={layoutConfig} 
               setLayoutConfig={setLayoutConfig}
               onDeleteReport={handleDeleteReport}
+              isLoading={isLoading}
             />
           </div>
           
@@ -361,6 +353,7 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
                       onDeleteReport={handleDeleteReport}
                       activeTab={activeTab}
                       setActiveTab={setActiveTab}
+                      isLoading={isLoading}
                     />
                     {/* Filter Panel for Preview */}
                     <div className="mt-4 px-4 pb-4">

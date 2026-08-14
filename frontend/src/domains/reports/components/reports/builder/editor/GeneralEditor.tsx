@@ -2,11 +2,23 @@ import { Input, Textarea, Checkbox, Button } from '@/shared/ui';
 import type { IReportConfig } from '@/domains/reports/types';
 import { Trash2 } from 'lucide-react';
 import { DataSourceManager } from './DataSourceManager';
+import { HelpGuide } from '../HelpGuide';
 
 export function GeneralEditor({ config, onChange, isDark, onDelete }: { config: Partial<IReportConfig>, onChange: any, isDark: boolean, onDelete?: () => void }) {
   const labelClass = `text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
   return (
     <div className="space-y-4">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className={`text-lg font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Pengaturan Umum</h2>
+        <HelpGuide title="Panduan Tab General">
+          <p>Tab <strong>General</strong> digunakan untuk mengatur identitas dasar laporan dan meracik sumber data (Dataset) yang akan digunakan pada tab-tab berikutnya.</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Nama Laporan:</strong> Judul yang akan tampil di halaman laporan.</li>
+            <li><strong>Kode Menu:</strong> Kode unik untuk menu laporan.</li>
+            <li><strong>Data Source:</strong> Query SQL yang menghasilkan data. Pastikan menamakan dataset dengan jelas (otomatis dikonversi ke format snake_case tanpa angka di depan). Dataset yang dideklarasikan di sini bisa dipanggil secara lintas dataset menggunakan sintaks <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">{`{NamaDataset.Field}`}</code>.</li>
+          </ul>
+        </HelpGuide>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
         <div className="md:col-span-8 space-y-1">
           <label className={labelClass}>Nama Laporan</label>
