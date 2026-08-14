@@ -5,6 +5,7 @@ import { SearchableSelect } from '@/shared/ui/form/searchable-select';
 import { useBrowseTypes } from '@/domains/browse/hooks/useBrowse';
 import type { IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
+import { HelpGuide } from '../HelpGuide';
 
 export function FiltersEditor({ config, onChange, isDark }: { config: Partial<IReportConfig>, onChange: any, isDark: boolean }) {
   const { data: browseTypes, isLoading: isLoadingBrowse } = useBrowseTypes();
@@ -78,6 +79,17 @@ export function FiltersEditor({ config, onChange, isDark }: { config: Partial<IR
   return (
     <div className="space-y-8">
       {/* 1. Pre-Fetch Queries Section */}
+      <div className="flex justify-between items-center mb-2">
+        <h2 className={`text-lg font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Pengaturan Filter</h2>
+        <HelpGuide title="Panduan Tab Filters">
+          <p>Tab <strong>Filters</strong> digunakan untuk mendefinisikan parameter input (filter) yang akan ditanyakan ke pengguna sebelum men-generate laporan.</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Filter Data Sources:</strong> Tambahkan query dataset jika Anda butuh mengambil nilai dinamis dari database untuk dijadikan Nilai Default (misal: mencari tanggal hari ini).</li>
+            <li><strong>Tipe Input:</strong> Pilih jenis input seperti Teks, Tanggal, atau Dropdown (berasal dari API atau query database).</li>
+            <li><strong>Variabel / Nama Filter:</strong> Pastikan sesuai dengan nama variabel di dalam SQL/Stored Procedure Anda (misal: <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">TglAwal</code>, <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">Divisi</code>). Parameter yang dikirimkan secara otomatis dari klien ketika dieksekusi.</li>
+          </ul>
+        </HelpGuide>
+      </div>
       <div className="space-y-3">
       <DataSourceManager
         config={config}

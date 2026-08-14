@@ -2,6 +2,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each, Show } from '@/shared/ui';
 import type { ILayoutHeader, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
+import { HelpGuide } from '../HelpGuide';
 
 export function HeaderEditor({ config, onChange, reportConfig, setReportConfig, isDark }: { config: ILayoutHeader, onChange: any, reportConfig: Partial<IReportConfig>, setReportConfig: any, isDark: boolean }) {
   const rows = config.rows || [];
@@ -16,6 +17,17 @@ export function HeaderEditor({ config, onChange, reportConfig, setReportConfig, 
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className={`text-lg font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Pengaturan Header Layout</h2>
+        <HelpGuide title="Panduan Tab Header">
+          <p>Tab <strong>Header</strong> digunakan untuk mendesain bagian atas (kop) dari laporan Anda.</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Header Data Sources:</strong> Tambahkan query dataset jika Anda butuh menampilkan teks dinamis di kop laporan (misalnya: mencetak parameter Nama Cabang, Tanggal Cetak, dsb).</li>
+            <li><strong>Layout Rows:</strong> Klik "Add Header Row" untuk menambah baris pada kop. Anda bisa membagi baris menjadi beberapa kolom, mengatur perataan (Align), lebar (Width), dan mengatur teks secara statis atau dinamis dari Dataset.</li>
+            <li>Gunakan format <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs">{`{NamaDataset.Field}`}</code> pada teks statis jika ingin menyisipkan variabel dinamis.</li>
+          </ul>
+        </HelpGuide>
+      </div>
       {/* 1. Header Data Sources */}
       <DataSourceManager
         config={reportConfig}

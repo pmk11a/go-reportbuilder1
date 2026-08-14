@@ -2,6 +2,7 @@ import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each, Show, Input } from '@/shared/ui';
 import type { ILayoutBody, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
+import { HelpGuide } from '../HelpGuide';
 
 export function BodyEditor({ config, onChange, reportConfig, setReportConfig, onOpenHeaderModal, isDark }: { config: ILayoutBody, onChange: any, reportConfig: Partial<IReportConfig>, setReportConfig: any, onOpenHeaderModal: (rIdx: number, cIdx: number, table: any) => void, isDark: boolean }) {
   const rows = config.rows || [];
@@ -16,6 +17,37 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className={`text-lg font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Pengaturan Body Layout</h2>
+        <HelpGuide title="Panduan Tab Body (Layouting & Struktur Utama)">
+          <div className="space-y-4 text-sm leading-relaxed">
+            <p>
+              Tab <strong>Body</strong> adalah fondasi penyusunan isi utama laporan. Di sini Anda mendefinisikan sumber data (Dataset) dan menatanya dalam bentuk baris (Row) dan blok tabel.
+            </p>
+
+            <div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">1. Body Data Sources (Dataset Utama)</h4>
+              <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+                <li>Berisi *Query SQL* utama yang menghasilkan **array data (banyak baris)** untuk dirender sebagai tabel.</li>
+                <li>Gunakan <strong>ID Source</strong> unik dan <strong>Nama Dataset</strong> yang rapi (huruf kecil, garis bawah, misal: <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-[11px]">mutasi_bank</code>).</li>
+                <li>Dataset ini nantinya akan dipilih saat Anda mengonfigurasi komponen tabel di bawah.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-1">2. Body Layout (Struktur Baris & Kolom)</h4>
+              <p className="text-slate-600 dark:text-slate-400 mb-2">
+                Sistem layouting menggunakan konsep Grid (Baris dan Kolom). Anda bisa menata tabel sejajar atau bertumpuk:
+              </p>
+              <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+                <li><strong>Tambah Baris (Add Row):</strong> Menambah baris horizontal baru.</li>
+                <li><strong>Tambah Tabel ke Baris Ini:</strong> Di dalam satu baris, Anda bisa membuat dua atau tiga tabel berjajar ke samping (misal: untuk perbandingan data). Sesuaikan <strong>Lebar (Width)</strong> misal <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-[11px]">50%</code> untuk masing-masing blok.</li>
+                <li>Klik tombol <strong>Konfigurasi Tabel</strong> (ikon pensil) pada setiap blok tabel untuk mendesain Header, Kolom (Tbody), dan Rumus perhitungan.</li>
+              </ul>
+            </div>
+          </div>
+        </HelpGuide>
+      </div>
       <DataSourceManager
         config={reportConfig}
         onChange={setReportConfig}
