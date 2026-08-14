@@ -3,6 +3,7 @@ import { Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, 
 import type { ILayoutBody, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
 import { HelpGuide } from '../HelpGuide';
+import { Checkbox } from '@/shared/ui/form/checkbox';
 
 export function BodyEditor({ config, onChange, reportConfig, setReportConfig, onOpenHeaderModal, isDark }: { config: ILayoutBody, onChange: any, reportConfig: Partial<IReportConfig>, setReportConfig: any, onOpenHeaderModal: (rIdx: number, cIdx: number, table: any) => void, isDark: boolean }) {
   const rows = config.rows || [];
@@ -62,12 +63,22 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
       {/* 2. Body Layout */}
       <div className={`sticky top-0 z-20 flex justify-between items-center py-2 px-1 -mx-1 mb-2 ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'}`}>
         <div>
-          <h3 className={`font-medium ${headingClass}`}>Body Layout (Tables)</h3>
-          <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Tentukan tabel data di bagian Body Laporan.</p>
+          <h3 className={`font-medium ${headingClass}`}>Body Layout (Tables & Signatures)</h3>
+          <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Tentukan isi utama laporan.</p>
         </div>
-        <Button variant="default" size="sm" onClick={addRow}>
-          <Plus className="w-4 h-4 mr-1" /> Add Body Row
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="default" size="sm" onClick={addRow}>
+            <Plus className="w-4 h-4 mr-1" /> Add Table Row
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => {
+            onChange({ 
+              ...config, type: 'body', 
+              rows: [...rows, { type: 'signature', signatureRow: { justifyContent: 'space-between', columns: [{ title: 'Mengetahui', name: 'John Doe', role: 'Manager' }] } }] 
+            });
+          }}>
+            <Plus className="w-4 h-4 mr-1" /> Add Signature
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -82,12 +93,130 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
               </div>
 
               <div className="space-y-4">
-                <Each of={row.columns}>
-                  {(col, cIdx) => (
+                {row.type === 'signature' && row.signatureRow ? (
+                  <div className={`border rounded-xl p-4 ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 mb-4">
+                      <span className={`text-xs font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Signature Block</span>
+                      <Select 
+                        value={row.signatureRow.justifyContent || 'space-between'}
+                        onValueChange={(val) => {
+                          const newRows = [...rows];
+                          newRows[rIdx].signatureRow!.justifyContent = val as any;
+                          onChange({ ...config, rows: newRows });
+                        }}
+                      >
+                        <SelectTrigger className="h-8 rounded-lg text-xs w-full sm:w-40 ml-2">
+                          <SelectValue placeholder="Alignment" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="flex-start">Left</SelectItem>
+                          <SelectItem value="center">Center</SelectItem>
+                          <SelectItem value="flex-end">Right</SelectItem>
+                          <SelectItem value="space-between">Space Between</SelectItem>
+                          <SelectItem value="space-around">Space Around</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <label className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <Checkbox 
+                          checked={row.signatureRow.showBorder || false}
+                          onChange={(e) => {
+                            const newRows = [...rows];
+                            newRows[rIdx].signatureRow!.showBorder = !!e.target.checked;
+                            onChange({ ...config, rows: newRows });
+                          }}
+                        />
+                        Border
+                      </label>
+                      <label className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <Checkbox 
+                          checked={row.signatureRow.gapless || false}
+                          onChange={(e) => {
+                            const newRows = [...rows];
+                            newRows[rIdx].signatureRow!.gapless = !!e.target.checked;
+                            onChange({ ...config, rows: newRows });
+                          }}
+                        />
+                        Berdempetan
+                      </label>
+                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                      <Each of={row.signatureRow.columns}>
+                        {(col, cIdx) => (
+                          <div key={cIdx} className={`border rounded-xl p-4 relative ${isDark ? 'bg-slate-950 border-slate-700' : 'bg-slate-50 border-slate-200 shadow-sm'}`}>
+                            <Button 
+                              variant="ghost" size="sm" 
+                              onClick={() => {
+                                const newRows = [...rows];
+                                newRows[rIdx].signatureRow!.columns.splice(cIdx, 1);
+                                onChange({ ...config, rows: newRows });
+                              }}
+                              className="absolute top-2 right-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 h-7 w-7 p-0 rounded-full"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <h4 className={`text-xs font-bold uppercase mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Kolom {cIdx + 1}</h4>
+                            <div className="space-y-4">
+                              <div className="space-y-1">
+                                <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 1 (Judul)</label>
+                                <Input 
+                                  placeholder="e.g. Mengetahui" className={`h-8 rounded-xl text-xs ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                  value={col.title || ''}
+                                  onChange={e => {
+                                    const newRows = [...rows];
+                                    newRows[rIdx].signatureRow!.columns[cIdx].title = e.target.value;
+                                    onChange({ ...config, rows: newRows });
+                                  }}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 2 (Nama TTD)</label>
+                                <Input 
+                                  placeholder="Nama Lengkap" className={`h-8 rounded-xl font-bold text-xs ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                  value={col.name || ''}
+                                  onChange={e => {
+                                    const newRows = [...rows];
+                                    newRows[rIdx].signatureRow!.columns[cIdx].name = e.target.value;
+                                    onChange({ ...config, rows: newRows });
+                                  }}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 3 (NIP/Jabatan)</label>
+                                <Input 
+                                  placeholder="NIP. 123456" className={`h-8 rounded-xl text-xs ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                  value={col.role || ''}
+                                  onChange={e => {
+                                    const newRows = [...rows];
+                                    newRows[rIdx].signatureRow!.columns[cIdx].role = e.target.value;
+                                    onChange({ ...config, rows: newRows });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </Each>
+                    </div>
+                    <Button 
+                      variant="ghost" size="sm"
+                      disabled={row.signatureRow.columns.length >= 5}
+                      onClick={() => {
+                        const newRows = [...rows];
+                        newRows[rIdx].signatureRow!.columns.push({ title: 'Baris 1', name: 'Baris 2', role: 'Baris 3' });
+                        onChange({ ...config, rows: newRows });
+                      }}
+                      className="mt-3 text-xs"
+                    >
+                      <Plus className="w-3 h-3 mr-1" /> Add Signature Column
+                    </Button>
+                  </div>
+                ) : (
+                  <Each of={row.columns || []}>
+                    {(col, cIdx) => (
                     <div key={cIdx} className={`border rounded-xl p-5 relative ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200 shadow-sm'}`}>
                       <Button variant="ghost" size="sm" onClick={() => {
                         const newRows = [...rows];
-                        newRows[rIdx].columns.splice(cIdx, 1);
+                        newRows[rIdx].columns!.splice(cIdx, 1);
                         onChange({ ...config, rows: newRows });
                       }} className="absolute top-3 right-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 h-8 w-8 p-0 rounded-full">
                         <Trash2 className="w-4 h-4" />
@@ -104,7 +233,7 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                             value={col.width || ''}
                             onChange={e => {
                               const newRows = [...rows];
-                              newRows[rIdx].columns[cIdx].width = e.target.value;
+                              newRows[rIdx].columns![cIdx].width = e.target.value;
                               onChange({ ...config, rows: newRows });
                             }}
                           />
@@ -119,7 +248,7 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                             value={col.colSpan || ''}
                             onChange={e => {
                               const newRows = [...rows];
-                              newRows[rIdx].columns[cIdx].colSpan = parseInt(e.target.value) || undefined;
+                              newRows[rIdx].columns![cIdx].colSpan = parseInt(e.target.value) || undefined;
                               onChange({ ...config, rows: newRows });
                             }}
                           />
@@ -133,7 +262,7 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                             value={col.marginTop || ''}
                             onChange={e => {
                               const newRows = [...rows];
-                              newRows[rIdx].columns[cIdx].marginTop = e.target.value;
+                              newRows[rIdx].columns![cIdx].marginTop = e.target.value;
                               onChange({ ...config, rows: newRows });
                             }}
                           />
@@ -145,7 +274,7 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                             value={col.table.dataset || undefined}
                             onValueChange={(val) => {
                               const newRows = [...rows];
-                              newRows[rIdx].columns[cIdx].table.dataset = val;
+                              newRows[rIdx].columns![cIdx].table.dataset = val;
                               onChange({ ...config, rows: newRows });
                             }}
                           >
@@ -170,7 +299,7 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                               value={col.align || 'left'}
                               onValueChange={(val) => {
                                 const newRows = [...rows];
-                                newRows[rIdx].columns[cIdx].align = val as any;
+                                newRows[rIdx].columns![cIdx].align = val as any;
                                 onChange({ ...config, rows: newRows });
                               }}
                             >
@@ -201,19 +330,22 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                     </div>
                   )}
                 </Each>
+                )}
               </div>
 
-              <Button 
-                variant="ghost" size="sm"
-                onClick={() => {
-                  const newRows = [...rows];
-                  newRows[rIdx].columns.push({ width: '50%', table: { dataset: '', headerRows: [], dataColumns: [] } });
-                  onChange({ ...config, rows: newRows });
-                }}
-                className="mt-2 text-xs"
-              >
-                <Plus className="w-3 h-3 mr-1" /> Add Table to Row
-              </Button>
+              {(!row.type || row.type === 'table') && (
+                <Button 
+                  variant="ghost" size="sm"
+                  onClick={() => {
+                    const newRows = [...rows];
+                    newRows[rIdx].columns!.push({ width: '50%', table: { dataset: '', headerRows: [], dataColumns: [] } });
+                    onChange({ ...config, rows: newRows });
+                  }}
+                  className="mt-2 text-xs"
+                >
+                  <Plus className="w-3 h-3 mr-1" /> Add Table to Row
+                </Button>
+              )}
             </div>
           )}
         </Each>

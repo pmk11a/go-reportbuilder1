@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each } from '@/shared/ui';
+import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each, Checkbox } from '@/shared/ui';
 import type { ILayoutFooter, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
 import { HelpGuide } from '../HelpGuide';
@@ -75,6 +75,28 @@ export function FooterEditor({ config, onChange, reportConfig, setReportConfig, 
                       <SelectItem value="space-around">Space Around</SelectItem>
                     </SelectContent>
                   </Select>
+                  <label className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <Checkbox 
+                      checked={row.showBorder || false}
+                      onChange={(e) => {
+                        const newRows = [...rows];
+                        newRows[rIdx].showBorder = !!e.target.checked;
+                        onChange({ ...config, rows: newRows });
+                      }}
+                    />
+                    Border
+                  </label>
+                  <label className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <Checkbox 
+                      checked={row.gapless || false}
+                      onChange={(e) => {
+                        const newRows = [...rows];
+                        newRows[rIdx].gapless = !!e.target.checked;
+                        onChange({ ...config, rows: newRows });
+                      }}
+                    />
+                    Berdempetan
+                  </label>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => onChange({ ...config, rows: rows.filter((_, i) => i !== rIdx) })} className="text-red-500 hover:text-red-600 h-8 w-8 p-0 rounded-full shrink-0">
                   <Trash2 className="w-4 h-4" />

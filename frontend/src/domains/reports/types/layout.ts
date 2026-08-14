@@ -18,6 +18,8 @@ export interface ILayoutColumn {
 
 export interface ILayoutRow {
   justifyContent?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around'
+  showBorder?: boolean
+  gapless?: boolean
   columns: ILayoutColumn[]
 }
 
@@ -59,13 +61,15 @@ export interface ILayoutTable {
 }
 
 export interface ILayoutBodyRow {
-  columns: {
+  type?: 'table' | 'signature';
+  columns?: {
     width?: string; 
     colSpan?: number;
     marginTop?: string;
     align?: 'left' | 'center' | 'right';
     table: ILayoutTable;
   }[];
+  signatureRow?: ILayoutRow;
 }
 
 export interface ILayoutBody {

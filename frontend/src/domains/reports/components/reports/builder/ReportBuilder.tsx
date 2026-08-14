@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ReportEditor } from './ReportEditor';
 import { ReportPreview } from './ReportPreview';
 import type { ILayoutConfig, IReportConfig } from '@/domains/reports/types';
-import { Save, ArrowLeft, Monitor, Smartphone, Loader2 } from 'lucide-react';
+import { Save, ArrowLeft, Monitor, Smartphone } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useThemeStore } from '@/shared/stores/themeStore';
 import { Button, Tabs } from '@/shared/ui';

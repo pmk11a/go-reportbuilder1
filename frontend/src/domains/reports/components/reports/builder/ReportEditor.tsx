@@ -124,7 +124,7 @@ export function ReportEditor({ activeTab, setActiveTab, reportConfig, setReportC
           onSave={(newTable) => {
             const bodyConfig = getLayout('body') as ILayoutBody;
             const newBody = { ...bodyConfig };
-            newBody.rows[headerModal.rowIndex].columns[headerModal.colIndex].table = newTable;
+            newBody.rows[headerModal.rowIndex].columns![headerModal.colIndex].table = newTable;
             updateLayout('body', newBody);
             setHeaderModal({ isOpen: false, rowIndex: -1, colIndex: -1, table: null });
           }}

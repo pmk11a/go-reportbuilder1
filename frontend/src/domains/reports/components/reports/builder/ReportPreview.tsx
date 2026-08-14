@@ -146,14 +146,47 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
           <Each of={body?.rows || []}>
             {(row, rIdx) => (
               <div key={rIdx} className="flex flex-row flex-wrap items-start w-full -mx-2">
-                <Each of={row.columns || []}>
-                  {(col, cIdx) => {
-                    let mx = '';
-                    if (col.align === 'center') mx = 'mx-auto';
-                    else if (col.align === 'right') mx = 'ml-auto';
-                    else if (col.align === 'left') mx = 'mr-auto';
-                    
-                    return (
+                {row.type === 'signature' && row.signatureRow ? (
+                  <div className="w-full px-2 mt-8 mb-4">
+                    <div 
+                      className={`flex w-full ${row.signatureRow.gapless ? '' : 'gap-4'}`}
+                      style={{ justifyContent: row.signatureRow.justifyContent || 'space-between' }}
+                    >
+                      <Each of={row.signatureRow.columns || []}>
+                        {(col, cIdx) => (
+                          <div key={cIdx} className={`flex flex-col items-center flex-1 text-sm text-center ${row.signatureRow!.showBorder ? 'border border-black p-2' : ''}`}>
+                            <Show when={!!col.title}>
+                              <span>{renderSignatureText(col.title)}</span>
+                            </Show>
+                            <Show when={!!col.title2}>
+                              <span>{renderSignatureText(col.title2)}</span>
+                            </Show>
+                            
+                            <div className="h-16" /> {/* Spacer untuk Tanda Tangan */}
+                            
+                            <Show when={!!col.name}>
+                              <span className="font-bold text-gray-800 underline underline-offset-4">{renderSignatureText(col.name)}</span>
+                            </Show>
+                            <Show when={!!col.role}>
+                              <span className="text-xs text-gray-800 mt-1">{renderSignatureText(col.role)}</span>
+                            </Show>
+                            <Show when={!!col.role2}>
+                              <span className="text-xs text-gray-500">{renderSignatureText(col.role2)}</span>
+                            </Show>
+                          </div>
+                        )}
+                      </Each>
+                    </div>
+                  </div>
+                ) : (
+                  <Each of={row.columns || []}>
+                    {(col, cIdx) => {
+                      let mx = '';
+                      if (col.align === 'center') mx = 'mx-auto';
+                      else if (col.align === 'right') mx = 'ml-auto';
+                      else if (col.align === 'left') mx = 'mr-auto';
+                      
+                      return (
                     <div 
                       key={cIdx} 
                       className={`px-2 ${mx} ${col.colSpan ? `col-span-${col.colSpan}` : ''}`} 
@@ -476,7 +509,8 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
                     </div>
                     );
                   }}
-                </Each>
+                  </Each>
+                )}
               </div>
             )}
           </Each>
@@ -490,12 +524,12 @@ export function ReportPreview({ config, zoom, orientation = 'portrait', datasets
             {(row, rIdx) => (
               <div 
                 key={rIdx} 
-                className="flex w-full"
+                className={`flex w-full ${row.gapless ? '' : 'gap-4'}`}
                 style={{ justifyContent: row.justifyContent || 'space-between' }}
               >
                 <Each of={row.columns || []}>
                   {(col, cIdx) => (
-                    <div key={cIdx} className="flex flex-col items-center w-40 text-sm text-center">
+                    <div key={cIdx} className={`flex flex-col items-center flex-1 text-sm text-center ${row.showBorder ? 'border border-black p-2' : ''}`}>
                       <Show when={!!col.title}>
                         <span>{renderSignatureText(col.title)}</span>
                       </Show>
