@@ -1,0 +1,128 @@
+{
+  "name": "fr3_baselines",
+  "saved_at": 1785975520.340057,
+  "signatures": {
+    "Barang_ukuran.fr3": {
+      "version": "4.5",
+      "pages": [
+        {
+          "paper_w": 215.9,
+          "paper_h": 279.4,
+          "orientation": "portrait",
+          "margins": {
+            "left": 15.0,
+            "right": 15.9,
+            "top": 10.0,
+            "bottom": 10.0
+          }
+        },
+        {
+          "paper_w": 215.9,
+          "paper_h": 279.4,
+          "orientation": "portrait",
+          "margins": {
+            "left": 10.0,
+            "right": 10.0,
+            "top": 10.0,
+            "bottom": 10.0
+          }
+        },
+        {
+          "paper_w": 215.9,
+          "paper_h": 279.4,
+          "orientation": "portrait",
+          "margins": {
+            "left": 10.0,
+            "right": 10.0,
+            "top": 10.0,
+            "bottom": 10.0
+          }
+        }
+      ],
+      "datasets": [
+        [],
+        [],
+        [
+          "NamaSize",
+          "Namawarna",
+          "QntSJ",
+          "meter2SJ",
+          "namaBrg"
+        ],
+        [
+          "NamaMotif",
+          "NamaSize",
+          "Namawarna",
+          "QntSJ",
+          "meter2SJ",
+          "namaBrg"
+        ]
+      ],
+      "dataset_names": [
+        "Data",
+        "frxDBDataset1",
+        "frxDBDataset3",
+        "frxDBDataset4"
+      ],
+      "memo_count": 64,
+      "variables": [],
+      "script_procs": 3
+    },
+    "BatalBPPB.fr3": {
+      "version": "",
+      "pages": [],
+      "datasets": [],
+      "dataset_names": [],
+      "memo_count": 0,
+      "variables": [],
+      "script_procs": 0
+    },
+    "BatalPO.fr3": {
+      "version": "",
+      "pages": [],
+      "datasets": [],
+      "dataset_names": [],
+      "memo_count": 0,
+      "variables": [],
+      "script_procs": 0
+    },
+    "BPPL.fr3": {
+      "version": "",
+      "pages": [],
+      "datasets": [],
+      "dataset_names": [],
+      "memo_count": 0,
+      "variables": [],
+      "script_procs": 0
+    },
+    "Copy of ReporRJualPertipe.fr3": {
+      "version": "4.5",
+      "pages": [
+        {
+          "paper_w": 700.0,
+          "paper_h": 210.0,
+          "orientation": "portrait",
+          "margins": {
+            "left": 10.0,
+            "right": 10.0,
+            "top": 10.0,
+            "bottom": 10.0
+          }
+        }
+      ],
+      "datasets": [
+        [],
+        [],
+        []
+      ],
+      "dataset_names": [
+        "Data",
+        "frxDBDataset1",
+        "frxDBDataset2"
+      ],
+      "memo_count": 60,
+      "variables": [],
+      "script_procs": 0
+    }
+  }
+}

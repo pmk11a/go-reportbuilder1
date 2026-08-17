@@ -236,7 +236,7 @@ function ReportGeneratorPage() {
                     paperConfig={reportGeneral?.paperConfig} 
                     datasets={reportDatasets}
                     mode="preview"
-                    isAutoFit={isAutoFit}
+                    
                     isFitTable={isFitTable}
                   />
                 </div>

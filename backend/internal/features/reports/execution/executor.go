@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/masza1/dapen-backend/internal/features/reports"
 )
@@ -15,11 +16,16 @@ import (
 // IReportExecutionRepository defines the data access contract for report execution.
 type IReportExecutionRepository interface {
 	GetReportByKodeMenu(ctx context.Context, kodeMenu string) (*reports.SDBMasterLaporan, error)
+	GetReportByID(ctx context.Context, id int) (*reports.SDBMasterLaporan, error)
 	GetFilters(ctx context.Context, idLaporan int) ([]reports.SDBParameterLaporan, error)
 	GetDatasets(ctx context.Context, idLaporan int) ([]reports.SDBQueryLaporan, error)
 	GetAllColumns(ctx context.Context, idLaporan int) (map[string][]reports.SDBKolomLaporan, error)
 	GetGroups(ctx context.Context, idLaporan int) ([]reports.SDBGroupLaporan, error)
+	GetKomponen(ctx context.Context, idLaporan int) ([]reports.SDBKomponenLaporan, error)
+	GetUserAccess(ctx context.Context, kodeMenu string) ([]reports.SUserAccess, error)
 	ExecuteQuery(ctx context.Context, sql string, filters map[string]interface{}, userId string) ([]map[string]interface{}, error)
+	ExecuteQueryWithParams(ctx context.Context, sql string, params []interface{}) ([]map[string]interface{}, error)
+	ExecuteSPQuery(ctx context.Context, sql string) ([]map[string]interface{}, error)
 	ExecuteQueryMulti(ctx context.Context, sql string) ([][]map[string]interface{}, error)
 	GetLabelMapping(ctx context.Context, field string) (map[string]string, error)
 }
@@ -27,6 +33,39 @@ type IReportExecutionRepository interface {
 // SReportExecutionService handles report generation for end users.
 type SReportExecutionService struct {
 	repo IReportExecutionRepository
+}
+
+// GetReportConfig returns the full report config (detail + related data) for a given KODEMENU.
+// It queries the execution repo directly, which includes the status_aktif = 1 filter.
+func (s *SReportExecutionService) GetReportConfig(ctx context.Context, kodeMenu string) (*reports.SReportDetailResponse, error) {
+	// Step 1: get master row (with status_aktif = 1)
+	report, err := s.repo.GetReportByKodeMenu(ctx, kodeMenu)
+	if err != nil {
+		return nil, err
+	}
+
+	// Step 2: load related data
+	filters, err := s.repo.GetFilters(ctx, report.IDLaporan)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get filters: %w", err)
+	}
+	datasets, err := s.repo.GetDatasets(ctx, report.IDLaporan)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get datasets: %w", err)
+	}
+	columns, err := s.repo.GetAllColumns(ctx, report.IDLaporan)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get columns: %w", err)
+	}
+	groups, err := s.repo.GetGroups(ctx, report.IDLaporan)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get groups: %w", err)
+	}
+
+	komponen, _ := s.repo.GetKomponen(ctx, report.IDLaporan)
+	access, _ := s.repo.GetUserAccess(ctx, report.KODEMENU)
+
+	return mapReportToDetailResponse(report, filters, datasets, columns, groups, komponen, access), nil
 }
 
 // NewReportExecutionService constructs the report execution service.
@@ -186,6 +225,12 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 	// Parse config_json for static params
 	staticParams := s.parseStaticParams(dataset.ConfigJSON)
 
+	// Collect filter params for SP parameter building
+	paramsFilters := make(map[string]interface{})
+	for key, value := range filters {
+		paramsFilters[key] = value
+	}
+
 	// Replace static params from config_json (sorted by length desc)
 	for key, value := range staticParams {
 		sql = s.replacePlaceholder(sql, "@"+key, fmt.Sprintf("'%s'", s.escapeSQLString(fmt.Sprintf("%v", value))))
@@ -209,9 +254,22 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
 	}
 
-	// For EXEC SP queries, replace remaining placeholders with NULL
+	// For EXEC SP queries that have a known sp_signature in config_json,
+	// use buildSPQuery to build the properly formatted SQL.
+	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
+		builtSQL, _ := s.buildSPQuery(ctx, dataset, sql, paramsFilters)
+		if builtSQL != sql {
+			// SP was handled by buildSPQuery - execute directly
+			return s.repo.ExecuteSPQuery(ctx, builtSQL)
+		}
+	}
+
+	// NOTE: buildSPQuery returned original SQL (SP not handled by switch case)
+	// Replace remaining @placeholders with NULL for any SP calls that weren't handled
 	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
 		sql = s.replaceRemainingPlaceholders(sql)
+		// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
+		sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
 	}
 
 	// Strip residual placeholders in SELECT queries (fallback safety)
@@ -227,6 +285,11 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 
 	log.Printf("DEBUG EXECUTE DATASET %s: %s", dataset.NamaDataset, sql)
 
+	// Reject placeholder / unconfigured queries to surface configuration issues early
+	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") {
+		return nil, fmt.Errorf("report dataset %q has not been configured yet (missing SP mapping)", dataset.NamaDataset)
+	}
+
 	return s.repo.ExecuteQuery(ctx, sql, nil, userId)
 }
 
@@ -239,6 +302,12 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 	staticParams := s.parseStaticParams(dataset.ConfigJSON)
 	for key, value := range staticParams {
 		sql = s.replacePlaceholder(sql, "@"+key, fmt.Sprintf("'%s'", s.escapeSQLString(fmt.Sprintf("%v", value))))
+	}
+
+	// Collect filter params for SP parameter building
+	paramsFilters := make(map[string]interface{})
+	for key, value := range filters {
+		paramsFilters[key] = value
 	}
 
 	// Replace filter parameters
@@ -259,12 +328,40 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
 	}
 
-	// For EXEC SP queries, replace remaining placeholders with NULL
+	// For EXEC SP queries that have a known sp_signature in config_json,
+	// use ExecuteSPReport to build the properly parameterized SQL.
 	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
-		sql = s.replaceRemainingPlaceholders(sql)
+		sql, params := s.buildSPQuery(ctx, dataset, sql, paramsFilters)
+		if len(params) > 0 {
+			resultSets, err := s.repo.ExecuteQueryMulti(ctx, sql)
+			if err != nil {
+				log.Printf("DEBUG EXECUTE MULTI ERROR %s: %v", dataset.NamaDataset, err)
+				return nil, err
+			}
+			log.Printf("DEBUG EXECUTE MULTI RESULT %s: %d result sets", dataset.NamaDataset, len(resultSets))
+			for i, rs := range resultSets {
+				log.Printf("DEBUG RESULT SET %d: %d rows", i, len(rs))
+				if len(rs) > 0 {
+					log.Printf("DEBUG RESULT SET %d ROW 0 keys: %v", i, func() []string { keys := make([]string, 0, len(rs[0])); for k := range rs[0] { keys = append(keys, k) }; return keys }())
+				}
+			}
+			return resultSets, nil
+		}
 	}
 
-	log.Printf("DEBUG EXECUTE DATASET MULTI %s: %s", dataset.NamaDataset, sql)
+	// Replace remaining @placeholders with NULL for any SP calls that weren't handled
+	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
+		sql = s.replaceRemainingPlaceholders(sql)
+		// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
+		sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
+	}
+
+	log.Printf("DEBUG EXECUTE MULTI %s: %s", dataset.NamaDataset, sql)
+
+	// Reject placeholder / unconfigured queries
+	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") {
+		return nil, fmt.Errorf("report dataset %q has not been configured yet (missing SP mapping)", dataset.NamaDataset)
+	}
 
 	resultSets, err := s.repo.ExecuteQueryMulti(ctx, sql)
 	if err != nil {
@@ -305,6 +402,267 @@ func (s *SReportExecutionService) parseStaticParams(configJSON *string) map[stri
 		}
 	}
 	return result
+}
+
+// buildSPQuery builds a properly parameterized SQL query for known SP signatures
+// Currently handles Sp_ReportSODet and Sp_reportSORek patterns from Delphi
+func (s *SReportExecutionService) buildSPQuery(ctx context.Context, dataset *reports.SDBQueryLaporan, sql string, filters map[string]interface{}) (string, []interface{}) {
+	// Extract SP signature from config_json
+	var spSignature string
+	if dataset.ConfigJSON != nil {
+		var config map[string]interface{}
+		if err := json.Unmarshal([]byte(*dataset.ConfigJSON), &config); err == nil {
+			if sig, ok := config["sp_signature"].(string); ok {
+				spSignature = strings.TrimSpace(sig)
+			}
+		}
+	}
+
+	if spSignature == "" {
+		return sql, nil
+	}
+
+	// Normalize SP name for matching
+	spUpper := strings.ToUpper(spSignature)
+
+	// Build filter map for easy lookup
+	filterMap := make(map[string]interface{})
+	for k, v := range filters {
+		filterMap[strings.ToLower(k)] = v
+	}
+
+	// Extract date filters - check both underscore and no-underscore variants
+	var tglAwal, tglAkhir string
+	// Try: tgl_awal, tgl_akhhir (with underscore), tglaal, tgakhir (no underscore)
+	if v, ok := filterMap["tgl_awal"]; ok && v != nil {
+		tglAwal = fmt.Sprintf("%v", v)
+	} else if v, ok := filterMap["tglawal"]; ok && v != nil {
+		tglAwal = fmt.Sprintf("%v", v)
+	} else if v, ok := filterMap["tgl_akhhir"]; ok && v != nil {
+		tglAwal = fmt.Sprintf("%v", v)
+	}
+	if v, ok := filterMap["tgl_akhir"]; ok && v != nil {
+		tglAkhir = fmt.Sprintf("%v", v)
+	} else if v, ok := filterMap["tglakhir"]; ok && v != nil {
+		tglAkhir = fmt.Sprintf("%v", v)
+	} else if v, ok := filterMap["tgl_akhhir"]; ok && v != nil {
+		tglAkhir = fmt.Sprintf("%v", v)
+	}
+
+	// Parse dates - accept MM-DD-YYYY or ISO format
+	parseDate := func(s string) (time.Time, bool) {
+		// Try MM-DD-YYYY format
+		if t, err := time.Parse("01-02-2006", s); err == nil {
+			return t, true
+		}
+		// Try ISO format
+		if t, err := time.Parse(time.RFC3339, s); err == nil {
+			return t, true
+		}
+		// Try YYYY-MM-DD
+		if t, err := time.Parse("2006-01-02", s); err == nil {
+			return t, true
+		}
+		return time.Time{}, false
+	}
+
+	var dateFmt = "01-02-2006"
+
+	switch {
+	case strings.Contains(spUpper, "REPORTOUT") && strings.Contains(spUpper, "SODET"):
+		// Sp_ReportOutSODet - Out SO Detail report (Penjualan/Delivery Order)
+		// Parameters: @SReport, @Ordr, @tgl1, @tgl2, @isiList, @Id
+		kodeMenu := s.getKodeMenuFromIDLaporan(ctx, dataset.IDLaporan)
+		groupType := "N" // N=NoBukti, B=Barang, C=CustSupp
+		switch {
+		case strings.HasSuffix(kodeMenu, "0102"):
+			groupType = "B"
+		case strings.HasSuffix(kodeMenu, "0103"):
+			groupType = "C"
+		}
+
+		sReport := "T"
+		if v, ok := filterMap["sreport"]; ok && v != nil {
+			sReport = fmt.Sprintf("%v", v)
+		}
+
+		listItems := "''" // empty string as SQL literal
+		if v, ok := filterMap["isilist"]; ok && v != nil {
+			switch val := v.(type) {
+			case []interface{}:
+				var items []string
+				for _, item := range val {
+					items = append(items, fmt.Sprintf("'%v'", item))
+				}
+				listItems = strings.Join(items, ",")
+			case string:
+				if val != "" {
+					listItems = fmt.Sprintf("'%s'", strings.ReplaceAll(val, "'", "''"))
+				}
+			}
+		}
+
+		// Format dates - SP expects MM/DD/YYYY format
+		var dateStr1, dateStr2 string
+		if t, ok := parseDate(tglAwal); ok {
+			dateStr1 = fmt.Sprintf("'%s'", t.Format("01/02/2006"))
+		} else {
+			dateStr1 = "'01/01/2025'"
+		}
+		if t, ok := parseDate(tglAkhir); ok {
+			dateStr2 = fmt.Sprintf("'%s'", t.Format("01/02/2006"))
+		} else {
+			dateStr2 = "'12/31/2025'"
+		}
+
+		// Build SQL: EXEC Sp_ReportOutSODet @SReport='T',@Ordr='N',@tgl1='01/01/2025',@tgl2='12/31/2025',@isiList='',@Id=''
+		builtSQL := fmt.Sprintf("EXEC %s @SReport='%s',@Ordr='%s',@tgl1=%s,@tgl2=%s,@isiList=%s,@Id=''",
+			spSignature,
+			sReport,
+			groupType,
+			dateStr1,
+			dateStr2,
+			listItems,
+		)
+		log.Printf("DEBUG SP QUERY %s: %s", dataset.NamaDataset, builtSQL)
+		return builtSQL, nil
+
+	case strings.Contains(spUpper, "REPORTSO") && strings.Contains(spUpper, "DET"):
+		// Sp_ReportSODet - SO detail report
+		// Parameters: :0=SReport, :1=GroupType, 'TglAwal','TglAkhir',:2=ListItems, :3=ValasIndex
+		kodeMenu := s.getKodeMenuFromIDLaporan(ctx, dataset.IDLaporan)
+		groupType := "N" // default
+		switch {
+		case strings.HasSuffix(kodeMenu, "0102"):
+			groupType = "B"
+		case strings.HasSuffix(kodeMenu, "0103"):
+			groupType = "C"
+		case strings.HasSuffix(kodeMenu, "0104"):
+			groupType = "D"
+		}
+
+		sReport := "T"
+		if v, ok := filterMap["sreport"]; ok && v != nil {
+			sReport = fmt.Sprintf("%v", v)
+		}
+
+		listItems := ""
+		if v, ok := filterMap["listitems"]; ok {
+			switch val := v.(type) {
+			case []interface{}:
+				var items []string
+				for _, item := range val {
+					items = append(items, fmt.Sprintf("%v", item))
+				}
+				listItems = strings.Join(items, ";")
+			case string:
+				listItems = val
+			}
+		}
+
+		valasIndex := 0
+		if v, ok := filterMap["valas"]; ok && v != nil {
+			if idx, err := strconv.Atoi(fmt.Sprintf("%v", v)); err == nil {
+				valasIndex = idx
+			}
+		}
+
+		// Format dates if available
+		var dateStr1, dateStr2 string
+		if t, ok := parseDate(tglAwal); ok {
+			dateStr1 = t.Format(dateFmt)
+		} else {
+			dateStr1 = "'2025-01-01'"
+		}
+		if t, ok := parseDate(tglAkhir); ok {
+			dateStr2 = t.Format(dateFmt)
+		} else {
+			dateStr2 = "'2025-12-31'"
+		}
+
+		// Format SQL with escaped values directly to avoid GORM parameter binding issues
+		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','%s','%s','%s',%d",
+			spSignature,
+			sReport,
+			groupType,
+			dateStr1,
+			dateStr2,
+			strings.ReplaceAll(listItems, "'", "''"),
+			valasIndex,
+		)
+		log.Printf("DEBUG SP QUERY %s: %s", dataset.NamaDataset, builtSQL)
+		return builtSQL, nil
+
+	case strings.Contains(spUpper, "REPORTSO") && strings.Contains(spUpper, "REK"):
+		// Sp_reportSORek - SO rekap report
+		// Parameters: :0=SReport, :1=GroupType, 'TglAwal','TglAkhir',:2=ListItems
+		kodeMenu := s.getKodeMenuFromIDLaporan(ctx, dataset.IDLaporan)
+		groupType := "N"
+		switch {
+		case strings.HasSuffix(kodeMenu, "0102"):
+			groupType = "B"
+		case strings.HasSuffix(kodeMenu, "0103"):
+			groupType = "C"
+		case strings.HasSuffix(kodeMenu, "0104"):
+			groupType = "D"
+		}
+
+		sReport := "T"
+		if v, ok := filterMap["sreport"]; ok && v != nil {
+			sReport = fmt.Sprintf("%v", v)
+		}
+
+		listItems := ""
+		if v, ok := filterMap["listitems"]; ok {
+			switch val := v.(type) {
+			case []interface{}:
+				var items []string
+				for _, item := range val {
+					items = append(items, fmt.Sprintf("%v", item))
+				}
+				listItems = strings.Join(items, ";")
+			case string:
+				listItems = val
+			}
+		}
+
+		var dateStr1, dateStr2 string
+		if t, ok := parseDate(tglAwal); ok {
+			dateStr1 = t.Format(dateFmt)
+		} else {
+			dateStr1 = "'2025-01-01'"
+		}
+		if t, ok := parseDate(tglAkhir); ok {
+			dateStr2 = t.Format(dateFmt)
+		} else {
+			dateStr2 = "'2025-12-31'"
+		}
+
+		// Format SQL with escaped values directly
+		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','%s','%s','%s'",
+			spSignature,
+			sReport,
+			groupType,
+			dateStr1,
+			dateStr2,
+			strings.ReplaceAll(listItems, "'", "''"),
+		)
+		log.Printf("DEBUG SP QUERY %s: %s", dataset.NamaDataset, builtSQL)
+		return builtSQL, nil
+
+	default:
+		// Unknown SP pattern - return original SQL with no params
+		return sql, nil
+	}
+}
+
+// getKodeMenuFromIDLaporan retrieves the KODEMENU for a given id_laporan
+func (s *SReportExecutionService) getKodeMenuFromIDLaporan(ctx context.Context, idLaporan int) string {
+	report, err := s.repo.GetReportByID(ctx, idLaporan)
+	if err != nil || report == nil {
+		return ""
+	}
+	return report.KODEMENU
 }
 
 // replacePlaceholder replaces a placeholder case-insensitively with word boundaries
@@ -359,9 +717,17 @@ func (s *SReportExecutionService) replaceFilterValue(sql, placeholder string, va
 }
 
 // replaceRemainingPlaceholders replaces all remaining @placeholders with NULL for SP calls
+// Also handles :0, :1, :2 style positional parameters (replace with NULL)
 func (s *SReportExecutionService) replaceRemainingPlaceholders(sql string) string {
+	// Replace @param style placeholders
 	re := regexp.MustCompile(`(?i)@[A-Za-z_]\w*`)
-	return re.ReplaceAllString(sql, "NULL")
+	sql = re.ReplaceAllString(sql, "NULL")
+
+	// Replace :0, :1, :2 etc style positional parameters
+	re2 := regexp.MustCompile(`:\d+`)
+	sql = re2.ReplaceAllString(sql, "NULL")
+
+	return sql
 }
 
 // escapeSQLString escapes single quotes for SQL

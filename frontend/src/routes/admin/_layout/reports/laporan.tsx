@@ -105,10 +105,7 @@ function MenuNode({
         >
           <FileText className="w-4 h-4 shrink-0 mt-0.5" />
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-medium truncate">{item.NmReport}</span>
-            <span className={`text-xs font-mono mt-0.5 ${selectedKode === item.KODEMENU ? 'opacity-80' : 'text-slate-400'}`}>
-              {item.KODEMENU}
-            </span>
+            <span className="font-medium truncate">{item.nama_laporan || item.NmReport}</span>
           </div>
         </Link>
       ) : (

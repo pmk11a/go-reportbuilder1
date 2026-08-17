@@ -13,6 +13,7 @@ func SeedDatabase(database *gorm.DB) {
 	seedSuperAdmin(database)
 	seedDBMenu(database)
 	seedReports(database)
+	seedDynamicReports(database)
 	seedDbBrowseConfigs(database)
 }
 

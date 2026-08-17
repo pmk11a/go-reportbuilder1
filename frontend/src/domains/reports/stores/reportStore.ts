@@ -31,6 +31,7 @@ interface ReportState {
   filterValues: IReportFilterValues & { _kodeMenu?: string }
   isExecuting: boolean
   executionError: string | null
+  executionResult: Record<string, any[]> | null
 
   // Loading states
   isLoading: boolean
@@ -63,6 +64,7 @@ interface ReportState {
   resetFilters: () => void
   setIsExecuting: (executing: boolean) => void
   setExecutionError: (error: string | null) => void
+  setExecutionResult: (result: Record<string, any[]> | null) => void
 
   // Loading
   setIsLoading: (loading: boolean) => void
@@ -98,6 +100,7 @@ export const useReportStore = create<ReportState>()(
   filterValues: {},
   isExecuting: false,
   executionError: null,
+  executionResult: null,
 
   // Initial state - Loading
   isLoading: false,
@@ -179,6 +182,8 @@ export const useReportStore = create<ReportState>()(
   setIsExecuting: (executing) => set({ isExecuting: executing }),
 
   setExecutionError: (error) => set({ executionError: error }),
+
+  setExecutionResult: (result) => set({ executionResult: result }),
 
   // Loading
   setIsLoading: (loading) => set({ isLoading: loading }),

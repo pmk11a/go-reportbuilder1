@@ -1,0 +1,74 @@
+[
+  {
+    "rule_id": "MEMO_OVERFLOW",
+    "regex": "Memo 'Memo17' overflows at left+width=0.0+260.8",
+    "fix_pattern": "Reduce width or shift Left to 0.0",
+    "language": "unknown"
+  },
+  {
+    "rule_id": "SEED_Sp_ReportInvoicePenjualanDet",
+    "regex": "complexity_score=1217.82;fields=@SReport='T',@Ordr='S',@tgl1='01/01/2011',@tgl2='01/01/2013',@isiList='%%' \r\nselect @Id=SUBSTRING(@Id,1,1)\r\nif @Id=''\r\nBegin\r\nIf @Ordr='N'\r\n\tbegin\r\n\t\tif @NeedOto=0 or @NeedOto=1\r\n\t\tBegin\r\n\t\t if @isKP =0\r\n\t\t  Begin\r\n\t\t  if @PPN=0 \r\n\t\t  Begin\r\n\t\t  if @isiList=''\r\n\t\t  exec('select ''Gabungan'' Perusahaan,*",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_ReportInvoicePenjualanDet.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_ReportInvoicePenjualanRek",
+    "regex": "complexity_score=945.77;fields=@Choice='B',@Tgl1='01/01/2011',@Tgl2='01/01/2013'\r\nselect @Id=SUBSTRING(@Id,1,1)\r\nif @Id='' \r\nBegin\r\nIf @Choice='N'\r\nBegin\r\nif @NeedOto=0 or @NeedOto=1\r\n begin \r\n  if @PPN=0 \r\n   Begin\r\n\t\tselect \t'Gabungan' Perusahaan,NoBukti,Tanggal,KodeCustSupp,NAMACUSTSUPP,Nama,Kurs,Valas,SUM(case when Isnull(SO.PPH22,0)<>0 Then \r\n        (B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00))\r\n        when ISNULL(A.PPh21,0)<>0 and (ISNULL(D.IsPPH21,0)=1)Then\r\n       ((Round(B.NNet,0))- (ISNULL(A.NTotal,0)*(ISNULL(FRetensi,0))/100))/1.1\r\n        else B.NDPP end) NDPP,SUM(case when Isnull(SO.PPH22,0)<>0 Then \r\n        (B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00))\r\n        when ISNULL(A.PPh21,0)<>0 and (ISNULL(D.IsPPH21,0)=1)Then\r\n        ((Round(B.NNet,0))- (ISNULL(A.NTotal,0)*(ISNULL(FRetensi,0))/100))/1.1\r\n        else B.NDPPRp end) NDPPRP,sum(case when Isnull(SO.PPH22,0)<>0 Then\r\n        ((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))*Case WHen A.PPN=0 Then 0 when A.PPN=1 Then 0.1 else 1.1 end\r\n        when ISNULL(A.PPh21,0)<>0 and (ISNULL(D.IsPPH21,0)=1)Then\r\n        (((Round(B.NNet,0))- (ISNULL(A.NTotal,0)*(ISNULL(FRetensi,0))/100))/1.1)*0.1\r\n        else\r\n        B.NPPNRp end)NPPNRP,SUM(case when Isnull(SO.PPH22,0)<>0 Then  \r\n        ((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))+(((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))*Case WHen A.PPN=0 Then 0 when A.PPN=1 Then 0.1 else 1.1 end)-\r\n\t\t(((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))*(SO.PPH22/100))+\r\n\t\tCase When rpInv.TotNet<=SO.PPHDPP Then\r\n\t\t(((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))*Case WHen A.PPN=0 Then 0 when A.PPN=1 Then 0.1 else 1.1 end)\r\n\t\telse\r\n\t\t(((B.NDPP)-(B.NDPP*(Convert(Float,SO.Retensi)/100.00)))*Case WHen A.PPN=0 Then 0 when A.PPN=1 Then 0.1 else 1.1 end)*-1\r\n\t\tend \r\n/**/\twhen ISNULL(A.PPh21,0)<>0 and (ISNULL(E.IsPPH21,0)=1)Then\r\n\t\t((Round(B.NNet,0))- (ISNULL(A.NTotal,0)*(ISNULL(FRetensi,0))/100))-((((Round(B.NNet,0))- (ISNULL(A.NTotal,0)*(ISNULL(FRetensi,0))/100))/1.1)*(ISNULL(A.PPh21,0)/100))\r\n\t\telse B.NNETRp end)NNETRP",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_ReportInvoicePenjualanRek.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_sp_TFTransIn",
+    "regex": "complexity_score=773.45;fields=nobukti,Do",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\sp_TFTransIn.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_reportBPrek",
+    "regex": "complexity_score=732.88;fields=@Choice='B',@Bulan=1,@Tahun=2012\r\nif @Id=''\r\nBegin\r\nIf @Choice='N'\r\nbegin\r\n  If @NeedOto=0 or @NeedOto=1\r\n\tSelect \t'Gabungan' Perusahaan,NoBukti,Sat,kodebrg,NAMABRG,Hrg,Hrg*Sum(Isnull(B.Qnt,0)) NilaiBeli,Sum(Isnull(B.Qnt,0)) Qnt,NMDEP,Hrg*Sum(Isnull(B.Qnt2,0)) NilaiBeli2,NoPOL,Supir",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_reportBPrek.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_ReportRInvoicePenjualanRek",
+    "regex": "complexity_score=688.94;fields=@Choice='B',@Tgl1='01/01/2011',@Tgl2='01/01/2013'\r\nselect @Id=SUBSTRING(@Id,1,1)\r\nif @Id=''\r\nBegin\r\nIf @Choice='N'\r\nBegin\r\n\tIf @Needoto=0 or @Needoto=1\r\n\t\tselect \t'Gabungan' Perusahaan,NoBukti,Tanggal,KodeCustSupp,NAMACUSTSUPP,sum(isnull(B.PPN,0))PPN,sum(isnull(B.DISC,0))Disc,sum(isnull(B.KURS,0))Kurs,sum(isnull(B.QNT,0)) QNT,sum(isnull(B.QNT2,0))QNT2,sum(isnull(B.NetW,0)) NetW,sum(isnull(B.GrossW,0))GrossW,sum(isnull(B.DISCTOT,0))Disctot,sum(isnull(B.HRGNETTO,0)) HrgNetto,sum(isnull(B.NDISKON,0)) NDiskon,sum(isnull(B.SUBTOTAL,0)) SubTotal,sum(isnull(B.NDPP,0)) NDPP,sum(isnull(B.NPPN,0)) NPPN",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_ReportRInvoicePenjualanRek.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_ReportRPenjualanGdgRek",
+    "regex": "complexity_score=685.15;fields=@Choice='B',@Tgl1='01/01/2011',@Tgl2='01/01/2013'\r\nif @Id=''\r\nBegin\r\nIf @Choice='N'\r\nBegin\r\n\tIf @Needoto=0 or @Needoto=1\r\n\t\tselect \tB.NoBukti,Tanggal,KodeCustSupp,NAMACUSTSUPP,sum(isnull(B.PPN,0))PPN,sum(isnull(B.DISC,0))Disc,sum(isnull(B.KURS,0))Kurs,sum(isnull(B1.QNT,0)) QNT,sum(isnull(B1.QNT2,0))QNT2,sum(isnull(B.NetW,0)) NetW,sum(isnull(B.GrossW,0))GrossW,sum(isnull(B.DISCTOT,0))Disctot,sum(isnull(B.HRGNETTO,0)) HrgNetto,sum(isnull(B.NDISKON,0)) NDiskon,sum(isnull(B.SUBTOTAL,0)) SubTotal,sum(isnull(B.NDPP,0)) NDPP,sum(isnull(B.NPPN,0)) NPPN,sum(isnull(B.NNET,0)) NNet",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_ReportRPenjualanGdgRek.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_ReportBeliACCRek",
+    "regex": "complexity_score=638.5;fields=@Tgl1='01/01/2012',@tgl2='07/17/2013',@Choice='B'\r\n\r\nif @Id='' \r\nBegin\r\nIf @Choice='N'\r\nbegin\r\n    If @NeedOto=0 or @NeedOto=1\r\n      Begin\r\n       if @TipeBayar=0 or @TipeBayar=1\r\n\t\tSelect \t'Gabungan' Perusahaan,NoBukti,TANGGAL,KODESUPP,NAMACUSTSUPP,KODEVLS,KURS,sum(b.NDPP),sum(b.NDPPRp),sum(b.NPPNRp),sum(B.nnetrp),Nilai ByLainnya,case when ISNULL(a1.Nilai,0)=0 then sum(B.nnetrp) else sum(B.nnetrp)+a1.Nilai  end GrandTotal",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_ReportBeliACCRek.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_sp_ReportPiutangSrtJln",
+    "regex": "complexity_score=504.21;fields=@Bulan=11,@Tahun=2021 @Id=LEFT(@Id,1)\r\n\r\nDeclare @Tanggal DateTime,@SmpTgl DateTime,@SmpBln int,@SmpThn int,@SblTgl DateTime\r\nSet @Tanggal=Dateadd(MM, 0, Cast(CASE WHEN @Bulan < 10 THEN '0' ELSE '' END + Cast(@Bulan(2))+'-01-'+ \r\n                           Cast(@Tahun(4))))\r\nSet @SmpBln=@Bulan+1 \r\nselect @SmpThn=case when @SmpBln=13 then @Tahun+1 else @Tahun end\r\nselect @SmpBln=case when @SmpBln=13 then 1 else @SmpBln end\r\n\r\n\r\nSet @SmpTgl=Dateadd(MM, 0, Cast(CASE WHEN @SmpBln < 10 THEN '0' ELSE '' END + Cast(@SmpBln(2))+'-01-'+ \r\n                           Cast(@SmpThn(4))))\r\nSelect @SmpTgl=@SmpTgl-1\r\nselect @SblTgl=@Tanggal-1\r\n\r\nif @Tahun>2019\r\nbegin\r\n\r\nif @Id=''\r\nBegin\r\n--gabungan\r\nselect 'Gabungan' Perusahaan",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\sp_ReportPiutangSrtJln.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_sp_TFTransOut",
+    "regex": "complexity_score=493.18;fields=nobukti,Do",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\sp_TFTransOut.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_Sp_reportStockQtyRp",
+    "regex": "complexity_score=479.1;fields=@bulan=8,@tahun=2013,@isi=2,@Kodegdg='',@KodeGrp='BM',@minus=1 @kodegdg=Case when @kodegdg in ('','-') then '%' else @kodegdg end\r\n\r\nIf @Minus=0 and @MinusHpp=0\r\nbegin\r\n if @Pilih=0\r\n Begin\r\n  If @isi=1\r\n\tbegin\r\n\tif @Kodegdg in('G1','R1')\r\n    Begin\r\n\tSelect KODEGRP,NamaGrp,KODESUBGRP,NamaSubGrp,KODEGDG,KODEBRG,NAMABRG,Case when @isi=1 then A.SAT1\r\n       when @isi=2 then A.SAT2\r\n       when @isi=3 then ''\r\n       else ''\r\n\tend Satuan,QNTAWAL/a.Isi1 QntAwal,HRGAWAL,QNTPBL/a.Isi1 QNTPBL,HRGPBL,QntRPB/a.Isi1 QNTRBP,HRGRPB HRGRBP,QNTPMK/a.Isi1 QNTPMK",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\Sp_reportStockQtyRp.seed.fr3",
+    "language": "fr3-seed"
+  },
+  {
+    "rule_id": "SEED_sp_reportStockQtyRprek",
+    "regex": "complexity_score=474.81;fields=@bulan=5,@tahun=2013,@isi=2,@Kodegdg='',@KodeGrp='BM',@minus=1 @kodegdg=Case when @kodegdg in ('','-') then '%' else @kodegdg end\r\nif @minus=0\r\nbegin\r\nif @Pilih=0 \r\n Begin\r\n\tIf @isi=1\r\n\tbegin\r\n\tif @Kodegdg In('G1','R1')\r\n\tBegin\r\n\tSelect KODEGRP,NamaGrp,KODESUBGRP,NamaSubGrp,KODEGDG,KODEBRG,NAMABRG,Case when @isi=1 then A.SAT1\r\n       when @isi=2 then A.SAT2\r\n       when @isi=3 then ''\r\n       else ''\r\n\tend Satuan,QNTAWAL/a.Isi1 QntAwal,HRGAWAL,(a.QNTPBL/a.Isi1)+(a.QNTRPJ/a.Isi1)+(a.QNTADI/a.Isi1)+(a.QNTTRI/a.Isi1)+(a.QNTRPK/a.Isi1) Qntmasuk,(a.HRGPBL + a.HRGRPJ +  a.HRGADI + a.HRGTRI + a.HRGRPK) HrgMasuk,(a.QNTPNJ/a.Isi1)+(a.QntRPB/a.Isi1)+(a.QNTADO/a.Isi1)+(a.QNTTRO/a.Isi1)+(a.QNTPMK/a.Isi1) QntKeluar,(a.HRGPNJ+a.HRGRPB+a.HRGADO+a.HRGTRO+a.HRGPMK) HrgKeluar,QNTUKI/a.Isi1 QNTUKI",
+    "fix_pattern": "generated .fr3 seed at d:\\TestLaB\\piagent\\Bca\\ReportPreview\\seeds\\sp_reportStockQtyRprek.seed.fr3",
+    "language": "fr3-seed"
+  }
+]

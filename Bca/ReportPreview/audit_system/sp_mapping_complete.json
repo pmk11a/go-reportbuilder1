@@ -1,0 +1,938 @@
+{
+  "total_missing": 49,
+  "mapped": 49,
+  "mapping": {
+    "020106": {
+      "nama": "Daftar Deposito",
+      "sp": "Sp_LapDeposito",
+      "params": [
+        "Masuk",
+        "Divisi",
+        "Perkiraan",
+        "TglAw",
+        "TglAk"
+      ],
+      "sample": [
+        "%",
+        "02",
+        "0",
+        "2024-01-01",
+        "2024-12-31"
+      ]
+    },
+    "020107": {
+      "nama": "Daftar Giro diterima",
+      "sp": "Sp_LapGiroHutang",
+      "params": [
+        "Masuk",
+        "Divisi",
+        "Perkiraan",
+        "TglAw",
+        "TglAk"
+      ],
+      "sample": [
+        "%",
+        "02",
+        "0",
+        "2024-01-01",
+        "2024-12-31"
+      ]
+    },
+    "020108": {
+      "nama": "Daftar Giro dibuka",
+      "sp": "sp_LapGiroPiutang",
+      "params": [
+        "Masuk",
+        "Divisi",
+        "Perkiraan",
+        "TglAw",
+        "TglAk",
+        "tolak"
+      ],
+      "sample": [
+        "%",
+        "02",
+        "0",
+        "2024-01-01",
+        "2024-12-31",
+        "0"
+      ]
+    },
+    "020201": {
+      "nama": "Jurnal",
+      "sp": "Sp_LapJurnal",
+      "params": [
+        "Tipe",
+        "Divisi",
+        "TglAw",
+        "TglAk"
+      ],
+      "sample": [
+        "",
+        "02",
+        "2024-01-01",
+        "2024-12-31"
+      ]
+    },
+    "020205": {
+      "nama": "Aktiva",
+      "sp": "sp_LapAktiva",
+      "params": [
+        "bulan",
+        "tahun",
+        "Divisi"
+      ],
+      "sample": [
+        "12",
+        "2024",
+        "02"
+      ]
+    },
+    "020206": {
+      "nama": "Biaya Penyusutan",
+      "sp": "sp_LapSusutAktiva",
+      "params": [
+        "bulan",
+        "tahun",
+        "Divisi"
+      ],
+      "sample": [
+        "12",
+        "2024",
+        "02"
+      ]
+    },
+    "020303": {
+      "nama": "Pelunasan",
+      "sp": "sp_ReportPelunasanPiutang",
+      "params": [
+        "tanggal1",
+        "tanggal2",
+        "awal",
+        "akhir",
+        "devisi",
+        "tipe",
+        "perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-01-01",
+        "2024-12-31",
+        "0",
+        "9",
+        "02",
+        "0",
+        "%",
+        "%"
+      ]
+    },
+    "020304": {
+      "nama": "Saldo",
+      "sp": "sp_ReportSisaPiutang",
+      "params": [
+        "tanggal",
+        "awal",
+        "akhir",
+        "devisi",
+        "tipe",
+        "Perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "9",
+        "02",
+        "0",
+        "%",
+        "%"
+      ]
+    },
+    "020403": {
+      "nama": "Pelunasan",
+      "sp": "sp_ReportPelunasanPiutang",
+      "params": [
+        "tanggal1",
+        "tanggal2",
+        "awal",
+        "akhir",
+        "devisi",
+        "tipe",
+        "perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-01-01",
+        "2024-12-31",
+        "0",
+        "9",
+        "02",
+        "0",
+        "%",
+        "%"
+      ]
+    },
+    "020404": {
+      "nama": "Saldo",
+      "sp": "sp_ReportSisaPiutangDet",
+      "params": [
+        "tanggal",
+        "awal",
+        "akhir",
+        "devisi",
+        "tipe",
+        "Perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "9",
+        "02",
+        "0",
+        "%",
+        "%"
+      ]
+    },
+    "020407": {
+      "nama": "Monitoring Pembayaran Piutang",
+      "sp": "sp_ReportMonitoringPiutang",
+      "params": [
+        "tanggal",
+        "awal",
+        "akhir",
+        "devisi",
+        "tipe",
+        "Perkiraan",
+        "KodeVls",
+        "KodePrj"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "9",
+        "02",
+        "0",
+        "%",
+        "%",
+        "%"
+      ]
+    },
+    "020502": {
+      "nama": "HPP",
+      "sp": "Sp_ReportStock",
+      "params": [
+        "bulan",
+        "tahun",
+        "kodegdg",
+        "nosat"
+      ],
+      "sample": [
+        "12",
+        "2024",
+        "GUDANG",
+        "1"
+      ]
+    },
+    "020505": {
+      "nama": "Laporan Neraca Penunjang",
+      "sp": "SP_LapNeracaPenunjang",
+      "params": [
+        "divisi",
+        "bulan",
+        "tahun"
+      ],
+      "sample": [
+        "02",
+        "12",
+        "2024"
+      ]
+    },
+    "025711": {
+      "nama": "Penerimaan ACC Per. Nobukti",
+      "sp": "Sp_reportPenerimaanAccDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%"
+      ]
+    },
+    "025712": {
+      "nama": "Penerimaan ACC Per Barang",
+      "sp": "Sp_ReportPenerimaanACCRek",
+      "params": [
+        "Choice",
+        "Tgl1",
+        "Tgl2"
+      ],
+      "sample": [
+        "A",
+        "2024-01-01",
+        "2024-12-31"
+      ]
+    },
+    "025713": {
+      "nama": "Penerimaan ACC Per Supplier",
+      "sp": "Sp_ReportPenerimaanACCRek",
+      "params": [
+        "Choice",
+        "Tgl1",
+        "Tgl2"
+      ],
+      "sample": [
+        "A",
+        "2024-01-01",
+        "2024-12-31"
+      ]
+    },
+    "025731": {
+      "nama": "Retur Pembelian ACC Per. Nobukti",
+      "sp": "Sp_reportBeliAccDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "TipeBayar",
+        "Perkiraan",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "A",
+        "A",
+        "1",
+        "%"
+      ]
+    },
+    "025732": {
+      "nama": "Retur Pembelian ACC Per Barang",
+      "sp": "Sp_reportBeliAccDetPerPerkiraan",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "TipeBayar",
+        "Keterangan",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "A",
+        "A",
+        "%",
+        "%"
+      ]
+    },
+    "025733": {
+      "nama": "Retur Pembelian ACC Per Supplier",
+      "sp": "Sp_reportBeliAccDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "TipeBayar",
+        "Perkiraan",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "A",
+        "A",
+        "1",
+        "%"
+      ]
+    },
+    "025741": {
+      "nama": "Retur Pembelian GDG Per No. Bukti",
+      "sp": "Sp_reportRBeliGDGDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "1",
+        "%"
+      ]
+    },
+    "025743": {
+      "nama": "Retur Pembelian GDGPer Supplier",
+      "sp": "Sp_reportRPembelianGDGRek",
+      "params": [
+        "Choice",
+        "Tgl1",
+        "Tgl2",
+        "NeedOto",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "1",
+        "%"
+      ]
+    },
+    "030201": {
+      "nama": "Laporan Penawaran Per No.Bukti",
+      "sp": "Sp_ReportPNWDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%"
+      ]
+    },
+    "030202": {
+      "nama": "Laporan Penawaran Per Barang",
+      "sp": "Sp_ReportPNWDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%"
+      ]
+    },
+    "030203": {
+      "nama": "Laporan Penawaran Per Customer",
+      "sp": "Sp_reportPNWRek",
+      "params": [
+        "Choice",
+        "Tgl1",
+        "Tgl2",
+        "needOto",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "1",
+        "%"
+      ]
+    },
+    "030204": {
+      "nama": "Laporan Penawaran Per Marketing",
+      "sp": "Sp_reportPNWRek",
+      "params": [
+        "Choice",
+        "Tgl1",
+        "Tgl2",
+        "needOto",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "1",
+        "%"
+      ]
+    },
+    "030314": {
+      "nama": "Laporan CashBack",
+      "sp": "Sp_report_CashBack",
+      "params": [
+        "tgl1",
+        "tgl2",
+        "isiList"
+      ],
+      "sample": [
+        "2024-01-01",
+        "2024-12-31",
+        "%"
+      ]
+    },
+    "030325": {
+      "nama": "Retur Surat Jalan",
+      "sp": "Sp_ReturPenyerahan",
+      "params": [
+        "Choice",
+        "Nobukti",
+        "Nourut",
+        "Tanggal",
+        "Kodebag",
+        "kodeBiaya",
+        "SOP"
+      ],
+      "sample": [
+        "A",
+        "%",
+        "%",
+        "2024-12-31",
+        "%",
+        "%",
+        "%"
+      ]
+    },
+    "030326": {
+      "nama": " Retur Surat Jalan ACC",
+      "sp": "Sp_ReturPenyerahan",
+      "params": [
+        "Choice",
+        "Nobukti",
+        "Nourut",
+        "Tanggal",
+        "Kodebag",
+        "kodeBiaya",
+        "SOP"
+      ],
+      "sample": [
+        "A",
+        "%",
+        "%",
+        "2024-12-31",
+        "%",
+        "%",
+        "%"
+      ]
+    },
+    "030351": {
+      "nama": "Laporan Target Sales",
+      "sp": "sp_ReportKomisiSales",
+      "params": [
+        "tanggal",
+        "tipe",
+        "awal",
+        "akhir",
+        "Devisi",
+        "perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "0",
+        "9",
+        "02",
+        "%",
+        "%"
+      ]
+    },
+    "030361": {
+      "nama": "Komisi Pelunasan",
+      "sp": "sp_ReportKomisiSales",
+      "params": [
+        "tanggal",
+        "tipe",
+        "awal",
+        "akhir",
+        "Devisi",
+        "perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "0",
+        "9",
+        "02",
+        "%",
+        "%"
+      ]
+    },
+    "030362": {
+      "nama": "Komisi Sales",
+      "sp": "sp_ReportKomisiSales",
+      "params": [
+        "tanggal",
+        "tipe",
+        "awal",
+        "akhir",
+        "Devisi",
+        "perkiraan",
+        "KodeVls"
+      ],
+      "sample": [
+        "2024-12-31",
+        "0",
+        "0",
+        "9",
+        "02",
+        "%",
+        "%"
+      ]
+    },
+    "040361": {
+      "nama": "Trasfer Barang Per Nobukti",
+      "sp": "Sp_ReportTransferDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "GM",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%",
+        "0",
+        "%"
+      ]
+    },
+    "040362": {
+      "nama": "Trasfer Barang Per Barang",
+      "sp": "Sp_ReportTransferDet",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeedOto",
+        "GM",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%",
+        "0",
+        "%"
+      ]
+    },
+    "040501": {
+      "nama": "Laporan Ubah Kemasan Bahan Per Nobukti",
+      "sp": "Sp_reportUbahKemasanBahan",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%"
+      ]
+    },
+    "040502": {
+      "nama": "Laporan Ubah Kemasan Bahan Per Barang",
+      "sp": "Sp_reportUbahKemasanBahan",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Id"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "%"
+      ]
+    },
+    "040701": {
+      "nama": "Laporan Opname Bahan Per Nobukti",
+      "sp": "Sp_ReportOpnamebahan",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Needoto"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "0"
+      ]
+    },
+    "040702": {
+      "nama": "Laporan Opname Bahan Per Barang",
+      "sp": "Sp_ReportOpnamebahan",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "Needoto"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "0"
+      ]
+    },
+    "040801": {
+      "nama": "Laporan Opname Barang Per Nobukti",
+      "sp": "Sp_ReportOpnameBarang",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeeDoto"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "0"
+      ]
+    },
+    "040802": {
+      "nama": "Laporan Opname Barang Per Barang",
+      "sp": "Sp_ReportOpnameBarang",
+      "params": [
+        "SReport",
+        "Ordr",
+        "tgl1",
+        "tgl2",
+        "isiList",
+        "NeeDoto"
+      ],
+      "sample": [
+        "A",
+        "A",
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "0"
+      ]
+    },
+    "040851": {
+      "nama": "Hasil Produksi Per NObukti",
+      "sp": "cetakhasilproduksi",
+      "params": [
+        "NoBukti"
+      ],
+      "sample": [
+        "%"
+      ]
+    },
+    "040852": {
+      "nama": "Hasil Produksi Per Barang",
+      "sp": "cetakhasilproduksi",
+      "params": [
+        "NoBukti"
+      ],
+      "sample": [
+        "%"
+      ]
+    },
+    "040861": {
+      "nama": "Hasil Produksi ACC Per Nobukti",
+      "sp": "cetakhasilproduksi",
+      "params": [
+        "NoBukti"
+      ],
+      "sample": [
+        "%"
+      ]
+    },
+    "040862": {
+      "nama": "Hasil Produksi ACC Per Barang",
+      "sp": "cetakhasilproduksi",
+      "params": [
+        "NoBukti"
+      ],
+      "sample": [
+        "%"
+      ]
+    },
+    "050104": {
+      "nama": "Stock Akhir Barang Produksi",
+      "sp": "Sp_ReportStockAkhir",
+      "params": [
+        "Nosat",
+        "tanggal",
+        "KOdegdg"
+      ],
+      "sample": [
+        "1",
+        "2024-12-31",
+        "%"
+      ]
+    },
+    "050105": {
+      "nama": "Stock Fisik Gudang",
+      "sp": "Sp_ReportStockFisikGudang",
+      "params": [
+        "tanggal",
+        "KOdegdg"
+      ],
+      "sample": [
+        "2024-12-31",
+        "%"
+      ]
+    },
+    "050106": {
+      "nama": "Stock Harian",
+      "sp": "SP_ReportStockHarian",
+      "params": [
+        "awal",
+        "akhir",
+        "gudang",
+        "nosat"
+      ],
+      "sample": [
+        "2024-01-01",
+        "2024-12-31",
+        "%",
+        "1"
+      ]
+    },
+    "050107": {
+      "nama": "Laporan Katalog Barang (Satuan PCS)",
+      "sp": "Sp_reportStockQtyPCS",
+      "params": [
+        "Bulan",
+        "Tahun",
+        "Kodegdg",
+        "KodeGrp"
+      ],
+      "sample": [
+        "12",
+        "2024",
+        "%",
+        "%"
+      ]
+    },
+    "050201": {
+      "nama": "Kartu Stock Qnt",
+      "sp": "sp_reportkartuStock",
+      "params": [
+        "kodegdg",
+        "Kodebrg",
+        "bulan1",
+        "bulan2",
+        "tahun1",
+        "tahun2",
+        "periode1",
+        "periode2",
+        "Nosat"
+      ],
+      "sample": [
+        "%",
+        "%",
+        "1",
+        "12",
+        "2024",
+        "2024",
+        "A",
+        "A",
+        "1"
+      ]
+    },
+    "050202": {
+      "nama": "Kartu Stock Qnt dan Rupiah",
+      "sp": "sp_reportStockQtyRprek",
+      "params": [
+        "Bulan",
+        "Tahun",
+        "isi",
+        "Kodegdg",
+        "KodeGrp",
+        "minus",
+        "MinusHPP",
+        "Qty1",
+        "Qty2",
+        "Pilih",
+        "KodeSubGrp"
+      ],
+      "sample": [
+        "12",
+        "2024",
+        "0",
+        "%",
+        "%",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "%"
+      ]
+    }
+  }
+}

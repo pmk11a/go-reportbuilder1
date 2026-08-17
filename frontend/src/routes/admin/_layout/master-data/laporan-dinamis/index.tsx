@@ -134,8 +134,8 @@ function ReportListItem({
     >
       <FileText className={`h-4 w-4 shrink-0 mt-0.5 ${isActive ? '' : 'opacity-60'}`} />
       <div className="flex-1 min-w-0">
-        <p className="font-medium truncate">{report.nama_laporan || report.KODEMENU}</p>
-        <p className={`text-xs mt-0.5 font-mono ${isActive ? 'text-white/70' : 'opacity-60'}`}>
+        <p className="font-medium truncate">{report.nama_laporan}</p>
+        <p className={`text-xs mt-0.5 ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
           {report.KODEMENU}
         </p>
       </div>

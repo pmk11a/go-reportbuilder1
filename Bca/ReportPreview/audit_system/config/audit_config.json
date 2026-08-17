@@ -1,0 +1,103 @@
+{
+  "system": {
+    "name": "FR3 Audit & Validation System",
+    "version": "1.0.0",
+    "mode": "self-improving",
+    "author": "AI-Assisted Engineering",
+    "created": "2026-01-09"
+  },
+  "paths": {
+    "fr3_source_root": "d:/TestLaB/piagent/Bca/ReportFiles",
+    "output_root": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system",
+    "logs": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/logs",
+    "reports": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/reports",
+    "baseline": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/baselines",
+    "skills_root": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/learning_engine",
+    "backups": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/backups",
+    "fr3_backup_root": "d:/TestLaB/piagent/Bca/ReportFiles_Backup"
+  },
+  "audit_rules": {
+    "xml_validity": {
+      "enabled": true,
+      "weight": 15,
+      "severity": "critical"
+    },
+    "fastreport_schema": {
+      "enabled": true,
+      "weight": 20,
+      "severity": "critical",
+      "required_root": "TfrxReport",
+      "min_supported_version": "3.18"
+    },
+    "zero_byte_tail": {
+      "enabled": true,
+      "weight": 10,
+      "severity": "critical",
+      "description": "Tail truncated or zero-padded bytes after </TfrxReport>"
+    },
+    "dataseet_integrity": {
+      "enabled": true,
+      "weight": 15,
+      "severity": "high",
+      "must_have_datasets": true
+    },
+    "pascalscript_safety": {
+      "enabled": true,
+      "weight": 10,
+      "severity": "high",
+      "forbidden_tokens": ["Exec", "ShellExecute", "WinExec", "Shell", "CreateOleObject"]
+    },
+    "memo_field_binding": {
+      "enabled": true,
+      "weight": 10,
+      "severity": "medium",
+      "description": "Each memo with data-binding must reference declared DataSet"
+    },
+    "datasource_set_naming": {
+      "enabled": true,
+      "weight": 5,
+      "severity": "low"
+    },
+    "duplicate_field_check": {
+      "enabled": true,
+      "weight": 5,
+      "severity": "low"
+    },
+    "layout_overflow": {
+      "enabled": true,
+      "weight": 10,
+      "severity": "medium",
+      "max_paper_width_mm": 1000,
+      "max_paper_height_mm": 1000
+    }
+  },
+  "validation_thresholds": {
+    "min_audit_score_to_pass": 80,
+    "min_confidence_to_apply_fix": 0.85,
+    "max_fix_per_run": 50,
+    "rollback_on_regression": true
+  },
+  "baseline_compare": {
+    "enabled": true,
+    "track_field_diff": true,
+    "track_script_diff": true,
+    "track_dataset_diff": true,
+    "ignore_whitespace": true,
+    "ignore_create_date": true,
+    "ignore_last_change": true
+  },
+  "self_improvement": {
+    "enabled": true,
+    "auto_generate_fixes": true,
+    "test_before_apply": true,
+    "learn_from_success": true,
+    "skill_knowledge_path": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/learning_engine/skills.json",
+    "pattern_db_path": "d:/TestLaB/piagent/Bca/ReportPreview/audit_system/learning_engine/patterns.json"
+  },
+  "reporting": {
+    "formats": ["json", "markdown", "html"],
+    "verbose_log": true,
+    "include_examples": true,
+    "max_issues_in_summary": 20
+  }
+}

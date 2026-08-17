@@ -1,6 +1,7 @@
 export interface IReportMenuItem {
   KODEMENU: string
   NmReport: string
+  nama_laporan?: string
   L0: number
   ACCESS: string
   children: IReportMenuItem[]

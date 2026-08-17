@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "description": "Audit manifest for 11 high-complexity reports. Source: Bca/ReportPreview/seeds/sql/seed_db*Laporan_11_reports.sql (id 100-110).",
+    "extracted_at": "2026-08-06",
+    "filter_input_types_supported": ["date", "text", "number", "combobox", "browse", "perkiraan", "dropdown", "checkbox"],
+    "report_kodeMenu_index": {
+      "100": "0303301",
+      "101": "0303302",
+      "102": "025801",
+      "103": "020507",
+      "104": "0303303",
+      "105": "0303304",
+      "106": "025902",
+      "107": "020406",
+      "108": "025802",
+      "109": "050102",
+      "110": "050103"
+    }
+  },
+  "reports": [
+    {
+      "id_laporan": 100,
+      "kodeMenu": "0303301",
+      "nama_laporan": "Invoice Penjualan Detail",
+      "title": "LAPORAN INVOICE PENJUALAN DETAIL",
+      "pageHeader": "Periode: @tgl1 s/d @tgl2",
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "SReport", "label": "SReport", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "T", "posisi": 1, "konfigurasi": { "options": ["T","F"] } },
+        { "nama_filter": "Ordr",    "label": "Ordr",    "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "S", "posisi": 2, "konfigurasi": { "options": ["S","D"] } },
+        { "nama_filter": "tgl1",    "label": "Tanggal Mulai", "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 3 },
+        { "nama_filter": "tgl2",    "label": "Tanggal Akhir", "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 4 },
+        { "nama_filter": "isiList", "label": "Isi List","tipe_input": "text",    "wajib_isi": false, "nilai_default": "",   "posisi": 5 },
+        { "nama_filter": "NeedOto", "label": "NeedOto", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 6, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "PPN",     "label": "PPN",     "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 7, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Id",      "label": "Id Customer", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 8 }
+      ],
+      "columns": ["Perusahaan","NoBukti","Tanggal","Kode Customer","Nama Customer","No SJ","Total","PPN","Grand Total","Status"],
+      "signatures": [{ "label": "Kontrol", "position": "left" },{ "label": "Sales", "position": "center" },{ "label": "Pimpinan", "position": "right" }],
+      "per_row_computed": { "GrandTotal": "Total + PPN" },
+      "groups": []
+    },
+    {
+      "id_laporan": 101,
+      "kodeMenu": "0303302",
+      "nama_laporan": "Invoice Penjualan Rekening",
+      "title": "INVOICE PENJUALAN REKAP",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Choice",  "label": "Choice",  "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "B", "posisi": 1, "konfigurasi": { "options": ["B","F","D"] } },
+        { "nama_filter": "Tgl1",    "label": "Tgl1",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 2 },
+        { "nama_filter": "Tgl2",    "label": "Tgl2",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 3 },
+        { "nama_filter": "NeedOto", "label": "NeedOto", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 4, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "PPN",     "label": "PPN",     "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 5, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Id",      "label": "Id Customer", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 6 }
+      ],
+      "columns": ["Perusahaan","NoBukti","Tanggal","Kode","Nama Customer","Total","PPN","Grand Total"],
+      "signatures": [{ "label": "Accounting", "position": "left" },{ "label": "Finance Manager", "position": "right" }],
+      "per_row_computed": { "GrandTotal": "Total + PPN" },
+      "groups": []
+    },
+    {
+      "id_laporan": 102,
+      "kodeMenu": "025801",
+      "nama_laporan": "Transfer In Detail",
+      "title": "LAPORAN TRANSFER IN",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Nobukti", "label": "No Bukti", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 1 },
+        { "nama_filter": "Do",      "label": "Do",      "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "I", "posisi": 2, "konfigurasi": { "options": ["I","O"] } },
+        { "nama_filter": "Urut",    "label": "Urut",    "tipe_input": "number",  "wajib_isi": false, "nilai_default": "1", "posisi": 3 }
+      ],
+      "columns": ["No. Transaksi","Tanggal","Dari Bank","Ke Bank","Jumlah","Keterangan"],
+      "signatures": [{ "label": "Teller", "position": "left" },{ "label": "Pincab", "position": "right" }],
+      "per_row_computed": {},
+      "groups": []
+    },
+    {
+      "id_laporan": 103,
+      "kodeMenu": "020507",
+      "nama_laporan": "Buku Besar Rekening",
+      "title": "BUKU BESAR PER REKENING",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Choice",  "label": "Choice",  "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "B", "posisi": 1, "konfigurasi": { "options": ["B","D"] } },
+        { "nama_filter": "Tgl1",    "label": "Tgl1",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 2 },
+        { "nama_filter": "Tgl2",    "label": "Tgl2",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 3 },
+        { "nama_filter": "NeedOto", "label": "NeedOto", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 4, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Id",      "label": "Perkiraan", "tipe_input": "text",  "wajib_isi": false, "nilai_default": "%", "posisi": 5 }
+      ],
+      "columns": ["Perkiraan","Keterangan","Debet","Kredit","Saldo","No Bukti","Tanggal"],
+      "signatures": [{ "label": "Accounting", "position": "left" },{ "label": "Auditor", "position": "right" }],
+      "per_row_computed": { "SaldoAkhir": "SaldoAwal + Debet - Kredit" },
+      "groups": [{ "group_field": "Perkiraan", "auto_sum": "Debet,Kredit,Saldo", "special_handling": "running-balance" }]
+    },
+    {
+      "id_laporan": 104,
+      "kodeMenu": "0303303",
+      "nama_laporan": "Rekap Invoice Penjualan",
+      "title": "REKAP INVOICE PENJUALAN",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Choice",  "label": "Choice",  "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "B", "posisi": 1, "konfigurasi": { "options": ["B","F"] } },
+        { "nama_filter": "Tgl1",    "label": "Tgl1",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 2 },
+        { "nama_filter": "Tgl2",    "label": "Tgl2",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 3 },
+        { "nama_filter": "Needoto", "label": "Needoto", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 4, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Id",      "label": "Id Customer", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 5 }
+      ],
+      "columns": ["Perusahaan","NoBukti","Tanggal","Kode","Nama Customer","Total","PPN","Grand Total"],
+      "signatures": [{ "label": "Kontrol", "position": "left" },{ "label": "Manager", "position": "center" },{ "label": "Pimpinan", "position": "right" }],
+      "per_row_computed": { "GrandTotal": "Total + PPN" },
+      "groups": []
+    },
+    {
+      "id_laporan": 105,
+      "kodeMenu": "0303304",
+      "nama_laporan": "Penjualan Gudang Rekening",
+      "title": "PENJUALAN GUDANG REKAP",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Choice",  "label": "Choice",  "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "B", "posisi": 1, "konfigurasi": { "options": ["B","F"] } },
+        { "nama_filter": "Tgl1",    "label": "Tgl1",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 2 },
+        { "nama_filter": "Tgl2",    "label": "Tgl2",    "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 3 },
+        { "nama_filter": "Needoto", "label": "Needoto", "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 4, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Id",      "label": "Id Customer", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 5 }
+      ],
+      "columns": ["Perusahaan","NoBukti","Tanggal","Kode","Nama Customer","Total","PPN","Gudang"],
+      "signatures": [{ "label": "Gudang", "position": "left" },{ "label": "Penjualan", "position": "center" },{ "label": "Pimpinan", "position": "right" }],
+      "per_row_computed": { "Nilai": "Qty * Harga" },
+      "groups": []
+    },
+    {
+      "id_laporan": 106,
+      "kodeMenu": "025902",
+      "nama_laporan": "Pembelian ACC Rekening",
+      "title": "LAPORAN PEMBELIAN ACC",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Choice",    "label": "Choice",    "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "B", "posisi": 1, "konfigurasi": { "options": ["B","F"] } },
+        { "nama_filter": "Tgl1",      "label": "Tgl1",      "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-01-01", "posisi": 2 },
+        { "nama_filter": "Tgl2",      "label": "Tgl2",      "tipe_input": "date",   "wajib_isi": true,  "nilai_default": "2024-12-31", "posisi": 3 },
+        { "nama_filter": "NeedOto",   "label": "NeedOto",   "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "0", "posisi": 4, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "TipeBayar", "label": "TipeBayar", "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "0", "posisi": 5, "konfigurasi": { "options": ["0","1","2"] } },
+        { "nama_filter": "Id",        "label": "Id Supplier", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 6 }
+      ],
+      "columns": ["Perusahaan","NoBukti","Tanggal","Kode Supplier","Nama Supplier","Valas","Total","PPN","Tipe Bayar"],
+      "signatures": [{ "label": "Pembelian", "position": "left" },{ "label": "Finance", "position": "right" }],
+      "per_row_computed": { "Nilai": "Qty * Harga" },
+      "groups": []
+    },
+    {
+      "id_laporan": 107,
+      "kodeMenu": "020406",
+      "nama_laporan": "Piutang Surat Jalan",
+      "title": "PIUTANG SURAT JALAN",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Bulan",   "label": "Bulan",   "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "1",    "posisi": 1 },
+        { "nama_filter": "Tahun",   "label": "Tahun",   "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "2024", "posisi": 2 },
+        { "nama_filter": "Id",      "label": "Id Customer", "tipe_input": "text","wajib_isi": false, "nilai_default": "%", "posisi": 3 },
+        { "nama_filter": "Tanggal", "label": "Tanggal", "tipe_input": "date",   "wajib_isi": false, "nilai_default": "",   "posisi": 4 },
+        { "nama_filter": "SmpTgl",  "label": "SmpTgl",  "tipe_input": "date",   "wajib_isi": false, "nilai_default": "",   "posisi": 5 },
+        { "nama_filter": "SmpBln",  "label": "SmpBln",  "tipe_input": "number",  "wajib_isi": false, "nilai_default": "0",   "posisi": 6 },
+        { "nama_filter": "SmpThn",  "label": "SmpThn",  "tipe_input": "number",  "wajib_isi": false, "nilai_default": "2024","posisi": 7 }
+      ],
+      "columns": ["Kode Customer","Nama Customer","Tanggal","No SJ","No Invoice","Jumlah","Sisa Piutang","Kelompok"],
+      "signatures": [{ "label": "Collection", "position": "left" },{ "label": "Finance Manager", "position": "right" }],
+      "per_row_computed": {},
+      "groups": []
+    },
+    {
+      "id_laporan": 108,
+      "kodeMenu": "025802",
+      "nama_laporan": "Transfer Out Detail",
+      "title": "LAPORAN TRANSFER OUT",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Nobukti", "label": "No Bukti", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 1 },
+        { "nama_filter": "Do",      "label": "Do",      "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "O", "posisi": 2, "konfigurasi": { "options": ["I","O"] } },
+        { "nama_filter": "Urut",    "label": "Urut",    "tipe_input": "number",  "wajib_isi": false, "nilai_default": "1", "posisi": 3 }
+      ],
+      "columns": ["No. Transaksi","Tanggal","Dari Bank","Ke Bank","Jumlah","Tujuan"],
+      "signatures": [{ "label": "Teller", "position": "left" },{ "label": "Pincab", "position": "right" }],
+      "per_row_computed": {},
+      "groups": []
+    },
+    {
+      "id_laporan": 109,
+      "kodeMenu": "050102",
+      "nama_laporan": "Stock Quantity Rupiah",
+      "title": "LAPORAN STOCK QUANTITY & RUPIAH",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Bulan",      "label": "Bulan",      "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "1",  "posisi": 1 },
+        { "nama_filter": "Tahun",      "label": "Tahun",      "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "2024","posisi": 2 },
+        { "nama_filter": "isi",        "label": "Isi",        "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "2", "posisi": 3, "konfigurasi": { "options": ["1","2","3"] } },
+        { "nama_filter": "Kodegdg",    "label": "KodeGudang", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 4 },
+        { "nama_filter": "KodeGrp",    "label": "KodeGrp",    "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 5 },
+        { "nama_filter": "minus",      "label": "Minus",      "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "0", "posisi": 6, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "MinusHpp",   "label": "MinusHpp",   "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "0", "posisi": 7, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Qty1",       "label": "Qty1",       "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 8, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Qty2",       "label": "Qty2",       "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 9, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Pilih",      "label": "Pilih",      "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 10,"konfigurasi": { "options": ["1","2"] } },
+        { "nama_filter": "KodeSubGrp", "label": "KodeSubGrp", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 11 }
+      ],
+      "columns": ["Kode Barang","Nama Barang","Satuan","Stok","Harga","Nilai"],
+      "signatures": [{ "label": "Gudang", "position": "left" },{ "label": "PPIC", "position": "center" },{ "label": "Pimpinan", "position": "right" }],
+      "per_row_computed": { "Nilai": "Stok * Harga" },
+      "groups": [{ "group_field": "KodeGrp", "auto_sum": "Stok,Harga,Nilai", "special_handling": "default" }]
+    },
+    {
+      "id_laporan": 110,
+      "kodeMenu": "050103",
+      "nama_laporan": "Stock Quantity Rekonsiliasi",
+      "title": "STOCK QUANTITY REKONSILIASI",
+      "pageHeader": null,
+      "pageFooter": null,
+      "filters": [
+        { "nama_filter": "Bulan",      "label": "Bulan",      "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "1",  "posisi": 1 },
+        { "nama_filter": "Tahun",      "label": "Tahun",      "tipe_input": "number",  "wajib_isi": true,  "nilai_default": "2024","posisi": 2 },
+        { "nama_filter": "isi",        "label": "Isi",        "tipe_input": "dropdown", "wajib_isi": true,  "nilai_default": "2", "posisi": 3, "konfigurasi": { "options": ["1","2","3"] } },
+        { "nama_filter": "Kodegdg",    "label": "KodeGudang", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 4 },
+        { "nama_filter": "KodeGrp",    "label": "KodeGrp",    "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 5 },
+        { "nama_filter": "minus",      "label": "Minus",      "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "0", "posisi": 6, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "MinusHpp",   "label": "MinusHpp",   "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "0", "posisi": 7, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Qty1",       "label": "Qty1",       "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 8, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Qty2",       "label": "Qty2",       "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 9, "konfigurasi": { "options": ["0","1"] } },
+        { "nama_filter": "Pilih",      "label": "Pilih",      "tipe_input": "dropdown", "wajib_isi": false, "nilai_default": "1", "posisi": 10,"konfigurasi": { "options": ["1","2"] } },
+        { "nama_filter": "KodeSubGrp", "label": "KodeSubGrp", "tipe_input": "text",   "wajib_isi": false, "nilai_default": "%", "posisi": 11 }
+      ],
+      "columns": ["Kode Barang","Nama Barang","Satuan","Stok Awal","Masuk","Keluar","Stok Akhir","Selisih"],
+      "signatures": [{ "label": "Accounting", "position": "left" },{ "label": "Gudang", "position": "center" },{ "label": "Pimpinan", "position": "right" }],
+      "per_row_computed": { "StokAkhir": "StokAwal + Masuk - Keluar" },
+      "groups": [{ "group_field": "KodeGrp", "auto_sum": "StokAwal,Masuk,Keluar,StokAkhir", "special_handling": "default" }]
+    }
+  ],
+  "parity_properties": [
+    { "id": "filters", "description": "Filter count, types, defaults match expected" },
+    { "id": "title", "description": "Title text exactly matches expected" },
+    { "id": "header", "description": "PageHeader template substituted with @param/[param]" },
+    { "id": "footer", "description": "PageFooter text rendered (loose match for totalPages)" },
+    { "id": "columns", "description": "Column names + order + alignment match expected" },
+    { "id": "computed", "description": "Per-row computed columns equal Total + PPN (sum)" },
+    { "id": "subtotal", "description": "Group auto_sum subtotals + grand total rendered" },
+    { "id": "signatures", "description": "Signature labels + positions match expected" }
+  ]
+}

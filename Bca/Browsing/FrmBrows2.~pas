@@ -1,0 +1,601 @@
+unit FrmBrows2;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Grids, Db, ADODB, StdCtrls, ExtCtrls, Buttons,
+  dxCntner, dxTL, dxDBCtrl, dxDBGrid, cxLookAndFeelPainters,StrUtils,dxGridMenus ;
+
+type
+  TFrBrows2 = class(TForm)
+    QuBrows: TADOQuery;
+    DsBrows: TDataSource;
+    Panel2: TPanel;
+    QuBrowGL: TADOQuery;
+    DsQuBrowGL: TDataSource;
+    Sp_Simpan: TADOStoredProc;
+    GridBrows: TdxDBGrid;
+    Button1: TButton;
+    Button2: TButton;
+    Panel1: TPanel;
+    Panel3: TPanel;
+    Label1: TLabel;
+    EditFilter: TEdit;
+    Procedure ViewItem(mSelect : String; judul,Lebar: Array of Variant;
+                             Var mQuery : TAdoQuery;carikata: string);
+    procedure ResizeControls(padOnly: boolean);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    Procedure ViewItems(mSelect : String; mParam,judul,Lebar: Array of Variant;
+                             Var mQuery : TAdoQuery;Carikata:String);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure GridBrowsDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure GridBrowsMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Button4Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+  private
+    { Private declarations }
+    xFilterDataBrows: String;
+    procedure FilterDataBrows;
+  public
+     MaxWidth : integer;
+     Tbl, brGudang, Gudang, NoKira, NoKira2, Customer,Devisi,kodearea,kodesales,sIsiBrg,JenisBahan:string;
+     SortBy,IsiData,isidata1,NoSupp,mNopo,mNoSo,mPosisi,mSales1,mSales2,mLokasi,mKodebrg,mKodegdg,Tipeppn,mNobukti : String;
+     GrpTipe,GrpPPN,GrpGdg : Byte;
+     TglAwal,TglAkhir:Tdatetime;
+     EditBrows,EditBrows1 : String;
+     isKecuali,SelectAllRecord : Boolean;
+     brTahun, brBulan: Integer;
+    { Public declarations }
+  end;
+
+const
+     LoC = LoCaseInsensitive;
+     LoP = LoPartialKey;
+
+
+var
+  FrBrows2: TFrBrows2;
+  S:array[0..255]of char;
+
+implementation
+
+uses MyGlobal,MyModul,
+  MyProcedure, FrmJual, FrmRJual, FrmAlamatCust;
+
+{$R *.DFM}
+
+Procedure TFrBrows2.ViewItem(mSelect : String; judul,Lebar: Array of Variant;
+                             Var mQuery : TAdoQuery;carikata: string);
+Var
+   I: Word;
+Begin
+  FrBrows2.DsBrows.DataSet:=mQuery;
+  With mQuery Do
+  Begin
+    Close;
+    Sql.Clear;
+    Sql.Add(mSelect);
+    Open;
+  end;
+  with FrBrows2.GridBrows do
+  begin
+     BeginUpdate;
+     DestroyColumns;
+     KeyField := '';
+     DataSource := FrBrows2.DsBrows;
+     CreateDefaultColumns(DataSource.DataSet, GridBrows);
+     KeyField := mQuery.Fields[0].FieldName;
+     EndUpdate;
+
+     Columns[0].SummaryFooterField:=mQuery.Fields[0].FieldName;
+     Columns[0].SummaryFooterType:=cstCount;
+     For I := Low(Judul) to High(Judul) Do
+     begin
+         Columns[i].Width :=Lebar[i]*5;
+         Columns[i].Caption :=Judul[i];
+         Columns[i].HeaderAlignment:=taCenter;
+         if Columns[i].Caption='N' then
+            Columns[i].Visible := false;
+         if (mQuery.Fields[i] is TNumericField) then
+             (mQuery.Fields[i] as TNumericField).DisplayFormat:=',0.00';
+         if (mQuery.Fields[i] is TIntegerField) then
+             (mQuery.Fields[i] as TIntegerField).DisplayFormat:=',0';
+     end;
+     GridBrows.StartSearch(0, EditBrows);
+     GridBrows.Invalidate;
+  end;
+  ResizeControls(false);
+end;
+
+
+
+Procedure TFrBrows2.ViewItems(mSelect : String; mParam,judul,Lebar: Array of Variant;
+                             Var mQuery : TAdoQuery;Carikata:String);
+Var
+   I,J: Word;
+Begin
+  FrBrows2.DsBrows.DataSet:=mQuery;
+  With mQuery Do
+  Begin
+    Close;
+    Sql.Clear;
+    Sql.Add(mSelect);
+    Prepared;
+    For J := Low(mParam) to High(mParam) Do
+       Parameters[j].Value:=mParam[j];
+    Open;
+  end;
+  with FrBrows2.GridBrows do
+  begin
+     BeginUpdate;
+     DestroyColumns;
+     KeyField := '';
+     DataSource := FrBrows2.DsBrows;
+     CreateDefaultColumns(DataSource.DataSet, GridBrows);
+     KeyField := mQuery.Fields[0].FieldName;
+     Columns[0].SummaryFooterField:=mQuery.Fields[0].FieldName;
+     Columns[0].SummaryFooterType:=cstCount;
+     EndUpdate;
+     For I := Low(Judul) to High(Judul) Do
+     begin
+         Columns[i].Width :=Lebar[i]*5;
+         Columns[i].Caption :=Judul[i];
+         Columns[i].HeaderAlignment:=taCenter;
+         if Columns[i].Caption='N' then
+            Columns[i].Visible := false;
+         if (mQuery.Fields[i] is TNumericField) then
+             (mQuery.Fields[i] as TNumericField).DisplayFormat:=',0.00';
+         if (mQuery.Fields[i] is TIntegerField) then
+             (mQuery.Fields[i] as TIntegerField).DisplayFormat:=',0';
+     end;
+     GridBrows.StartSearch(0, EditBrows);
+     GridBrows.Invalidate;
+  end;
+  ResizeControls(false);
+end;
+
+procedure TFrBrows2.FilterDataBrows;
+var xFilterData: String;
+    xStrSQL: String;
+    
+begin
+  xFilterData:=QuotedStr('%'+EditFilter.Text+'%');
+  case KodeBrows of
+    1101  : begin
+              ViewItem('select KodeGdg, Nama NamaGdg, IsRusak from dbGudang order by KodeGdg',
+              ['Kode', 'Nama Gudang','N'],
+              [15, 50, 1], QuBrows, EditBrows);
+            end;
+    11011 : begin
+              ViewItem('select KodeGdg, Nama NamaGdg, IsRusak from dbGudang '+
+              ' where KodeGdg in (select KodeGdg from dbPemakaiGdg where UserID='+QuotedStr(IDUser)+') '+
+              ' order by KodeGdg',
+              ['Kode', 'Nama Gudang', 'N'],
+              [15, 50, 1], QuBrows, EditBrows);
+            end;
+    1122  : begin
+              ViewItem('select KodeGrp, Nama from dbGroup Order by KodeGrp',
+              ['Kode Group', 'Nama Group'], [15, 40], QuBrows, EditBrows);
+            end;
+    11221 : begin // Master Sub Group
+             ViewItem('Select KodeSubGrp, Nama from dbSubGroup where KodeGrp='+QuotedStr(NoKira),
+                     ['Kode','Nama Sub Group'], [15,50], QuBrows, Editbrows);
+            end;
+    1132  : begin
+              ViewItem('select KodeBrd, NamaBrd from dbBrand order by KodeBrd',
+              ['Kode', 'Nama Merek'],
+              [15, 50], QuBrows, EditBrows);
+            end;
+    1140  : begin
+              ViewItem('select KodeBrg, NamaBrg from dbBarang order by KodeBrg',
+              ['Kode', 'Nama Barang'],
+              [15, 50], QuBrows, EditBrows);
+            end;
+    11401 : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1, Sat2 from vwBarangBeli order by KodeBrg',
+              ['Kode Barang', 'Nama Barang', 'N', 'N'],
+              [20, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    11402 : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1, Sat2 from vwBarangJual '+
+              'where KodeTipe like '+QuotedStr(NoKira+'%')+' order by KodeBrg',
+              ['Kode', 'Nama Barang', 'N', 'N'],
+              [15, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    11403 : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1, Sat2 from dbBarang '+
+              'where Tipe='+NoKira+' order by KodeBrg',
+              ['Kode', 'Nama Barang', 'N', 'N'],
+              [15, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    1114  : begin
+              ViewItem('select KodeBrg, NamaBrg,Sat1,isi1,Sat2,isi2 from dbBarang order by KodeBrg',
+              ['Kode', 'Nama Barang','N','N','N','N'],
+              [15, 50,1,1,1,1], QuBrows, EditBrows);
+            end;
+    1135  : begin
+              ViewItem('select KodeWarna, NamaWarna from dbWarna Order by KodeWarna',
+              ['Kode Warna', 'Nama Warna'], [15, 40], QuBrows, EditBrows);
+            end;
+    1136  : begin
+              ViewItem('select KodeSize, NamaSize from dbSize Order by kodeSize',
+              ['Kode Ukuran', 'Nama Ukuran'], [15, 40], QuBrows, EditBrows);
+            end;
+    1138  : begin
+              ViewItem('select KodeMotif, NamaMotif from dbMotif Order by KodeMotif',
+              ['Kode Motif', 'Nama Motif'], [15, 40], QuBrows, EditBrows);
+            end;
+    1139  : begin
+              ViewItem('select KodeTipe, NamaTipe from dbTipe Order by kodeTipe',
+              ['Kode Tipe', 'Nama Tipe'], [15, 40], QuBrows, EditBrows);
+            end;
+    1152  : begin
+              ViewItem('select KodeKota, NamaKota from dbkota Order by kodekota',
+              ['Kode', 'Nama Kota'],[15, 40], QuBrows, EditBrows);
+            end;
+    1154  : begin
+              ViewItem(' select KodeCust, NamaCust, Alamat, Hari DueDate, SALES, NAMASLS, KODEEXP, NAMAEXP, JENIS '+
+              ' from vwBrowsCustomer where (KodeTipe like '+QuotedStr(NoKira+'%')+' or KodeTipe like ''-'') order by KodeCust',
+              ['Kode', 'Nama Pelanggan', 'Alamat', 'N','N','N','N','N','N'],
+              [15, 50, 50, 5, 5, 5,1,1,1], QuBrows, EditBrows);
+            end;
+    11542 : begin
+              ViewItem(' select Nomor, AlamatKirim, KodeExp, NamaExp '+
+              ' from vwAlamatCust where KodeCust='+QuotedStr(NoKira)+' order by Nomor',
+              ['No. ', 'Alamat Kirim','N','N'],
+              [10, 100, 1, 1], QuBrows, EditBrows);
+            end;
+    1156  : begin
+              ViewItem('select KodeSupp, NamaSupp, Alamat, DueDate, Kodevls from vwBrowsSupplier order by KodeSupp ',
+              ['Kode', 'Nama Supplier', 'Alamat', 'N','N'],
+              [15, 50, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    1158  : begin
+              ViewItem('select KodeSls, NamaSls from dbSalesman order by KodeSls',
+              ['Kode', 'Nama Sales'],
+              [15, 50], QuBrows, EditBrows);
+            end;
+    1160  : begin
+              if NoKira='' then xStrSQL:=''
+                else xStrSQL:='where Perkiraan like '+QuotedStr(NoKira);
+              ViewItem('select KodeExp, NamaExp from dbExpedisi '+xStrSQL+' order by KodeExp',
+              ['Kode', 'Nama Ekspedisi'],
+              [15, 50], QuBrows, EditBrows);
+            end;
+    1172  : begin
+              ViewItem('Select KodeVls, NamaVls, Kurs from dbValas Order by KodeVls',
+                     ['Kode','Nama Valas','Kurs'], [15,40,13], QuBrows, EditBrows);
+            end;
+    1405  : begin
+              ViewItem('Select distinct KodeBrg KodeHPP from dbHPPProduksi Order by KodeHPP',
+                     ['Kode HPP'], [40], QuBrows, EditBrows);
+            end;
+    19991 : Begin
+              Sortby :='Perkiraan';
+              ViewItemS('Select a.Perkiraan, b.Keterangan '+
+                     'From '+gDatabaseGL+'..dbPostHutPiut a, '+gDatabaseGL+'..dbPerkiraan b '+
+                     'Where a.Perkiraan=b.Perkiraan and A.Kode=:0 Order by a.Perkiraan',[NoKira],
+                     ['Perkiraan','Keterangan'],[25,40],Qubrows,EditBrows);
+            end;
+    22021 : begin
+             ViewItem('select a.KodeBrg, a.NamaBrg, a.Sat1, a.Sat2, isnull(b.SaldoQnt2,0) SaldoQnt2, isnull(b.SaldoQnt,0) SaldoQnt '+
+             ' from vwBrowsBhnBaku a '+
+             ' left outer join dbStockBrg b on b.KodeBrg=a.KodeBrg and b.KodeGdg='+QuotedStr(NoKira)+
+             ' and Tahun='+IntToStr(StrToInt(PeriodThn))+' and Bulan='+IntToStr(StrToInt(PeriodBln))+
+             ' where (a.Kodebrg Like '+xFilterData+' or a.NamaBrg like '+xFilterData+') order by a.Kodebrg',
+             ['Kode Barang', 'Nama Barang', 'N','N','Saldo '+gSat2Beli, 'Saldo '+gSatBeli], [15, 50, 1,1,15, 15], QuBrows, EditBrows);
+           end;
+    22041 : begin
+             ViewItem('select a.KodeBrg, a.NamaBrg, a.Sat1, a.Sat2, isnull(b.SaldoQnt2,0) SaldoQnt2, isnull(b.SaldoQnt,0) SaldoQnt '+
+             ' from vwBrowsBrgJadi a '+
+             ' left outer join dbStockBrg b on b.KodeBrg=a.KodeBrg and b.KodeGdg='+QuotedStr(NoKira)+
+             ' and Tahun='+IntToStr(StrToInt(PeriodThn))+' and Bulan='+IntToStr(StrToInt(PeriodBln))+
+             ' where (a.Kodebrg Like '+xFilterData+' or a.NamaBrg like '+xFilterData+') order by a.Kodebrg',
+             ['Kode Barang', 'Nama Barang', 'N','N','Saldo '+gSat2Jual, 'Saldo '+gSatJual], [15, 50, 1,1,15, 15], QuBrows, EditBrows);
+           end;
+    22061 : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat2, Sat1 from vwBrowsBrgJadi order by KodeBrg',
+              ['Kode', 'Nama Barang', 'N', 'N'],
+              [20, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    23121 : begin
+              ViewItem('select distinct NoBukti, Tanggal from vwBrowsBarangPO '+
+              ' where Qnt-QntPO>0 order by NoBukti',
+              ['No. SPP', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    23122 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, QNT2, SatuanRoll, QNT, NoSat, Satuan, Qnt2PO, QntPO, '+
+              ' Qnt2-Qnt2PO Qnt2Sisa, Qnt-QntPo QntSisa from vwBrowsBarangPO '+
+              'where NoBukti='+QuotedStr(NoKira)+' and QNT-QNTPO>0 order by Urut ',
+              ['No.','Kode Barang','Nama Barang','SPP '+gSat2Beli,'N','SPP '+gSatBeli,'N','N','PO '+gSat2Beli,
+              'PO '+gSatBeli,'Sisa '+gSat2Beli,'Sisa '+gSatBeli],
+              [5,15,40,15,1,15,1,1,15,15,15,15], QuBrows, EditBrows);
+            end;
+    23131 : begin
+              ViewItem('select distinct NoBukti, Tanggal from vwBrowsBarangBeli '+
+              ' where FlagTipe=''L'' and (Qnt-QntBeli>0) and KodeSupp='+QuotedStr(NoKira)+' order by NoBukti',
+              ['No. PO', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    23132 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, NoSat, Satuan, SatuanRoll, Qnt2, Qnt, Qnt2Beli, QntBeli, '+
+              ' Qnt2-Qnt2Beli Qnt2Sisa, Qnt-QntBeli QntSisa, Harga, DiscP1, DiscTot '+
+              'from vwBrowsBarangBeli where (Qnt-QntBeli>0) and NoBukti='+QuotedStr(NoKira)+' order by Urut ',
+              ['N','Kode Barang','Nama Barang','N','N','N','PO '+gSat2Beli,'PO '+gSatBeli,'Beli '+gSat2Beli,'Beli '+gSatBeli,
+              'Sisa '+gSat2Beli,'Sisa '+gSatBeli,'N','N','N'],
+              [1,15,40,1,1,1,12,12,12,12,12,12,1,1,1], QuBrows, EditBrows);
+            end;
+    23151 : begin
+              ViewItem('select distinct NoBukti, Tanggal from vwBrowsBarangRBeli '+
+              ' where FlagTipe=''I'' and (Qnt-QntRBeli>0) and KodeSupp='+QuotedStr(NoKira)+' order by NoBukti',
+              ['No. Beli', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    23152 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, NoSat, Satuan, SatuanRoll, Qnt2, Qnt, Qnt2RBeli, QntRBeli, '+
+              ' Qnt2-Qnt2RBeli Qnt2Sisa, Qnt-QntRBeli QntSisa, Harga, DiscP1, DiscTot '+
+              'from vwBrowsBarangRBeli where (Qnt-QntRBeli>0) and NoBukti='+QuotedStr(NoKira)+' order by Urut ',
+              ['N','Kode Barang','Nama Barang','N','N','N','Beli '+gSat2Beli,'Beli '+gSatBeli,'Retur '+gSat2Beli,'Retur '+gSatBeli,
+              'Sisa '+gSat2Beli,'Sisa '+gSatBeli,'N','N','N'],
+              [1,15,40,1,1,1,12,12,12,12,12,12,1,1,1], QuBrows, EditBrows);
+            end;
+    23241 : begin
+              ViewItems('select distinct NoBukti, Tanggal from vwBrowsBarangBeli '+
+              ' where FlagTipe=''I'' and (Qnt-QntBeli>0) and KodeSupp='+QuotedStr(NoKira)+
+              ' and datediff(day,Tanggal,:0)<='+IntToStr(DM.QuSettingStk.FieldByName('HariPO').AsInteger)+
+              ' order by NoBukti',
+              [TglAwal], ['No. PO', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    23242 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, NoSat, Satuan, SatuanRoll, Qnt2, Qnt, Qnt2Beli, QntBeli, '+
+              ' Qnt2-Qnt2Beli Qnt2Sisa, Qnt-QntBeli QntSisa, Harga, DiscP1, DiscTot '+
+              'from vwBrowsBarangBeli where (Qnt-QntBeli>0) and NoBukti='+QuotedStr(NoKira)+' order by Urut ',
+              ['N','Kode Barang','Nama Barang','N','N','N','PO '+gSat2Beli,'PO '+gSatBeli,'Beli '+gSat2Beli,'Beli '+gSatBeli,
+              'Sisa '+gSat2Beli,'Sisa '+gSatBeli,'N','N','N'],
+              [1,15,40,1,1,1,12,12,12,12,12,12,1,1,1], QuBrows, EditBrows);
+            end;
+    24011  : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat2, Sat1 from dbBarang where Tipe=0 order by KodeBrg',
+              ['Kode', 'Nama Barang', 'N', 'N'],
+              [15, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    240131  : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1, Sat2 from dbBarang where Tipe=2 order by KodeBrg',
+              ['Kode', 'Nama Barang','N','N'],
+              [15, 50, 1, 1], QuBrows, EditBrows);
+            end;
+    24021  : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1 Satuan, Sat2 SatuanRoll from vwBrowsBrgJadi order by KodeBrg',
+              ['Kode', 'Nama Barang', 'Sat1', 'Sat2'],
+              [20, 70,10,10], QuBrows, EditBrows);
+            end;
+    26005 : begin
+              ViewItem(' Select A.Urut, A.KodeBrg, A.NamaBrg, case when A.Qnt2=0 then null else A.Qnt2 end Qnt2,'+
+              'case when A.Qnt3=0 then null else A.Qnt3 end Qnt3,'+
+              'case when A.Qnt2-A.Qnt2SO=0 then null else A.Qnt2-A.Qnt2SO end Qnt2Sisa,'+
+              'case when A.Qnt3-A.Qnt3SO=0 then null else A.Qnt3-A.Qnt3SO end QntSisa,'+
+              'isnull(J.Qnt2,0)-isnull(N.Qnt2,0) Qnt2Stock,'+
+              'isnull(J.Qnt,0)-isnull(N.Qnt,0) QntStock,'+
+              'A.Isi, A.Satuan, A.SatuanRoll, A.Harga, A.DiscP1, A.DiscTot '+
+              'From vwBrowsBarangSO A '+
+              'left outer join '+
+              '(select KodeBrg, sum(case when Bulan=1 then QntAwal else 0 end+QntIn-QntOut) Qnt,'+
+              'sum(case when Bulan=1 then Qnt2Awal else 0 end+Qnt2In-Qnt2Out) Qnt2 '+
+              'from dbStockBrg '+
+              'where Tahun='+IntToStr(brTahun)+' and BuLan<='+IntToStr(brBulan)+' and KodeGdg='+QuotedStr(brGudang)+
+              ' and KodeBrg in (select KodeBrg from vwBrowsBarangSO where NoBukti='+QuotedStr(NoKira)+') '+
+              'group by KodeBrg'+
+              ') J on J.KodeBrg=A.KodeBrg '+
+              'left outer join '+
+              '(select KodeBrg, sum(Qnt-QntSJ) Qnt, sum(Qnt2-Qnt2SJ) Qnt2 '+
+              'from vwSOBelumSuratJlnDet '+
+              'where KodeGdg='+QuotedStr(brGudang)+' and KodeBrg in (select KodeBrg from vwBrowsBarangSO where NoBukti='+QuotedStr(NoKira)+') '+
+              'group by KodeBrg'+
+              ') N on N.KodeBrg=A.KodeBrg '+
+              'where	A.NoBukti='+QuotedStr(NoKira)+' and ((A.Qnt2-A.Qnt2SO<>0) or (A.Qnt3-A.Qnt3SO<>0))'+
+              ' order by A.Urut',
+              ['N','Kode Barang','Nama Barang','Qnt '+gSat2Jual,'Qnt '+gSatJual,'Sisa '+gSat2Jual,'Sisa '+gSatJual,
+              'Stock '+gSat2Jual,'Stock '+gSatJual,'N','N','N','Harga','N','N'],
+              [1,15,40,12,12,12,12,12,12,1,1,1,10,1,1], QuBrows, EditBrows);
+            end;
+
+    26006 : begin
+              ViewItem('select distinct NoBukti, Tanggal from dbSPB where KodeCust='+QuotedStr(NoKira)+' order by NoBukti',
+              ['No. SPB', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    26031 : begin
+              ViewItem('select distinct NoBukti, Tanggal from vwSOBelumSuratJln '+
+              ' where KodeCust='+QuotedStr(NoKira)+' and NoAlamatKirim='+NoKira2+
+              ' and KodeGdg='+QuotedStr(brGudang)+' and INSBrg='+QuotedStr(isidata1)+' order by NoBukti',
+              ['No. SO', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    26032 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, Qnt2, SatuanRoll, Qnt, Isi, Satuan, '+
+              ' Qnt2SJ, QntSJ, Qnt2-Qnt2SJ Qnt2Sisa, Qnt-QntSJ QntSisa'+
+              ' from vwSOBelumSuratJlnDet where NoBukti='+QuotedStr(NoKira)+
+              ' and ((Qnt2-Qnt2SJ<>0) or (Qnt-QntSJ<>0)) order by Urut ',
+              ['N','Kode Barang','Nama Barang','SO '+gSat2Jual,'N','SO '+gSatJual,'N','N','N','N',
+              'Sisa '+gSat2Jual,'Sisa '+gSatJual],
+              [5,20,50,15,1,15,1,1,15,15,15,15], QuBrows, EditBrows);
+            end;
+    26041 : begin
+              ViewItem('select distinct NoBukti, Tanggal from dbSO where KodeCust='+QuotedStr(NoKira)+' order by NoBukti',
+              ['No. SO', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    26042 : begin
+              ViewItem(' select distinct NoBukti, Tanggal, NOSO from vwBrowsSJlnJual '+
+              ' where (SJlnPadaJual is null) and KodeCust='+QuotedStr(NoKira)+
+              ' and INSBrg='+QuotedStr(NoKira2)+' order by NoBukti',
+              ['No. Surat Jln', 'Tanggal','No. SO'],
+              [30,20,30], QuBrows, EditBrows);
+            end;
+    26043 : begin
+              ViewItem('select KodeBrg, NamaBrg, Sat1 Satuan, Sat2 SatuanRoll, Isi2 Isi from vwBarangJual '+
+              'where KodeTipe like '+QuotedStr(NoKira+'%')+' order by KodeBrg',
+              ['Kode Barang', 'Nama Barang', 'N', 'N', 'N'],
+              [20, 50,1,1,1], QuBrows, EditBrows);
+            end;
+    26051 : begin
+              ViewItem('select distinct NoBukti, Tanggal from dbJual '+
+              'where INSBrg like '+QuotedStr(NoKira2+'%')+' and KodeCust='+QuotedStr(NoKira)+' order by NoBukti',
+              ['No. Jual', 'Tanggal'],
+              [30, 20], QuBrows, EditBrows);
+            end;
+    26052 : begin
+              ViewItem('select Urut, KodeBrg, NamaBrg, Qnt2Sisa, SatuanRoll, QntSisa, Isi, Satuan, Harga, DiscP1, DiscTot '+
+              'from vwBrowsBarangRJual where NoBukti='+QuotedStr(NoKira)+' order by Urut ',
+              ['N','Kode Barang','Nama Barang','Qnt'+gSat2Jual,'N','Qnt'+gSatJual,'N','N','N','N','N'],
+              [5,20,50,15,1,15,1,1,1,1,1], QuBrows, EditBrows);
+            end;
+
+    9001  : begin
+              ViewItems(' Select NoBukti, Tanggal from '+NoKira+
+              ' where (Tanggal between :0 and :1) '+
+              ' Order by year(Tanggal), month(Tanggal), NoBukti',
+              [TglAwal,TglAkhir],['No Bukti','Tanggal'],[30,20],QuBrows,Editbrows);
+            end;
+    9002  : begin
+              ViewItems(' Select NoBukti, Tanggal from '+NoKira+
+              ' where FlagTipe='+QuotedStr(NoKira2)+' and (Tanggal between :0 and :1) '+
+              ' Order by year(Tanggal), month(Tanggal), NoBukti',
+              [TglAwal,TglAkhir],['No Bukti','Tanggal'],[30,20],QuBrows,Editbrows);
+            end;
+  End;
+end;
+
+procedure TFrBrows2.ResizeControls(padOnly: boolean);
+const spacing = 13;
+var
+   i,growByWidth, desiredSize: integer;
+   minWidth: integer;
+   totalColWidth: integer;
+   temp: integer;
+
+   Function max(x,y: integer): integer;
+   begin
+      if x>y then result:=x
+      else result:= y;
+   end;
+   Function min(x,y: integer): integer;
+   begin
+      if x<y then result:=x
+      else result:= y;
+   end;
+begin
+   desiredSize:= GetSystemMetrics(SM_CXHThumb) + 1;  {Win95 fix }
+   {$ifdef win32}
+   inc(desiredSize,3);
+   {$endif}
+
+   minWidth:= 3;
+
+   for i:= 0 to GridBrows.ColumnCount-1 do
+      desiredSize:= desiredSize + GridBrows.Columns[i].Width + 1;//GridBrows.GridLineWidth;
+   TotalColWidth:= desiredSize;
+
+   if (desiredSize < minWidth) then {pad last field }
+   begin
+      { 4/30/98 - ColWidths is rounded to character boundary so expand grid by difference }
+      //temp:= GridBrows.colWidths[GridBrows.getColCount-1] + (minWidth - desiredSize);
+      //GridBrows.colWidths[GridBrows.getColCount-1]:= temp;
+      //desiredSize:= minWidth +  GridBrows.colWidths[GridBrows.getColCount-1]-temp;
+
+      temp:= GridBrows.Columns[GridBrows.ColumnCount-1].Width + (minWidth - desiredSize);
+
+      GridBrows.Columns[GridBrows.ColumnCount-1].Width:= temp;
+      desiredSize:= minWidth +  GridBrows.Columns[GridBrows.ColumnCount-1].Width-temp;
+   end;
+   if padOnly then exit;
+
+   If MaxWidth= 0 then MaxWidth:= Screen.width-40
+   else MaxWidth:= min(MaxWidth, screen.width - 40);
+
+   desiredSize:= min(desiredSize, MaxWidth);
+   desiredSize:= max(desiredSize, minWidth);
+
+   GrowByWidth:= desiredSize - GridBrows.width;
+   GridBrows.width:= GridBrows.width + GrowByWidth;
+
+   //if TotalColWidth <= GridBrows.width then  { Don't show horizontal scroll bar }
+   //   GridBrows.ShowHorzScrollBar:= False;
+   //GridBrows.DoPerfectFit;  { Adjust size before its shown }
+
+   self.width:= self.width + GrowByWidth;
+
+   FrBrows2.Width:=GridBrows.width+30;
+end;
+
+
+
+procedure TFrBrows2.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+   if key=VK_ESCAPE then
+   begin
+      Close;
+   end else
+   if Key=VK_RETURN then begin
+      ModalResult:= mrOK;
+   end;
+end;
+
+procedure TFrBrows2.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action:=cafree;
+end;
+
+procedure TFrBrows2.GridBrowsDblClick(Sender: TObject);
+begin
+  ModalResult:=mrOk;
+end;
+
+procedure TFrBrows2.FormShow(Sender: TObject);
+begin
+  QuBrows.Connection:=DM.MyStock;
+  EditBrows:=IsiData;
+  EditBrows1:=IsiData1;
+  GridBrows.OptionsBehavior:=[edgoAutoSearch,edgoAutoSort,edgoDragScroll,edgoEnterShowEditor,edgoMultiSelect,
+    edgoTabThrough,edgoVertThrough];
+  FilterDataBrows;
+  EditBrows:=IsiData;
+end;
+
+procedure TFrBrows2.Button1Click(Sender: TObject);
+begin
+  ModalResult:=mrOK;
+end;
+
+procedure TFrBrows2.Button2Click(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TFrBrows2.GridBrowsMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if (Button <> mbRight) or (Shift <> []) then Exit;
+  TdxDBGridPopupMenuManager.Instance.ShowGridPopupMenu(Sender as TdxDBGrid);
+end;
+
+procedure TFrBrows2.Button4Click(Sender: TObject);
+begin
+    GridBrows.SelectAll;
+end;
+
+procedure TFrBrows2.Button3Click(Sender: TObject);
+begin
+     ModalResult:=mrYes;
+end;
+
+end.

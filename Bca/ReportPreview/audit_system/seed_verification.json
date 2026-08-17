@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-08-06T14:35:00",
+  "complex_reports_state": {
+    "dbMasterLaporan": 9,
+    "dbParameterLaporan": 11,
+    "dbKolomLaporan": 11,
+    "dbQueryLaporan": 11,
+    "dbGroupLaporan": 3,
+    "DBFLMENUREPORT": 11,
+    "DBMENUREPORT": 7
+  },
+  "unique_users_with_access": 38,
+  "skipped_reports": {
+    "050102": "Already exists as id_laporan=20 (Stock Rupiah)",
+    "050103": "Already exists as id_laporan=21 (Stock Qty + Rupiah)"
+  },
+  "status": "CLEAN_AND_VERIFIED",
+  "files": [
+    "seed_dbMasterLaporan_9_reports.sql",
+    "seed_dbParameterLaporan_9_reports.sql",
+    "seed_dbKolomLaporan_9_reports.sql",
+    "seed_dbQueryLaporan_9_reports.sql",
+    "seed_dbGroupLaporan_9_reports.sql",
+    "seed_DBFLMENUREPORT_9_reports.sql"
+  ]
+}

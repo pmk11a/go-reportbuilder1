@@ -1,0 +1,143 @@
+{
+  "summary": {
+    "timestamp": 1785974118.5219047,
+    "scanned_files": 1,
+    "passed": 1,
+    "failed": 0,
+    "avg_score": 65.0,
+    "valid_xml": 1,
+    "invalid_xml": 0,
+    "zero_byte_tail_count": 0,
+    "severity_counts": {
+      "high": 3,
+      "low": 4,
+      "medium": 3,
+      "critical": 2
+    },
+    "top_rule_violations": [
+      [
+        "DATASET_REFERENCED",
+        1
+      ],
+      [
+        "DUPLICATE_FIELD",
+        1
+      ],
+      [
+        "DUPLICATE_NAME",
+        1
+      ],
+      [
+        "FR_VERSION",
+        1
+      ],
+      [
+        "MEMO_FIELD_BINDING",
+        1
+      ],
+      [
+        "MEMO_FONT_MISSING",
+        1
+      ],
+      [
+        "MEMO_OVERFLOW",
+        1
+      ],
+      [
+        "ORPHAN_DATASET",
+        1
+      ],
+      [
+        "PAGE_LAYOUT",
+        1
+      ],
+      [
+        "SCRIPT_SYNTAX",
+        1
+      ]
+    ],
+    "total_datasets": 4,
+    "total_memos": 82
+  },
+  "results": [
+    {
+      "file_path": "d:/TestLaB/piagent/Bca/ReportFiles/ReportKasHarian.fr3",
+      "score": 65.0,
+      "passed": true,
+      "issues": [
+        {
+          "rule_id": "DATASET_REFERENCED",
+          "severity": "high",
+          "message": "Dataset 'Data' declared but never referenced",
+          "suggestion": "Declare dataset in TfrxReport's PropData or bind via script."
+        },
+        {
+          "rule_id": "DUPLICATE_FIELD",
+          "severity": "low",
+          "message": "No duplicate fields",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "DUPLICATE_NAME",
+          "severity": "low",
+          "message": "All element names unique",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "FR_VERSION",
+          "severity": "medium",
+          "message": "Version 4.14 recognized",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "MEMO_FIELD_BINDING",
+          "severity": "high",
+          "message": "All 82 memo bindings valid",
+          "suggestion": "Add missing DataSet reference to the memo element."
+        },
+        {
+          "rule_id": "MEMO_FONT_MISSING",
+          "severity": "low",
+          "message": "All memos have Font.Name",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "MEMO_OVERFLOW",
+          "severity": "medium",
+          "message": "Memories overflow page width: Memo17, Memo18, Memo72, Memo36, Memo14, Memo15, Memo19, Memo20, Memo2, Memo16",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "ORPHAN_DATASET",
+          "severity": "medium",
+          "message": "Orphan datasets: Data",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "PAGE_LAYOUT",
+          "severity": "low",
+          "message": "Page OK: 210.0x297.0",
+          "suggestion": "Review rule definition."
+        },
+        {
+          "rule_id": "SCRIPT_SYNTAX",
+          "severity": "high",
+          "message": "Script OK (1744 chars, 2 procedures)",
+          "suggestion": "Ensure script contains at least one begin..end block."
+        },
+        {
+          "rule_id": "XML_VALIDITY",
+          "severity": "critical",
+          "message": "XML is well-formed",
+          "suggestion": "Fix XML syntax errors before reimporting."
+        },
+        {
+          "rule_id": "ZERO_BYTE_TAIL",
+          "severity": "critical",
+          "message": "No tail corruption detected",
+          "suggestion": "Open .fr3 in FastReport Designer and re-save as UTF-8 XML."
+        }
+      ]
+    }
+  ]
+}

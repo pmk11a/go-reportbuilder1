@@ -134,10 +134,9 @@ func (s *reportsService) CreateReport(ctx context.Context, req *SCreateReportReq
 		statusAktif = *req.StatusAktif
 	}
 
-	footerBands := req.FooterBands
 	var footerJSON json.RawMessage
-	if footerBands != nil && *footerBands != "" {
-		footerJSON = json.RawMessage(*footerBands)
+	if req.FooterBands != nil {
+		footerJSON = req.FooterBands
 	}
 
 	entity := &SDBMasterLaporan{
@@ -145,7 +144,7 @@ func (s *reportsService) CreateReport(ctx context.Context, req *SCreateReportReq
 		NamaLaporan: req.NamaLaporan,
 		Deskripsi:   req.Deskripsi,
 		StatusAktif: statusAktif,
-		FooterBands: footerBands,
+		FooterBands: func() *string { s := string(footerJSON); return &s }(),
 	}
 
 	id, err := s.repo.CreateReport(ctx, entity)
@@ -202,7 +201,7 @@ func (s *reportsService) UpdateReport(ctx context.Context, id int, req *SUpdateR
 		report.StatusAktif = *req.StatusAktif
 	}
 	if req.FooterBands != nil {
-		report.FooterBands = req.FooterBands
+		report.FooterBands = func() *string { if req.FooterBands != nil && len(req.FooterBands) > 0 { s := string(req.FooterBands); return &s }; return nil }()
 	}
 
 	if err := s.repo.UpdateReport(ctx, id, report); err != nil {

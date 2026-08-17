@@ -89,7 +89,7 @@ function ReportCard({ report }: { report: ReportMenuItem }) {
           <FileText className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium truncate">{report.NmReport || report.KODEMENU}</h3>
+          <h3 className="font-medium truncate">{(report as any).nama_laporan || report.NmReport}</h3>
           <p className="text-sm text-muted-foreground mt-1">
             {report.KODEMENU}
           </p>

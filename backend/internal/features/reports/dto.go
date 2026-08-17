@@ -23,21 +23,21 @@ type SKomponenRequest struct {
 
 // SCreateReportRequest is the JSON payload for creating a new report
 type SCreateReportRequest struct {
-	KODEMENU    string                 `json:"KODEMENU" binding:"required"`
-	NamaLaporan string                 `json:"nama_laporan" binding:"required"`
-	Deskripsi   *string                `json:"deskripsi"`
-	FooterBands *string                `json:"footer_bands"`
-	StatusAktif *bool                  `json:"status_aktif"`
-	Komponen    []SKomponenRequest     `json:"komponen"`
+	KODEMENU    string          `json:"KODEMENU" binding:"required"`
+	NamaLaporan string          `json:"nama_laporan" binding:"required"`
+	Deskripsi   *string         `json:"deskripsi"`
+	FooterBands json.RawMessage `json:"footer_bands"`
+	StatusAktif *bool           `json:"status_aktif"`
+	Komponen    []SKomponenRequest `json:"komponen"`
 }
 
 // SUpdateReportRequest is the JSON payload for updating a report
 type SUpdateReportRequest struct {
-	NamaLaporan *string `json:"nama_laporan"`
-	Deskripsi   *string `json:"deskripsi"`
-	FooterBands *string                `json:"footer_bands"`
-	StatusAktif *bool                  `json:"status_aktif"`
-	Komponen    []SKomponenRequest     `json:"komponen"`
+	NamaLaporan *string         `json:"nama_laporan"`
+	Deskripsi   *string         `json:"deskripsi"`
+	FooterBands json.RawMessage `json:"footer_bands"`
+	StatusAktif *bool            `json:"status_aktif"`
+	Komponen    []SKomponenRequest `json:"komponen"`
 }
 
 // SCreateFilterRequest is the JSON payload for creating a filter
@@ -191,7 +191,11 @@ type SReportDetailResponse struct {
 	FooterBands json.RawMessage              `json:"footer_bands"`
 	Keterangan *string                       `json:"Keterangan,omitempty"`
 	L0         *int                          `json:"L0,omitempty"`
+	Filters     []SFilterResponse            `json:"filters"`
 	Datasets    []SDatasetResponse           `json:"datasets"`
+	Columns     map[string][]SColumnResponse  `json:"columns"`
+	Groups      []SGroupResponse             `json:"groups"`
+	Komponen    []SKomponenResponse          `json:"komponen"`
 	Access     []SUserAccess                 `json:"access"`
 	CreatedAt  *string                       `json:"created_at"`
 	UpdatedAt  *string                       `json:"updated_at"`
@@ -263,11 +267,12 @@ type SKomponenResponse struct {
 
 // SMenuReportItem represents a menu item for the reports sidebar
 type SMenuReportItem struct {
-	KODEMENU   string               `json:"KODEMENU"`
-	Keterangan string               `json:"NmReport"`
-	L0         int                  `json:"L0"`
-	ACCESS     string               `json:"ACCESS"`
-	Children   []SMenuReportItem    `gorm:"-" json:"children,omitempty"`
+	KODEMENU    string               `json:"KODEMENU"`
+	Keterangan  string               `json:"NmReport"`
+	NamaLaporan string               `json:"nama_laporan,omitempty"`
+	L0          int                  `json:"L0"`
+	ACCESS      string               `json:"ACCESS"`
+	Children    []SMenuReportItem    `gorm:"-" json:"children,omitempty"`
 }
 
 // SPreviewQueryResponse is the JSON shape for query preview results

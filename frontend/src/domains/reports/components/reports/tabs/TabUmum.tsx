@@ -32,14 +32,9 @@ export function TabUmum({ report, isDark }: { report: IReportConfig; isDark: boo
               <FileText size={20} className={isDark ? 'text-primary-400' : 'text-primary-600'} />
               {report.nama_laporan}
             </h2>
-            <p className={`text-sm mt-1 font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              {report.KODEMENU}
+            <p className={`text-sm mt-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              {report.deskripsi}
             </p>
-            {report.deskripsi && (
-              <p className={`text-sm mt-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                {report.deskripsi}
-              </p>
-            )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)}>
@@ -56,7 +51,7 @@ export function TabUmum({ report, isDark }: { report: IReportConfig; isDark: boo
 
       <div className="p-6">
         <div className={`space-y-3 p-4 rounded-xl border ${cardClass}`}>
-          <DetailRow label="Nama" value={report.nama_laporan} isDark={isDark} />
+          <DetailRow label="Nama Laporan" value={report.nama_laporan} isDark={isDark} />
           <DetailRow label="Kode Menu" value={report.KODEMENU} isDark={isDark} mono />
           <DetailRow label="Deskripsi" value={report.deskripsi || '—'} isDark={isDark} />
           <DetailRow label="Status" value={report.status_aktif ? 'Aktif' : 'Nonaktif'} isDark={isDark} />

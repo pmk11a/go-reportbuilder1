@@ -7,10 +7,13 @@ import { Save, ArrowLeft, Monitor, Smartphone } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useThemeStore } from '@/shared/stores/themeStore';
 import { Button, Tabs } from '@/shared/ui';
-import { useReports } from '@/domains/reports/hooks/useReport';
+import { useReports, useExecuteReport } from '@/domains/reports/hooks/useReport';
 import { useGetTabGeneral, useGetTabFilters, useGetTabKomponen } from '@/domains/reports/hooks/useReportBuilder';
 import { reportService } from '@/domains/reports/services/reportService';
 import { useToast } from '@/shared/hooks/use-toast';
+import { useReportStore } from '@/domains/reports/stores/reportStore';
+import { BuilderFilterPanel } from './BuilderFilterPanel';
+
 
 export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
   const navigate = useNavigate();
@@ -67,6 +70,13 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
     observer.observe(el);
     return () => observer.disconnect();
   }, [isAutoFit, calculateAutoFitZoom]);
+
+  // Get execution result from store (populated by useExecuteReport)
+  const executionResult = useReportStore((s) => s.executionResult);
+
+  // Execute report hook
+  const executeReport = useExecuteReport(kodeMenu || null);
+  
 
   // Full report configuration state
   const [reportConfig, setReportConfig] = useState<Partial<IReportConfig>>({});
@@ -370,16 +380,24 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
                 value: 'editor',
                 content: (
                   <div className="xl:p-2 bg-slate-50 dark:bg-[#0f172a]">
-                    <ReportEditor 
-                      reportConfig={reportConfig} 
+                    <ReportEditor
+                      reportConfig={reportConfig}
                       setReportConfig={setReportConfig}
-                      layoutConfig={layoutConfig} 
+                      layoutConfig={layoutConfig}
                       setLayoutConfig={setLayoutConfig}
                       onDeleteReport={handleDeleteReport}
                       activeTab={activeTab}
                       setActiveTab={setActiveTab}
                       isLoading={isLoading}
                     />
+                    {/* Filter Panel for Preview */}
+                    <div className="mt-4 px-4 pb-4">
+                      <BuilderFilterPanel
+                        kodeMenu={kodeMenu || ''}
+                        filters={filtersData || []}
+                        executeReport={executeReport}
+                      />
+                    </div>
                   </div>
                 )
               },
@@ -388,8 +406,8 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
                 value: 'preview',
                 content: (
                   <div className={`w-full h-[calc(100vh-220px)] rounded-3xl relative overflow-hidden border ${isDark ? 'bg-slate-950 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
-                    <div ref={previewContainerRef} className="absolute inset-0 overflow-auto flex flex-col justify-start items-center p-4">
-                      <ReportPreview config={layoutConfig} zoom={zoom} orientation={orientation} paperConfig={reportConfig.paperConfig} isAutoFit={isAutoFit} isFitTable={isFitTable} />
+                    <div ref={previewContainerRef} className="absolute inset-0 overflow-auto p-4">
+                      <ReportPreview config={layoutConfig} zoom={zoom} orientation={orientation} paperConfig={reportConfig.paperConfig} isFitTable={isFitTable} datasets={executionResult || undefined} />
                     </div>
                     
                     <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-50 border border-slate-200 dark:border-slate-700">

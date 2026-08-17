@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TfrxReport Name="" Version="3.18" DotMatrixReport="True" IniFile="\Software\Fast Reports" PreviewOptions.Buttons="2047" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" ReportOptions.CreateDate="39174,4525209722" ReportOptions.Description.Text="" ReportOptions.LastChange="39177,6098423032" ScriptLanguage="PascalScript" ScriptText.Text="procedure PageFooter1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;end;&#13;&#10;&#13;&#10;procedure Page1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure PageHeader1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;end;&#13;&#10;&#13;&#10;procedure Page1OnAfterPrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;end;&#13;&#10;&#13;&#10;procedure MasterData1OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;end;&#13;&#10;&#13;&#10;procedure DMPMemo41OnAfterPrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;end;&#13;&#10;&#13;&#10;procedure DMPMemo41OnBeforePrint(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;&#13;&#10;end;&#13;&#10;&#13;&#10;begin&#13;&#10;&#13;&#10;end." PropData="044C656674025A03546F7003D20008446174617365747301010C3400000020446174615365743D22667278444244617461736574312220446174615365744E616D653D226672784442436574616B4B5253220000095661726961626C65730100055374796C650100">
+  <TfrxDMPPage Name="Page1" PaperWidth="317,499794948049" PaperHeight="139,435326614685" PaperSize="256" LeftMargin="7,61999507875318" RightMargin="2,53999835958439" TopMargin="4,49791376176403" BottomMargin="4,49791376176403" ColumnWidth="0" ColumnPositions.Text="" HGuides.Text="" VGuides.Text="" OnAfterPrint="Page1OnAfterPrint" OnBeforePrint="Page1OnBeforePrint" FontStyle="0">
+    <TfrxMasterData Name="MasterData1" Height="17" Left="0" Top="204" Width="1161,6" OnBeforePrint="MasterData1OnBeforePrint" ColumnWidth="0" ColumnGap="0" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" RowCount="0">
+      <TfrxDMPMemoView Name="DMPMemo1" Left="0" Top="0" Width="28,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haRight" Text="[Line]"/>
+      <TfrxDMPMemoView Name="DMPMemo10" Left="48" Top="0" Width="115,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" WordWrap="False" Text="[frxDBCetakKRS.&#34;KODEBRG&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo11" Left="172,8" Top="0" Width="432" Height="17" DataField="NamaBrg" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," WordWrap="False" Text="[frxDBCetakKRS.&#34;NamaBrg&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo19" Left="614,4" Top="0" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," DisplayFormat.FormatStr="%2.2n" DisplayFormat.Kind="fkNumeric" HAlign="haRight" WordWrap="False" Text="[frxDBCetakKRS.&#34;QNTDB&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo29" Left="835,2" Top="0" Width="28,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," WordWrap="False" Text="[frxDBCetakKRS.&#34;SATUAN&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo8" Left="720" Top="0" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," DisplayFormat.FormatStr="%2.2n" DisplayFormat.Kind="fkNumeric" HAlign="haRight" WordWrap="False" Text="[frxDBCetakKRS.&#34;QNTCR&#34;]"/>
+    </TfrxMasterData>
+    <TfrxPageFooter Name="PageFooter1" Height="136" Left="0" Top="255" Width="1161,6">
+      <TfrxDMPLineView Name="DMPLine3" Left="4,8" Top="8,5" Width="1152" Height="0"/>
+      <TfrxDMPMemoView Name="DMPMemo20" Left="28,8" Top="17" Width="115,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haCenter" Text="Penerima"/>
+      <TfrxDMPMemoView Name="DMPMemo43" Left="249,6" Top="17" Width="115,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haCenter" Text="Checker"/>
+      <TfrxDMPLineView Name="DMPLine4" Left="14,4" Top="93,5" Width="144" Height="0"/>
+      <TfrxDMPLineView Name="DMPLine5" Left="235,2" Top="93,5" Width="144" Height="0"/>
+      <TfrxDMPMemoView Name="DMPMemo44" Left="19,2" Top="119" Width="28,8" Height="17" AutoWidth="True" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" WordWrap="False" Text="Cetak : [date][Time]"/>
+      <TfrxDMPMemoView Name="DMPMemo7" Left="614,4" Top="17" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," DisplayFormat.FormatStr="%2.2n" DisplayFormat.Kind="fkNumeric" HAlign="haRight" WordWrap="False" Text="[SUM(&#60;frxDBCetakKRS.&#34;QNTDB&#34;&#62;,MasterData1)]"/>
+      <TfrxDMPMemoView Name="DMPMemo9" Left="720" Top="17" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" DisplayFormat.DecimalSeparator="," DisplayFormat.FormatStr="%2.2n" DisplayFormat.Kind="fkNumeric" HAlign="haRight" WordWrap="False" Text="[SUM(&#60;frxDBCetakKRS.&#34;QNTCR&#34;&#62;,MasterData1)]"/>
+    </TfrxPageFooter>
+    <TfrxPageHeader Name="PageHeader1" Height="153" Left="0" Top="17" Width="1161,6">
+      <TfrxDMPMemoView Name="DMPMemo31" Left="9,6" Top="85" Width="28,8" Height="17" AutoWidth="True" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" WordWrap="False" Text="Hal : [Page#]/[TotalPages#]"/>
+      <TfrxDMPMemoView Name="DMPMemo16" Left="0" Top="119" Width="28,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haRight" Text="No"/>
+      <TfrxDMPMemoView Name="DMPMemo17" Left="48" Top="119" Width="115,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" Text="Kode"/>
+      <TfrxDMPMemoView Name="DMPMemo18" Left="172,8" Top="119" Width="115,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" Text="Nama Barang"/>
+      <TfrxDMPMemoView Name="DMPMemo23" Left="614,4" Top="119" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haRight" Text="Qnt Dbt"/>
+      <TfrxDMPMemoView Name="DMPMemo25" Left="892,8" Top="119" Width="134,4" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haCenter" Text="Keterangan"/>
+      <TfrxDMPMemoView Name="DMPMemo2" Left="115,2" Top="34" Width="163,2" Height="17" DataField="NOBUKTI" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" FontStyle="32" ParentFont="False" Text="[frxDBCetakKRS.&#34;NOBUKTI&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo3" Left="115,2" Top="51" Width="163,2" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" Text="[frxDBCetakKRS.&#34;tanggal&#34;]"/>
+      <TfrxDMPMemoView Name="DMPMemo6" Left="9,6" Top="51" Width="76,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" FontStyle="0" ParentFont="False" Text="Tanggal"/>
+      <TfrxDMPMemoView Name="DMPMemo5" Left="9,6" Top="34" Width="76,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" FontStyle="33" ParentFont="False" Text="No. Nota"/>
+      <TfrxDMPLineView Name="DMPLine1" Left="4,8" Top="110,5" Width="1152" Height="0"/>
+      <TfrxDMPLineView Name="DMPLine2" Left="4,8" Top="144,5" Width="1152" Height="0"/>
+      <TfrxDMPMemoView Name="DMPMemo30" Left="835,2" Top="119" Width="28,8" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haRight" Text="Sat"/>
+      <TfrxDMPMemoView Name="DMPMemo41" Left="9,6" Top="0" Width="76,8" Height="17" AutoWidth="True" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" FontStyle="33" ParentFont="False" WordWrap="False" Text="[Perusahaan]"/>
+      <TfrxDMPMemoView Name="DMPMemo4" Left="614,4" Top="0" Width="249,6" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" FontStyle="33" ParentFont="False" Text="K O R E K S I  S T O C K"/>
+      <TfrxDMPMemoView Name="DMPMemo12" Left="720" Top="119" Width="96" Height="17" DataSet="frxDBDataset1" DataSetName="frxDBCetakKRS" HAlign="haRight" Text="Qnt Kdt"/>
+    </TfrxPageHeader>
+  </TfrxDMPPage>
+</TfrxReport>

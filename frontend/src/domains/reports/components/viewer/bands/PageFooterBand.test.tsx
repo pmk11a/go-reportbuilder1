@@ -37,6 +37,25 @@ describe('PageFooterBand', () => {
     expect(container.querySelector('p')).toBeInTheDocument()
   })
 
+  it('substitutes {{user}} placeholder', () => {
+    const { container } = render(
+      <PageFooterBand
+        footerBandConfig={{ enabled: true, content: 'Dicetak oleh: {{user}}' }}
+        userName="superadmin"
+      />
+    )
+    expect(container.querySelector('p')).toHaveTextContent('Dicetak oleh: superadmin')
+  })
+
+  it('substitutes {{time}} and {{datetime}} placeholders', () => {
+    const { container } = render(
+      <PageFooterBand
+        footerBandConfig={{ enabled: true, content: '{{date}} {{time}}' }}
+      />
+    )
+    expect(container.querySelector('p')).toBeInTheDocument()
+  })
+
   it('uses center alignment', () => {
     const { container } = render(
       <PageFooterBand

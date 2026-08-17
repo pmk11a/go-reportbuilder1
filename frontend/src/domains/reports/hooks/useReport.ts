@@ -205,13 +205,17 @@ export function useReportConfig(kodeMenu: string | null) {
 export function useExecuteReport(kodeMenu: string | null) {
   const setIsExecuting = useReportStore((s) => s.setIsExecuting)
   const setExecutionError = useReportStore((s) => s.setExecutionError)
+  const setExecutionResult = useReportStore((s) => s.setExecutionResult)
 
   return useMutation({
     mutationFn: async (filters: IReportFilterValues) => {
       if (!kodeMenu) throw new Error('Kode menu required')
       setIsExecuting(true)
       setExecutionError(null)
-      return reportViewerService.executeReport(kodeMenu, filters)
+      const result = await reportViewerService.executeReport(kodeMenu, filters)
+      // Store execution result for preview
+      setExecutionResult(result?.datasets || null)
+      return result
     },
     onError: (err: Error) => setExecutionError(err.message),
     onSettled: () => setIsExecuting(false),

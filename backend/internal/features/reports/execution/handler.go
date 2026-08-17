@@ -98,17 +98,17 @@ func (h *SReportExecutionHandler) GetReportConfig(c *gin.Context) {
 }
 
 // getReportByKodeMenu gets report by kode menu with fallback normalization
-func (h *SReportExecutionHandler) getReportByKodeMenu(ctx context.Context, kodeMenu string) (*reports.SReportConfigResponse, error) {
+func (h *SReportExecutionHandler) getReportByKodeMenu(ctx context.Context, kodeMenu string) (*reports.SReportDetailResponse, error) {
 	// Try original kode first
-	report, err := h.fetchReportConfig(ctx, kodeMenu)
+	report, err := h.service.GetReportConfig(ctx, kodeMenu)
 	if err == nil && report != nil {
 		return report, nil
 	}
 
-	// Try normalized version
+	// Try normalized version (strip leading zeros)
 	normalized := strings.TrimLeft(kodeMenu, "0")
 	if normalized != kodeMenu {
-		report, err = h.fetchReportConfig(ctx, normalized)
+		report, err = h.service.GetReportConfig(ctx, normalized)
 		if err == nil && report != nil {
 			return report, nil
 		}
@@ -118,7 +118,7 @@ func (h *SReportExecutionHandler) getReportByKodeMenu(ctx context.Context, kodeM
 }
 
 // fetchReportConfig fetches full report configuration
-func (h *SReportExecutionHandler) fetchReportConfig(ctx context.Context, kodeMenu string) (*reports.SReportConfigResponse, error) {
+func (h *SReportExecutionHandler) fetchReportConfig(ctx context.Context, kodeMenu string) (*reports.SReportDetailResponse, error) {
 	// Get report detail from service
 	reportsList, err := h.reportService.ListReports(ctx, &reports.SListReportsRequest{Page: 1, Limit: 1000})
 	if err != nil {
@@ -133,7 +133,7 @@ func (h *SReportExecutionHandler) fetchReportConfig(ctx context.Context, kodeMen
 			if err != nil {
 				return nil, err
 			}
-			return h.buildReportConfig(ctx, foundReport)
+			return foundReport, nil
 		}
 	}
 

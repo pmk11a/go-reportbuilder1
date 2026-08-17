@@ -1,0 +1,254 @@
+KODEMENU Keterangan
+-------- ----------
+012 Master Data Marketing
+01298 Daftar Pelanggan
+013 Master Data Yg Lain
+01304 Daftar Valas
+01305 Daftar Batal Otorisasi
+020 Accounting
+0201 Kas dan Bank
+020101 Kas Harian
+020102 Bank Harian
+020103 Posisi Bank, Kas & Piutang
+020106 Daftar Deposito
+0201061 Jatuh Tempo Deposito
+0201062 Pencairan Deposito
+0201063 Pembukaan Deposito
+0201064 Outstanding ÿDeposito
+020107 Daftar Giro diterima
+0201071 Jatuh Tempo Giro
+0201072 Pencairan Giro
+0201073 Penerimaan Giro
+0201074 Outstanding Giro
+0201075 Register Giro
+020108 Daftar Giro dibuka
+0201081 Jatuh Tempo Giro
+0201082 Pencairan Giro
+0201083 Buka Giro
+0201084 Outstanding Giro
+0201085 Register Giro
+020109 Bon Sementara
+0202 General Ledger
+020201 Jurnal
+02020101 Penerimaan Kas
+02020102 Pengeluaran Kas
+02020103 Penerimaan Bank
+02020104 Pengeluaran Bank
+02020105 Memorial
+02020106 Koreksi
+02020109 Penutup
+0202021 Buku Tambahan
+020204 Biaya
+020205 Aktiva
+020206 Biaya Penyusutan
+0203 Hutang
+020301 Kartu Hutang
+020302 Sisa
+020303 Pelunasan
+020304 Saldo
+020305 Umur
+0204 Piutang
+020401 Kartu Piutang
+020402 Sisa
+020403 Pelunasan
+020404 Saldo
+0204041 Saldo Detail
+020405 Umur
+020406 Kartu Piutang Detail
+020407 Monitoring Pembayaran Piutang
+0205 Rugi Laba & Neraca
+020501 Neraca Lajur
+020502 HPP
+020503 Laba Rugi
+020504 Neraca
+020505 Laporan Neraca Penunjang
+020506 Mutasi
+020507 Laporan Mutasi Keuangan
+025 Pengadaan
+02530 Permintaan Barang
+02530201 Permintaan Barang Per Nobukti
+02530202 Permintaan Barang Per Barang
+02530203 Permintaan Barang Per Supplier
+02540 PO
+0254010 OutStanding Permintaan Barang
+02540101 OutStanding Permintaan Barang Per Nobukti
+02540102 OutStanding Permintaan Barang Per Barang
+02540103 OutStanding Permintaan Barang Per Supplier
+0254020 PO
+02540201 PO Per Nobukti
+02540202 PO Per Barang
+02540203 PO Per Supplier
+02560 Penerimaan Gudang
+0256010 OutStanding PO
+02560101 OutStanding PO Per Nobukti
+02560102 OutStanding PO Per Barang
+02560103 OutStanding PO Per Supplier
+0256020 LPB
+02560201 LPB Per Nobukti
+02560202 LPB Per Barang
+02560203 LPB Per Supplier
+02560204 LPB Per Gudang
+02571 Penerimaan ACC
+025711 Penerimaan ACC Per. Nobukti
+025712 Penerimaan ACC Per Barang
+025713 Penerimaan ACC Per Supplier
+02573 Retur Pembelian ACC
+025731 Retur Pembelian ACC Per. Nobukti
+025732 Retur Pembelian ACC Per Barang
+025733 Retur Pembelian ACC Per Supplier
+02574 Retur Pembelian GDG
+025741 Retur Pembelian GDG Per No. Bukti
+025743 Retur Pembelian GDGPer Supplier
+025801 Transfer In Detail
+025802 Transfer Out Detail
+025902 Pembelian ACC Rekening
+030 Marketing
+03020 Laporan Penawaran
+030201 Laporan Penawaran Per No.Bukti
+030202 Laporan Penawaran Per Barang
+030203 Laporan Penawaran Per Customer
+030204 Laporan Penawaran Per Marketing
+03030 Laporan KP
+0303010 Laporan KP
+03030101 Laporan KP Per No.Bukti
+03030102 Laporan KP Per Barang
+03030103 Laporan KP Per Customer
+030301031 Laporan KP Per Sales
+03030104 	Laporan HPP KP
+0303020 Laporan OutStanding KP
+03030201 Laporan OutStanding KP Per No.Bukti
+03030202 Laporan OutStanding KP Per Barang
+03030203 Laporan OutStanding KP Per Customer
+03031 Laporan Perintah Kirim
+0303110 Laporan KP
+03031101 Laporan KP Per No. Bukti
+03031102 Laporan KP Per Barang
+03031103 Laporan KP Per Customer
+0303120 Laporan SPP
+03031201 Laporan SPP Per No. Bukti
+03031202 Laporan SPP Per Barang
+03031203 Laporan SPP Per Customer
+0303130 Laporan Uang Saku
+030313001 Uang Saku Per No.Bukti
+030313002 Uang Saku Per Project
+030313003 Uang Saku Per No. SJ
+030314 Laporan CashBack
+03032 Laporan Surat Jalan
+0303210 Laporan Outstanding SPP
+03032101 Laporan Outstanding SPP Per No. Bukti
+03032102 Laporan Outstanding SPP Per Barang
+03032103 Laporan Outstanding SPP Per Customer
+0303220 Laporan Pengiriman
+03032201 Laporan Pengiriman Per No. Bukti
+03032202 Laporan Pengiriman Per Barang
+03032203 Laporan  Per Customer
+03032204 Laporan Kontrak vs SJ
+03032205 Laporan Sisa Order Per Customer
+03032206 Laporan Progress Pengiriman
+03032207 Laporan  Per NO. POL
+0303230 Laporan Pengiriman ACC
+03032301 Laporan Pengiriman ACC Per No. Bukti
+03032302 Laporan Pengiriman ACC Per Barang
+03032303 Laporan Pengiriman ACC Per Customer
+03032304 Laporan Pengiriman ACC Per Gudang
+0303240 Laporan Rekapitulasi Pengiriman Barang
+0303241 Laporan Faktur Penjualan
+030325 Retur Surat Jalan
+0303251 Retur Surat Jalan per Nobukti
+0303252 Retur Surat Jalan per Barang
+0303253 Retur Surat Jalan per Customer
+030326  Retur Surat Jalan ACC
+03032601  Per No. Bukti
+03032602  Per Barang
+03032603  Per Cutomer
+03033 Laporan Invoice Penjualan
+0303301 Invoice Penjualan Detail
+0303302 Invoice Penjualan Rekening
+0303303 Rekap Invoice Penjualan
+0303304 Penjualan Gudang Rekening
+0303310 Laporan Outstanding SJ
+03033101 Laporan Outstanding SJ Per No. Bukti
+03033102 Laporan Outstanding SJ Per Barang
+03033103 Laporan Outstanding SJ Per Customer
+0303320 Laporan Invoice
+03033201 Laporan Invoice Per No. Bukti
+03033202 Laporan Invoice Per Barang
+03033203 Laporan Invoice Per Customer
+0303321 Laporan DP
+0303322 Laporan Invoice (Piutang Surat Jalan)
+0303323 Laporan Laba Kotor
+03034 Laporan Invoice Retur Penjualan
+0303410 Invoice Retur Penjualan Per No. Bukti
+0303420 Invoice Retur Penjualan Per Barang
+0303430 Invoice Retur Penjualan Per Customer
+03035 Laporan Invoice Retur Gudang
+0303501 Laporan Invoice Retur Gudang Per NoBukti
+0303502 Laporan Invoice Retur Gudang Per Barang
+0303503 Laporan Invoice Retur Gudang Per Customer
+030351 Laporan Target Sales
+030352 Laporan Sales Analisa
+03036 Laporan Komisi
+030361 Komisi Pelunasan
+030362 Komisi Sales
+03037 Laporan KP vs SPK vs Hasil Prd
+0303701 Laporan Per NoBukti
+0303702 Laporan Per Barang
+0303703 Laporan Per Customer
+03038 Laporan Kontrak vs SJ vs Saku
+0303801 Laporan Per No. KP
+0303802 Laporan Per Barang
+0303803 Laporan Customer
+040 Gudang
+0401 Laporan Pemakaian Bahan
+04010201 Laporan Pemakaian Bahan Per No.Bukti
+04010202 Laporan Pemakaian Bahan Per Barang
+0401020201 Laporan Pemakaian Bahan Per Departemen
+0401020202 Laporan Pemakaian Bahan Per NoPOL
+0401020203 Laporan Pemakaian Bahan Per Supir
+04010203 Laporan Pemakaian Bahan ACC Per No.Bukti
+04010204 Laporan Pemakaian Bahan ACC Per Bahan
+04010205 Laporan Pemakaian Bahan ACC Per Departemen
+04010206 Pengeluaran SparePart Truk Per NoPol
+04010207 Pengeluaran SparePart Truk Per Sopir
+04010208 Laporan BP
+04011 Pengeluaran SparePart Truk
+04036 Trasfer Barang
+040361 Trasfer Barang Per Nobukti
+040362 Trasfer Barang Per Barang
+04050 Laporan Ubah Kemasan Bahan
+040501 Laporan Ubah Kemasan Bahan Per Nobukti
+040502 Laporan Ubah Kemasan Bahan Per Barang
+04070 Laporan Opname Bahan
+040701 Laporan Opname Bahan Per Nobukti
+040702 Laporan Opname Bahan Per Barang
+04080 Laporan Opname Barang
+040801 Laporan Opname Barang Per Nobukti
+040802 Laporan Opname Barang Per Barang
+04085 Hasil Produksi
+040851 Hasil Produksi Per NObukti
+040852 Hasil Produksi Per Barang
+04086 Hasil Produksi ACC
+040861 Hasil Produksi ACC Per Nobukti
+040862 Hasil Produksi ACC Per Barang
+050 Stock dan Kartu Persediaan Barang
+05010 Laporan Stock
+050101 Stock Quantity
+050102 Stock Rupiah
+050103 Stock Qty + Rupiah
+050104 Stock Akhir Barang Produksi
+0501041 Stok Akhir Bahan Mentah
+050105 Stock Fisik Gudang
+050106 Stock Harian
+050107 Laporan Katalog Barang (Satuan PCS)
+05020 Kartu Stock
+050201 Kartu Stock Qnt
+050202 Kartu Stock Qnt dan Rupiah
+060 Kartu Proyek
+0601 History KP
+061 Laporan Cash Back
+06101 Laporan Cash Back Detail
+06102 Laporan Cash Back Rekap
+062 Laporan Piutang Surat Jalan
+063 Kartu Proyek Per Barang
+
+(250 rows affected)

@@ -11,7 +11,7 @@
 --   - FK opsional, recommended untuk referential integrity
 -- ============================================================
 
-USE dbwbcp2;
+USE dbbcagroup;
 GO
 
 -- ============================================================

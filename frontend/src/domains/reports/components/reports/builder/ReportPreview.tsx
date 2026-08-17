@@ -17,7 +17,6 @@ interface ReportPreviewProps {
   paperConfig?: IPaperConfig;
   datasets?: Record<string, any[]>;
   mode?: 'preview' | 'print';
-  isAutoFit?: boolean;
   isFitTable?: boolean;
 }
 
@@ -28,7 +27,6 @@ export function ReportPreview({
   paperConfig, 
   datasets,
   mode = 'preview',
-  isAutoFit = true,
   isFitTable = false
 }: ReportPreviewProps) {
   const targetRef = useRef<HTMLDivElement>(null);
@@ -200,22 +198,6 @@ export function ReportPreview({
   const width = paperConfig?.orientation === 'landscape' || orientation === 'landscape' ? 297 : 210;
   const height = paperConfig?.orientation === 'landscape' || orientation === 'landscape' ? 210 : 297;
 
-  const styleOverrides = mode === 'print' ? {
-    width: `${width}mm`,
-    minHeight: `${height}mm`,
-    height: 'max-content',
-    transform: `scale(${zoom})`,
-    marginRight: `-${width * (1 - zoom) / 2}mm`,
-    marginLeft: `-${width * (1 - zoom) / 2}mm`,
-    backgroundColor: 'white',
-    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)'
-  } : {
-    width: '100%',
-    minHeight: 'auto',
-    transform: `scale(${zoom})`,
-    transformOrigin: 'top center',
-    backgroundColor: 'white'
-  };
 
   const rawContent = (
     <div className="report-raw-content" style={{ fontFamily: 'inherit', fontSize: 'inherit', color: '#1f2937' }}>
@@ -904,34 +886,36 @@ export function ReportPreview({
 
   if (!isFitTable && mode === 'preview') {
     return (
-      <div className="w-full flex-1 p-8 bg-slate-100 overflow-auto flex justify-center">
-        <div 
-          className="bg-white shadow-lg origin-top"
-          style={{ 
-            width: `${width}mm`,
-            minHeight: `${height}mm`,
-            padding: '20mm 10mm 15mm 10mm',
-            transform: `scale(${zoom})`,
-            transformOrigin: 'top center'
-          }}
-        >
-          {rawContent}
+      <div className="w-full flex-1">
+        <div className="mx-auto" style={{ width: 'fit-content' }}>
+          <div 
+            className="bg-white shadow-lg"
+            style={{ 
+              width: `${width}mm`,
+              minHeight: `${height}mm`,
+              padding: '20mm 10mm 15mm 10mm',
+              zoom: zoom
+            }}
+          >
+            {rawContent}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`w-full ${mode === 'print' ? '' : 'flex-1 p-8 bg-slate-100 overflow-auto'}`}>
-      <div 
-        ref={targetRef} 
-        className="pagedjs-preview-container flex flex-col items-center justify-center gap-4"
-        style={{
-          transform: `scale(${zoom})`,
-          transformOrigin: 'top center',
-        }}
-      >
-        {/* Paged.js will mount pages here */}
+    <div className="w-full flex-1">
+      <div className="mx-auto" style={{ width: 'fit-content' }}>
+        <div 
+          ref={targetRef} 
+          className="pagedjs-preview-container flex flex-col gap-4"
+          style={{
+            zoom: zoom
+          }}
+        >
+          {/* Paged.js will mount pages here */}
+        </div>
       </div>
       
       {/* Hidden raw content to be consumed by Paged.js */}
