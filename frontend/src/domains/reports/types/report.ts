@@ -4,6 +4,17 @@ import type { IReportColumn } from './column';
 import type { IReportGroup } from './group';
 import type { IReportComponent } from './layout';
 
+export interface IPaperConfig {
+  size: 'A4' | 'F4' | 'Letter' | 'Legal';
+  orientation: 'portrait' | 'landscape';
+  margin: {
+    top: string;
+    right: string;
+    bottom: string;
+    left: string;
+  };
+}
+
 export interface IReport {
   id_laporan: number
   KODEMENU: string
@@ -31,4 +42,5 @@ export interface IReportConfig extends IReport {
   groups: IReportGroup[]
   komponen?: IReportComponent[]
   preFetchQueries?: IPreFetchQuery[]
+  paperConfig?: IPaperConfig
 }

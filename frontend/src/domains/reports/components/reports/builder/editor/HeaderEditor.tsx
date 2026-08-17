@@ -1,15 +1,11 @@
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each, Show } from '@/shared/ui';
+import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each, RichTextEditor } from '@/shared/ui';
 import type { ILayoutHeader, IReportConfig } from '@/domains/reports/types';
 import { DataSourceManager } from './DataSourceManager';
 import { HelpGuide } from '../HelpGuide';
 
 export function HeaderEditor({ config, onChange, reportConfig, setReportConfig, isDark }: { config: ILayoutHeader, onChange: any, reportConfig: Partial<IReportConfig>, setReportConfig: any, isDark: boolean }) {
   const rows = config.rows || [];
-  const datasets = reportConfig.datasets || [];
-  const availableDataSources = datasets
-    .filter(d => d.config_json?.scope === 'global' || d.config_json?.scope === 'header')
-    .map(d => ({ id: d.id_query.toString(), name: `${d.nama_dataset} (${d.config_json?.scope === 'global' ? 'Global' : 'Header'})` }));
   const cardClass = isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200';
   const headingClass = isDark ? 'text-slate-200' : 'text-slate-800';
 
@@ -76,148 +72,24 @@ export function HeaderEditor({ config, onChange, reportConfig, setReportConfig, 
                       <h4 className={`text-xs font-bold uppercase mb-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Kolom {cIdx + 1}</h4>
                       
                       <div className="space-y-4">
-                        {/* Source Type */}
-                        <div className="space-y-1">
-                          <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Jenis Konten</label>
-                          <Select 
-                            value={col.sourceType || 'static'}
-                            onValueChange={(val) => {
-                              const newRows = [...rows];
-                              newRows[rIdx].columns[cIdx].sourceType = val as any;
-                              if(val === 'system') newRows[rIdx].columns[cIdx].text = '{current_date}';
-                              if(val === 'static') newRows[rIdx].columns[cIdx].text = '';
-                              onChange({ ...config, rows: newRows });
-                            }}
-                          >
-                            <SelectTrigger className={`h-9 rounded-xl text-xs ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}>
-                              <SelectValue placeholder="Data" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="static">Statis (Manual)</SelectItem>
-                              <SelectItem value="system">Sistem (Otomatis)</SelectItem>
-                              <SelectItem value="database">Database / Dinamis</SelectItem>
-                              <SelectItem value="filter">Data Filter</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <span className={`text-[10px] block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Tipe data kolom.</span>
-                        </div>
-
                         {/* Konten Berdasarkan Source Type */}
                         <div>
-                          <Show when={col.sourceType === 'static'}>
                             <div className="space-y-1">
-                              <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Teks Statis</label>
-                              <Input 
-                                type="text" 
-                                className={`h-9 rounded-xl text-xs ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}
-                                value={col.text || ''}
-                                placeholder="Masukkan teks..."
-                                onChange={e => {
-                                  const newRows = [...rows];
-                                  newRows[rIdx].columns[cIdx].text = e.target.value;
-                                  onChange({ ...config, rows: newRows });
-                                }}
-                              />
-                              <span className={`text-[10px] block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Teks pasti yang akan dicetak.</span>
-                            </div>
-                          </Show>
-
-                          <Show when={col.sourceType === 'system'}>
-                            <div className="space-y-1">
-                              <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Variabel Sistem</label>
-                              <Select 
-                                value={col.text || '{current_date}'}
-                                onValueChange={(val) => {
-                                  const newRows = [...rows];
-                                  newRows[rIdx].columns[cIdx].text = val;
-                                  onChange({ ...config, rows: newRows });
-                                }}
-                              >
-                                <SelectTrigger className={`h-9 rounded-xl text-xs font-mono ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}>
-                                  <SelectValue placeholder="Pilih Variabel" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="{current_date}">Tanggal Cetak (Hari ini)</SelectItem>
-                                  <SelectItem value="{current_time}">Waktu Cetak (Jam)</SelectItem>
-                                  <SelectItem value="{page_number}">Halaman Ke-N</SelectItem>
-                                  <SelectItem value="{total_pages}">Total Halaman</SelectItem>
-                                  <SelectItem value="{user_name}">Nama User Pencetak</SelectItem>
-                                  <SelectItem value="{report_name}">Judul Laporan</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <span className={`text-[10px] block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Di-generate otomatis oleh sistem saat cetak.</span>
-                            </div>
-                          </Show>
-
-                          <Show when={col.sourceType === 'database'}>
-                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                              <div className="md:col-span-6 space-y-1">
-                                <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Sumber Data</label>
-                                <Select 
-                                  value={col.dataset || ''}
-                                  onValueChange={(val) => {
+                              <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Isi Konten (Rich Text)</label>
+                              <div className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700">
+                                <RichTextEditor 
+                                  value={col.text || ''}
+                                  onChange={(html: string) => {
                                     const newRows = [...rows];
-                                    newRows[rIdx].columns[cIdx].dataset = val;
+                                    newRows[rIdx].columns[cIdx].text = html;
                                     onChange({ ...config, rows: newRows });
                                   }}
-                                >
-                                  <SelectTrigger className={`h-9 rounded-xl text-xs ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}>
-                                    <SelectValue placeholder="Pilih Source" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <Show when={availableDataSources.length === 0}>
-                                      <SelectItem value="none" disabled>Belum ada Data Source</SelectItem>
-                                    </Show>
-                                    <Each of={availableDataSources}>
-                                      {(ds) => <SelectItem key={ds.id} value={ds.id}>{ds.name}</SelectItem>}
-                                    </Each>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="md:col-span-6 space-y-1">
-                                <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Nama Field</label>
-                                <Input 
-                                  type="text" 
-                                  className={`h-9 rounded-xl text-xs font-mono ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}
-                                  value={col.field || ''}
-                                  placeholder="e.g. nama_cabang"
-                                  onChange={e => {
-                                    const newRows = [...rows];
-                                    newRows[rIdx].columns[cIdx].field = e.target.value;
-                                    onChange({ ...config, rows: newRows });
-                                  }}
+                                  placeholder="Masukkan teks statis atau variabel..."
+                                  className="border-0 shadow-none min-h-[150px]"
                                 />
                               </div>
+                              <span className={`text-[10px] block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Anda bisa menggunakan variabel dinamis seperti {`{current_date}`} atau {`{DatasetName.Field}`}.</span>
                             </div>
-                            <span className={`text-[10px] mt-1 block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Ambil nilai (value) dari hasil eksekusi Query/SP.</span>
-                          </Show>
-
-                          <Show when={col.sourceType === 'filter'}>
-                            <div className="space-y-1">
-                              <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Pilih Filter</label>
-                              <Select 
-                                value={col.filter || ''}
-                                onValueChange={(val) => {
-                                  const newRows = [...rows];
-                                  newRows[rIdx].columns[cIdx].filter = val;
-                                  onChange({ ...config, rows: newRows });
-                                }}
-                              >
-                                <SelectTrigger className={`h-9 rounded-xl text-xs font-mono ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}>
-                                  <SelectValue placeholder="Pilih Variabel Filter" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <Show when={!reportConfig.filters || reportConfig.filters.length === 0}>
-                                    <SelectItem value="none" disabled>Belum ada Filter dibuat</SelectItem>
-                                  </Show>
-                                  <Each of={reportConfig.filters || []}>
-                                    {(f: any) => <SelectItem key={f.nama_filter} value={f.nama_filter}>{f.label || f.nama_filter} ({f.nama_filter})</SelectItem>}
-                                  </Each>
-                                </SelectContent>
-                              </Select>
-                              <span className={`text-[10px] block leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Menampilkan nilai yang dipilih user pada form filter.</span>
-                            </div>
-                          </Show>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">

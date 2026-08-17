@@ -25,12 +25,14 @@ export interface ILayoutRow {
 
 export interface ILayoutHeader {
   type: 'header'
-  rows: ILayoutRow[]
+  contentHtml?: string // New property for TipTap editor content
+  rows?: ILayoutRow[]
 }
 
 export interface ILayoutFooter {
   type: 'footer'
-  rows: ILayoutRow[]
+  contentHtml?: string // New property for TipTap editor content
+  rows?: ILayoutRow[]
 }
 
 export interface ILayoutDataColumn {
@@ -44,10 +46,13 @@ export interface ILayoutDataColumn {
 }
 
 export interface ILayoutTable {
+  title?: string
+  showBorder?: boolean
   dataset: string
   style?: string
   tableLayout?: 'auto' | 'fixed'
   showGrandTotal?: boolean
+  filters?: { field: string, operator: string, value: any }[]
   headerRows: ILayoutColumn[][]
   dataColumns: ILayoutDataColumn[]
   grouping?: {
@@ -61,13 +66,20 @@ export interface ILayoutTable {
 }
 
 export interface ILayoutBodyRow {
-  type?: 'table' | 'signature';
+  type?: 'table' | 'signature' | 'layout';
   columns?: {
     width?: string; 
     colSpan?: number;
     marginTop?: string;
     align?: 'left' | 'center' | 'right';
-    table: ILayoutTable;
+    type?: 'table' | 'signature' | 'text';
+    table?: ILayoutTable;
+    signature?: ILayoutColumn;
+    text?: string;
+    sourceType?: string;
+    dataset?: string;
+    field?: string;
+    filter?: string;
   }[];
   signatureRow?: ILayoutRow;
 }

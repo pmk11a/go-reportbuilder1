@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ReportEditor } from './ReportEditor';
 import { ReportPreview } from './ReportPreview';
@@ -40,6 +40,33 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
 
   const [zoom, setZoom] = useState(0.8);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [isAutoFit, setIsAutoFit] = useState(true);
+  const [isFitTable, setIsFitTable] = useState(false);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  const calculateAutoFitZoom = useCallback(() => {
+    if (!previewContainerRef.current) return;
+    const containerWidth = previewContainerRef.current.clientWidth - 32;
+    const paperWidthMm = orientation === 'landscape' ? 297 : 210;
+    const paperWidthPx = paperWidthMm * (96 / 25.4);
+    const newZoom = Math.min(1.5, Math.max(0.3, containerWidth / paperWidthPx));
+    setZoom(Math.round(newZoom * 100) / 100);
+  }, [orientation]);
+
+  // Auto-fit using ResizeObserver so it works when tab becomes visible
+  useEffect(() => {
+    if (!isAutoFit) return;
+    const el = previewContainerRef.current;
+    if (!el) {
+      // Tab might not be mounted yet, retry
+      const timer = setTimeout(calculateAutoFitZoom, 500);
+      return () => clearTimeout(timer);
+    }
+    calculateAutoFitZoom();
+    const observer = new ResizeObserver(() => calculateAutoFitZoom());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isAutoFit, calculateAutoFitZoom]);
 
   // Full report configuration state
   const [reportConfig, setReportConfig] = useState<Partial<IReportConfig>>({});
@@ -303,24 +330,32 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
           
           {/* Right Side: Preview */}
           <div className={`flex-1 h-full rounded-3xl relative overflow-hidden border ${isDark ? 'bg-slate-950 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
-            <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-40 border border-slate-200 dark:border-slate-700">
+            <div ref={previewContainerRef} className="absolute inset-0 overflow-auto flex flex-col justify-start items-center p-4">
+              <ReportPreview config={layoutConfig} zoom={zoom} orientation={reportConfig.paperConfig?.orientation || orientation} paperConfig={reportConfig.paperConfig} isFitTable={isFitTable} />
+            </div>
+
+            <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-50 border border-slate-200 dark:border-slate-700">
+              <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(v => !v); if (!isAutoFit) setTimeout(calculateAutoFitZoom, 100); }} className={`h-8 w-8 rounded-full ${isAutoFit ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Auto Fit Zoom">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>
+              </Button>
+              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
               <Button variant="ghost" size="icon" onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')} className="h-8 w-8 rounded-full text-slate-500" title="Ubah Orientasi">
                 {orientation === 'portrait' ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
               </Button>
               <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
-              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(0.3, z - 0.1))} className="h-8 w-8 rounded-full">
+              <Button variant="ghost" size="icon" onClick={() => setIsFitTable(v => !v)} className={`h-8 w-8 rounded-full ${isFitTable ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Fit Table ke Paper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+              </Button>
+              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
+              <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(false); setZoom(z => Math.max(0.3, z - 0.1)); }} className="h-8 w-8 rounded-full">
                 <span className="text-lg font-bold leading-none">-</span>
               </Button>
               <div className="flex items-center justify-center w-12 text-xs font-medium dark:text-slate-200">
                 {Math.round(zoom * 100)}%
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="h-8 w-8 rounded-full">
+              <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(false); setZoom(z => Math.min(2, z + 0.1)); }} className="h-8 w-8 rounded-full">
                 <span className="text-lg font-bold leading-none">+</span>
               </Button>
-            </div>
-
-            <div className="absolute inset-0 overflow-x-hidden overflow-y-auto flex flex-col justify-start items-center">
-              <ReportPreview config={layoutConfig} zoom={zoom} orientation={orientation} />
             </div>
           </div>
         </div>
@@ -352,25 +387,33 @@ export function ReportBuilder({ kodeMenu }: { kodeMenu?: string }) {
                 label: 'Preview Laporan',
                 value: 'preview',
                 content: (
-                  <div className={`w-full min-h-125 rounded-3xl relative overflow-hidden border ${isDark ? 'bg-slate-950 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
-                    <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-40 border border-slate-200 dark:border-slate-700">
+                  <div className={`w-full h-[calc(100vh-220px)] rounded-3xl relative overflow-hidden border ${isDark ? 'bg-slate-950 border-white/5' : 'bg-slate-100 border-slate-200'}`}>
+                    <div ref={previewContainerRef} className="absolute inset-0 overflow-auto flex flex-col justify-start items-center p-4">
+                      <ReportPreview config={layoutConfig} zoom={zoom} orientation={orientation} paperConfig={reportConfig.paperConfig} isAutoFit={isAutoFit} isFitTable={isFitTable} />
+                    </div>
+                    
+                    <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-50 border border-slate-200 dark:border-slate-700">
+                      <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(v => !v); if (!isAutoFit) calculateAutoFitZoom(); }} className={`h-8 w-8 rounded-full ${isAutoFit ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Auto Fit Zoom">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>
+                      </Button>
+                      <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
                       <Button variant="ghost" size="icon" onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')} className="h-8 w-8 rounded-full text-slate-500" title="Ubah Orientasi">
                         {orientation === 'portrait' ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
                       </Button>
                       <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
-                      <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.max(0.3, z - 0.1))} className="h-8 w-8 rounded-full">
+                      <Button variant="ghost" size="icon" onClick={() => setIsFitTable(v => !v)} className={`h-8 w-8 rounded-full ${isFitTable ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Fit Table ke Paper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+                      </Button>
+                      <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
+                      <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(false); setZoom(z => Math.max(0.3, z - 0.1)); }} className="h-8 w-8 rounded-full">
                         <span className="text-lg font-bold leading-none">-</span>
                       </Button>
                       <div className="flex items-center justify-center w-12 text-xs font-medium dark:text-slate-200">
                         {Math.round(zoom * 100)}%
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="h-8 w-8 rounded-full">
+                      <Button variant="ghost" size="icon" onClick={() => { setIsAutoFit(false); setZoom(z => Math.min(2, z + 0.1)); }} className="h-8 w-8 rounded-full">
                         <span className="text-lg font-bold leading-none">+</span>
                       </Button>
-                    </div>
-
-                    <div className="absolute inset-0 overflow-x-hidden overflow-y-auto flex justify-center items-start pt-16 sm:pt-20 pb-8">
-                      <ReportPreview config={layoutConfig} zoom={zoom} orientation={orientation} />
                     </div>
                   </div>
                 )

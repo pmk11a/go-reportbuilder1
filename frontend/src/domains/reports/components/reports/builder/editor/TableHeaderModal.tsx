@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, X, Settings2, ChevronUp, ChevronDown, Loader2 } from 'lucide-react';
-import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each } from '@/shared/ui';
+import { Button, DebouncedInput, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Each } from '@/shared/ui';
 import { Checkbox } from '@/shared/ui/form/checkbox';
 import type { ILayoutTable } from '@/domains/reports/types';
 import { usePreviewDataset } from '@/domains/reports/hooks/useReport';
@@ -49,12 +49,12 @@ export function TableHeaderModal({
 
   const addHeaderCol = (rIdx: number) => {
     const newRows = [...(localTable.headerRows || [])];
-    newRows[rIdx].push({ text: 'New Header', align: 'center', colSpan: 1, rowSpan: 1 });
+    newRows[rIdx].push({ text: '', align: 'center', colSpan: 1, rowSpan: 1 });
     setLocalTable({ ...localTable, headerRows: newRows });
   };
 
   const addDataCol = () => {
-    setLocalTable({ ...localTable, dataColumns: [...(localTable.dataColumns || []), { field: 'field_name', align: 'left' }] });
+    setLocalTable({ ...localTable, dataColumns: [...(localTable.dataColumns || []), { field: '', align: 'left' }] });
   };
 
   const moveHeaderRow = (rIdx: number, dir: -1 | 1) => {
@@ -211,12 +211,12 @@ export function TableHeaderModal({
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
                               <div className="lg:col-span-3 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">Label Kolom</label>
-                                <Input 
+                                <DebouncedInput 
                                   placeholder="Contoh: No. Bukti" className="text-sm h-9"
-                                  value={hCol.text}
-                                  onChange={e => {
+                                  value={hCol.text || ''}
+                                  onChange={val => {
                                     const newRows = [...localTable.headerRows];
-                                    newRows[rIdx][cIdx].text = e.target.value;
+                                    newRows[rIdx][cIdx].text = String(val);
                                     setLocalTable({...localTable, headerRows: newRows});
                                   }}
                                 />
@@ -241,36 +241,36 @@ export function TableHeaderModal({
                               </div>
                               <div className="lg:col-span-2 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">Lebar (Width)</label>
-                                <Input 
+                                <DebouncedInput 
                                   placeholder="Auto" className="h-9 text-sm"
                                   value={hCol.width || ''}
-                                  onChange={e => {
+                                  onChange={val => {
                                     const newRows = [...localTable.headerRows];
-                                    newRows[rIdx][cIdx].width = e.target.value;
+                                    newRows[rIdx][cIdx].width = String(val);
                                     setLocalTable({...localTable, headerRows: newRows});
                                   }}
                                 />
                               </div>
                               <div className="lg:col-span-2 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">ColSpan</label>
-                                <Input 
+                                <DebouncedInput 
                                   type="number" placeholder="1" className="h-9 text-sm"
                                   value={hCol.colSpan || 1}
-                                  onChange={e => {
+                                  onChange={val => {
                                     const newRows = [...localTable.headerRows];
-                                    newRows[rIdx][cIdx].colSpan = parseInt(e.target.value) || 1;
+                                    newRows[rIdx][cIdx].colSpan = parseInt(String(val)) || 1;
                                     setLocalTable({...localTable, headerRows: newRows});
                                   }}
                                 />
                               </div>
                               <div className="lg:col-span-2 space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-slate-500">RowSpan</label>
-                                <Input 
+                                <DebouncedInput 
                                   type="number" placeholder="1" className="h-9 text-sm"
                                   value={hCol.rowSpan || 1}
-                                  onChange={e => {
+                                  onChange={val => {
                                     const newRows = [...localTable.headerRows];
-                                    newRows[rIdx][cIdx].rowSpan = parseInt(e.target.value) || 1;
+                                    newRows[rIdx][cIdx].rowSpan = parseInt(String(val)) || 1;
                                     setLocalTable({...localTable, headerRows: newRows});
                                   }}
                                 />
@@ -291,12 +291,12 @@ export function TableHeaderModal({
 
           {/* Data Columns */}
           <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className={`sticky top-0 z-20 flex justify-between items-center py-2 px-1 -mx-1 mb-4 ${isDark ? 'bg-slate-900/95 backdrop-blur' : 'bg-white/95 backdrop-blur'}`}>
               <div>
                 <h4 className="font-semibold text-sm">Data Columns (Tbody)</h4>
                 <p className="text-xs text-slate-500">Pemetaan field dari Data Source (Database) ke tabel ini.</p>
               </div>
-              <Button variant="outline" size="sm" onClick={addDataCol}><Plus className="w-4 h-4 mr-1"/> Add Field</Button>
+              <Button variant="default" size="sm" onClick={addDataCol}><Plus className="w-4 h-4 mr-1"/> Add Field</Button>
             </div>
             
             <div className="space-y-3">
@@ -346,13 +346,13 @@ export function TableHeaderModal({
                               ID / Field
                               {isPreviewing && <Loader2 className="w-3 h-3 inline-block ml-2 animate-spin text-indigo-500" />}
                             </label>
-                            <Input 
+                            <DebouncedInput 
                               list={((dCol.type || 'field') === 'field') ? `columns-list-${cIdx}` : undefined}
                               placeholder="Contoh: no_rekening" className="font-mono text-sm h-9"
-                              value={dCol.field}
-                              onChange={e => {
+                              value={dCol.field || ''}
+                              onChange={val => {
                                 const newCols = [...localTable.dataColumns];
-                                newCols[cIdx].field = e.target.value;
+                                newCols[cIdx].field = String(val);
                                 setLocalTable({...localTable, dataColumns: newCols});
                               }}
                             />
@@ -404,13 +404,13 @@ export function TableHeaderModal({
                         </div>
                         <div className="xl:col-span-3 space-y-1">
                           <label className="text-[10px] font-bold uppercase text-slate-500">Lebar (Width)</label>
-                          <Input 
+                          <DebouncedInput 
                             placeholder="Contoh: 100px, 20%" 
                             className="font-mono text-sm h-9"
                             value={dCol.width || ''}
-                            onChange={e => {
+                            onChange={val => {
                               const newCols = [...localTable.dataColumns];
-                              newCols[cIdx].width = e.target.value;
+                              newCols[cIdx].width = String(val);
                               setLocalTable({...localTable, dataColumns: newCols});
                             }}
                           />
@@ -435,12 +435,12 @@ export function TableHeaderModal({
                       {(dCol.type || 'field') === 'formula' && (
                         <div className={`space-y-1.5 p-3 mt-1 rounded-lg border ${isDark ? 'bg-slate-900/50 border-slate-700/50' : 'bg-slate-50/50 border-slate-200/50'}`}>
                           <label className={`text-[10px] font-bold uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Rumus Formula</label>
-                          <Input 
+                          <DebouncedInput 
                             placeholder="Contoh: {tanggal:date} - {no_bukti}" className={`font-mono text-sm h-9 ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}
                             value={dCol.formula || ''}
-                            onChange={e => {
+                            onChange={val => {
                               const newCols = [...localTable.dataColumns];
-                              newCols[cIdx].formula = e.target.value;
+                              newCols[cIdx].formula = String(val);
                               setLocalTable({...localTable, dataColumns: newCols});
                             }}
                           />
@@ -460,26 +460,32 @@ export function TableHeaderModal({
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Settings2 className="w-5 h-5 text-indigo-500" />
-              <h4 className="font-semibold text-sm">Table Settings (Grouping & Sub-totals)</h4>
+              <h4 className="font-semibold text-sm">Table Grouping & Sub-Totals</h4>
             </div>
-            <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'} space-y-4`}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className={`p-5 rounded-xl border ${isDark ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'} space-y-5`}>
+              
+              <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-3 rounded-lg flex flex-col gap-1">
+                <h5 className="text-xs font-semibold text-indigo-800 dark:text-indigo-300">Multi-Column Grouping</h5>
+                <p className="text-[11px] text-indigo-600 dark:text-indigo-400">Anda dapat mengelompokkan data berdasarkan beberapa field sekaligus dengan memisahkannya menggunakan koma (contoh: <code>kode_cabang, id_divisi</code>).</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-500">Group By Field (Opsional)</label>
-                  <Input 
-                    placeholder="Contoh: kode_cabang, divisi" className="text-sm"
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Group By Field(s)</label>
+                  <DebouncedInput 
+                    placeholder="Contoh: kode_cabang, divisi" className="text-sm h-10"
                     value={localTable.grouping?.groupBy || ''}
-                    onChange={e => setLocalTable({...localTable, grouping: {...localTable.grouping!, groupBy: e.target.value}})}
+                    onChange={val => setLocalTable({...localTable, grouping: {...localTable.grouping!, groupBy: String(val)}})}
                   />
-                  <p className="text-[10px] text-slate-400">Gunakan koma (,) untuk beberapa field.</p>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-500">Label Sub-Total</label>
-                  <Input 
-                    placeholder="Contoh: Sub Total" className="text-sm"
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Label Text untuk Sub-Total</label>
+                  <DebouncedInput 
+                    placeholder="Contoh: Total" className="text-sm h-10"
                     value={localTable.grouping?.subtotalLabel || ''}
-                    onChange={e => setLocalTable({...localTable, grouping: {...localTable.grouping!, subtotalLabel: e.target.value}})}
+                    onChange={val => setLocalTable({...localTable, grouping: {...localTable.grouping!, subtotalLabel: String(val)}})}
                   />
+                  <p className="text-[10px] text-slate-500">Akan tampil di kolom pertama baris sub-total.</p>
                 </div>
               </div>
 

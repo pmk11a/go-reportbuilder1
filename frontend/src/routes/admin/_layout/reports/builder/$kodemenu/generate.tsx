@@ -2,12 +2,12 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ReportPreview } from '@/domains/reports/components/reports/builder/ReportPreview'
 import { useGetTabGeneral, useGetTabFilters, useGetTabKomponen } from '@/domains/reports/hooks/useReportBuilder'
 import { useReports, useExecuteReport } from '@/domains/reports/hooks/useReport'
-import { Loader2, FileSpreadsheet, FileText, Printer, Filter } from 'lucide-react'
+import { Loader2, FileSpreadsheet, FileText, Printer, Filter, Smartphone, Monitor } from 'lucide-react'
 import { BuilderFilterPanel } from '@/domains/reports/components/reports/builder/BuilderFilterPanel'
 import { useReportStore } from '@/domains/reports/stores/reportStore'
 import { reportViewerService } from '@/domains/reports/services/reportService'
 import { Show } from '@/shared/ui'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 export const Route = createFileRoute('/admin/_layout/reports/builder/$kodemenu/generate')({
   component: ReportGeneratorPage,
@@ -21,7 +21,8 @@ function ReportGeneratorPage() {
   const reportId = reports?.find(r => r.KODEMENU === kodemenu)?.id_laporan || null
 
   // Fetch configs
-  const { isLoading: l1 } = useGetTabGeneral(reportId)
+  // Fetch configs
+  const { data: reportGeneral, isLoading: l1 } = useGetTabGeneral(reportId)
   const { data: filterConfigs, isLoading: l2 } = useGetTabFilters(reportId)
   const { data: komponenData, isLoading: l3 } = useGetTabKomponen(reportId)
 
@@ -107,6 +108,21 @@ function ReportGeneratorPage() {
     window.print() // Simplistic fallback if generatePrintHTML is too tightly coupled to DynamicReportViewer
   }
 
+  const [zoom, setZoom] = React.useState(1.5)
+  const [orientation, setOrientation] = React.useState<'portrait'|'landscape'>('portrait')
+  const [isAutoFit, setIsAutoFit] = React.useState(true)
+  const [isFitTable, setIsFitTable] = React.useState(true)
+
+  React.useEffect(() => {
+    if (reportGeneral?.paperConfig?.orientation) {
+      setOrientation(reportGeneral.paperConfig.orientation)
+    }
+  }, [reportGeneral])
+
+  React.useEffect(() => {
+    setIsAutoFit(zoom === 1.5);
+  }, [zoom]);
+
   const isLoading = l1 || l2 || l3
 
   if (isLoading || !reportId) {
@@ -188,13 +204,42 @@ function ReportGeneratorPage() {
                 Gagal memuat laporan: {executeReport.error?.message}
               </div>
             ) : (
-              <div className="bg-white dark:bg-slate-950 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden min-h-[800px]">
-                <ReportPreview 
-                  config={layoutConfig}
-                  zoom={1}
-                  orientation="portrait"
-                  datasets={reportDatasets}
-                />
+              <div className="bg-slate-100 dark:bg-slate-950 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden h-[calc(100vh-350px)] relative">
+                <div className="absolute top-4 right-4 bg-white dark:bg-slate-800 shadow-lg rounded-full p-1.5 flex gap-1 z-50 border border-slate-200 dark:border-slate-700">
+                  <button onClick={() => { setIsAutoFit(v => !v); if (!isAutoFit) setZoom(1.5); }} className={`h-8 w-8 rounded-full flex items-center justify-center hover:bg-slate-100 ${isAutoFit ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Auto Fit Zoom (150%)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><path d="M2 12H22"/></svg>
+                  </button>
+                  <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
+                  <button onClick={() => setOrientation(o => o === 'portrait' ? 'landscape' : 'portrait')} className="h-8 w-8 rounded-full text-slate-500 flex items-center justify-center hover:bg-slate-100" title="Ubah Orientasi">
+                    {orientation === 'portrait' ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
+                  </button>
+                  <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
+                  <button onClick={() => setIsFitTable(v => !v)} className={`h-8 w-8 rounded-full flex items-center justify-center hover:bg-slate-100 ${isFitTable ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'text-slate-500'}`} title="Fit Table ke Paper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+                  </button>
+                  <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 my-auto mx-1" />
+                  <button onClick={() => { setIsAutoFit(false); setZoom(z => Math.max(0.3, z - 0.1)); }} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-slate-100">
+                    <span className="text-lg font-bold leading-none text-slate-600 dark:text-slate-300">-</span>
+                  </button>
+                  <div className="flex items-center justify-center w-12 text-xs font-medium dark:text-slate-200 text-slate-600">
+                    {Math.round(zoom * 100)}%
+                  </div>
+                  <button onClick={() => { setIsAutoFit(false); setZoom(z => Math.min(2, z + 0.1)); }} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-slate-100">
+                    <span className="text-lg font-bold leading-none text-slate-600 dark:text-slate-300">+</span>
+                  </button>
+                </div>
+                <div className="absolute inset-0 overflow-auto flex flex-col justify-start items-center">
+                  <ReportPreview 
+                    config={layoutConfig} 
+                    zoom={zoom} 
+                    orientation={orientation}
+                    paperConfig={reportGeneral?.paperConfig} 
+                    datasets={reportDatasets}
+                    mode="preview"
+                    isAutoFit={isAutoFit}
+                    isFitTable={isFitTable}
+                  />
+                </div>
               </div>
             )}
           </Show>

@@ -221,7 +221,9 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                       }} className="absolute top-3 right-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 h-8 w-8 p-0 rounded-full">
                         <Trash2 className="w-4 h-4" />
                       </Button>
-                      <h4 className={`text-xs font-bold uppercase mb-4 tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Tabel {cIdx + 1}</h4>
+                      <h4 className={`text-xs font-bold uppercase mb-4 tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                        {(!col.type || col.type === 'table') ? `Tabel ${cIdx + 1}` : `Signature Block ${cIdx + 1}`}
+                      </h4>
                       
                       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-5`}>
 
@@ -267,17 +269,60 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                             }}
                           />
                         </div>
-
-                        <div className="space-y-1.5">
-                          <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Pilih Data Source (Tabel)</label>
-                          <Select 
-                            value={col.table.dataset || undefined}
-                            onValueChange={(val) => {
-                              const newRows = [...rows];
-                              newRows[rIdx].columns![cIdx].table.dataset = val;
-                              onChange({ ...config, rows: newRows });
-                            }}
-                          >
+                        
+                        {col.type === 'signature' && col.signature ? (
+                          <>
+                            <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                              <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 1 (Judul)</label>
+                              <Input 
+                                placeholder="e.g. Mengetahui" className={`h-9 rounded-lg text-sm ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                value={col.signature.title || ''}
+                                onChange={e => {
+                                  const newRows = [...rows];
+                                  newRows[rIdx].columns![cIdx].signature!.title = e.target.value;
+                                  onChange({ ...config, rows: newRows });
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                              <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 2 (Nama TTD)</label>
+                              <Input 
+                                placeholder="Nama Lengkap" className={`h-9 rounded-lg font-bold text-sm ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                value={col.signature.name || ''}
+                                onChange={e => {
+                                  const newRows = [...rows];
+                                  newRows[rIdx].columns![cIdx].signature!.name = e.target.value;
+                                  onChange({ ...config, rows: newRows });
+                                }}
+                              />
+                            </div>
+                            <div className="space-y-1.5 md:col-span-2 lg:col-span-3">
+                              <label className={`text-[11px] font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Baris 3 (NIP/Jabatan)</label>
+                              <Input 
+                                placeholder="NIP. 123456" className={`h-9 rounded-lg text-sm ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white'}`}
+                                value={col.signature.role || ''}
+                                onChange={e => {
+                                  const newRows = [...rows];
+                                  newRows[rIdx].columns![cIdx].signature!.role = e.target.value;
+                                  onChange({ ...config, rows: newRows });
+                                }}
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="space-y-1.5">
+                              <label className={`text-xs font-semibold block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Pilih Data Source (Tabel)</label>
+                              <Select 
+                                value={col.table?.dataset || undefined}
+                                onValueChange={(val) => {
+                                  const newRows = [...rows];
+                                  if (newRows[rIdx].columns![cIdx].table) {
+                                    newRows[rIdx].columns![cIdx].table!.dataset = val;
+                                  }
+                                  onChange({ ...config, rows: newRows });
+                                }}
+                              >
                             <SelectTrigger className={`h-10 w-full rounded-xl text-sm ${isDark ? 'bg-slate-950 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-900'}`}>
                               <SelectValue placeholder="Pilih Dataset untuk Tabel ini" />
                             </SelectTrigger>
@@ -313,20 +358,23 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
                               </SelectContent>
                             </Select>
                           </div>
-                      </div>
-
-                      <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-xl border ${isDark ? 'bg-slate-950/50 border-slate-800/60' : 'bg-slate-50 border-slate-100'} gap-4 sm:gap-0`}>
-                        <div>
-                          <h5 className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Konfigurasi Kolom & Struktur</h5>
-                          <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Atur urutan kolom, grouping, styling, dan kalkulasi sub-total.</p>
+                        </>
+                      )}
+                    </div>
+                      {(!col.type || col.type === 'table') && col.table && (
+                        <div className={`mt-5 pt-5 border-t ${isDark ? 'border-slate-800' : 'border-slate-100'} flex items-center justify-between`}>
+                          <div>
+                            <h5 className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Konfigurasi Kolom & Struktur</h5>
+                            <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Atur urutan kolom, grouping, styling, dan kalkulasi sub-total.</p>
+                          </div>
+                          <Button 
+                            variant="default" className="h-9 px-4 shrink-0 shadow-sm rounded-xl text-xs font-medium"
+                            onClick={() => onOpenHeaderModal(rIdx, cIdx, col.table!)}
+                          >
+                            <Edit2 className="w-3.5 h-3.5 mr-2" /> Edit Tabel
+                          </Button>
                         </div>
-                        <Button 
-                          variant="default" className="h-9 px-4 shrink-0 shadow-sm rounded-xl text-xs font-medium"
-                          onClick={() => onOpenHeaderModal(rIdx, cIdx, col.table)}
-                        >
-                          <Edit2 className="w-3.5 h-3.5 mr-2" /> Edit Tabel
-                        </Button>
-                      </div>
+                      )}
                     </div>
                   )}
                 </Each>
@@ -334,17 +382,30 @@ export function BodyEditor({ config, onChange, reportConfig, setReportConfig, on
               </div>
 
               {(!row.type || row.type === 'table') && (
-                <Button 
-                  variant="ghost" size="sm"
-                  onClick={() => {
-                    const newRows = [...rows];
-                    newRows[rIdx].columns!.push({ width: '50%', table: { dataset: '', headerRows: [], dataColumns: [] } });
-                    onChange({ ...config, rows: newRows });
-                  }}
-                  className="mt-2 text-xs"
-                >
-                  <Plus className="w-3 h-3 mr-1" /> Add Table to Row
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="ghost" size="sm"
+                    onClick={() => {
+                      const newRows = [...rows];
+                      newRows[rIdx].columns!.push({ width: '50%', type: 'table', table: { dataset: '', headerRows: [], dataColumns: [] } });
+                      onChange({ ...config, rows: newRows });
+                    }}
+                    className="mt-2 text-xs"
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add Table to Row
+                  </Button>
+                  <Button 
+                    variant="ghost" size="sm"
+                    onClick={() => {
+                      const newRows = [...rows];
+                      newRows[rIdx].columns!.push({ width: '50%', type: 'signature', signature: { title: 'Mengetahui', name: 'John Doe', role: 'Manager' } });
+                      onChange({ ...config, rows: newRows });
+                    }}
+                    className="mt-2 text-xs"
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add Signature to Row
+                  </Button>
+                </div>
               )}
             </div>
           )}

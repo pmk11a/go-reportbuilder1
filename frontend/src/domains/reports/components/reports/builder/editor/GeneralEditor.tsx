@@ -1,4 +1,4 @@
-import { Input, Textarea, Checkbox, Button } from '@/shared/ui';
+import { Input, Textarea, Checkbox, Button, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui';
 import type { IReportConfig } from '@/domains/reports/types';
 import { Trash2 } from 'lucide-react';
 import { DataSourceManager } from './DataSourceManager';
@@ -57,6 +57,86 @@ export function GeneralEditor({ config, onChange, isDark, onDelete }: { config: 
           />
           Laporan Aktif (Ditampilkan di Menu)
         </label>
+      </div>
+
+      <div className={`h-px w-full ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
+
+      <div>
+        <h3 className={`text-base font-bold mb-3 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Konfigurasi Kertas (Cetak)</h3>
+        <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className={labelClass}>Ukuran Kertas</label>
+              <Select
+                value={config.paperConfig?.size || 'A4'}
+                onValueChange={(val: any) => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), size: val } })}
+              >
+                <SelectTrigger className={`h-9 w-full rounded-xl ${isDark ? 'bg-slate-950 border-slate-700' : 'bg-white border-slate-200'}`}>
+                  <SelectValue placeholder="Pilih Kertas" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="A4">A4 (210 x 297 mm)</SelectItem>
+                  <SelectItem value="F4">F4 / Folio (215 x 330 mm)</SelectItem>
+                  <SelectItem value="Letter">Letter (216 x 279 mm)</SelectItem>
+                  <SelectItem value="Legal">Legal (216 x 356 mm)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className={labelClass}>Orientasi (Rotasi)</label>
+              <Select
+                value={config.paperConfig?.orientation || 'portrait'}
+                onValueChange={(val: any) => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), orientation: val } })}
+              >
+                <SelectTrigger className={`h-9 w-full rounded-xl ${isDark ? 'bg-slate-950 border-slate-700' : 'bg-white border-slate-200'}`}>
+                  <SelectValue placeholder="Pilih Orientasi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="portrait">Potret (Berdiri)</SelectItem>
+                  <SelectItem value="landscape">Lanskap (Mendatar)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="md:col-span-2 mt-2">
+              <label className={labelClass + " mb-2"}>Margin Kertas</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="space-y-1">
+                  <label className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Atas (Top)</label>
+                  <Input 
+                    placeholder="Contoh: 20mm" className={`h-8 text-xs ${isDark ? 'bg-slate-950' : 'bg-white'}`}
+                    value={config.paperConfig?.margin?.top || '20mm'}
+                    onChange={e => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), margin: { ...(config.paperConfig?.margin || {}), top: e.target.value } } })}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Kanan (Right)</label>
+                  <Input 
+                    placeholder="Contoh: 15mm" className={`h-8 text-xs ${isDark ? 'bg-slate-950' : 'bg-white'}`}
+                    value={config.paperConfig?.margin?.right || '15mm'}
+                    onChange={e => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), margin: { ...(config.paperConfig?.margin || {}), right: e.target.value } } })}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Bawah (Bottom)</label>
+                  <Input 
+                    placeholder="Contoh: 20mm" className={`h-8 text-xs ${isDark ? 'bg-slate-950' : 'bg-white'}`}
+                    value={config.paperConfig?.margin?.bottom || '20mm'}
+                    onChange={e => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), margin: { ...(config.paperConfig?.margin || {}), bottom: e.target.value } } })}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Kiri (Left)</label>
+                  <Input 
+                    placeholder="Contoh: 15mm" className={`h-8 text-xs ${isDark ? 'bg-slate-950' : 'bg-white'}`}
+                    value={config.paperConfig?.margin?.left || '15mm'}
+                    onChange={e => onChange({ ...config, paperConfig: { ...(config.paperConfig || {}), margin: { ...(config.paperConfig?.margin || {}), left: e.target.value } } })}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={`h-px w-full ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}></div>

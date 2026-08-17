@@ -19,6 +19,7 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, type TooltipP
 // Form Components
 export { Checkbox, type CheckboxProps } from './form/checkbox';
 export { Counter, type CounterProps } from './form/counter';
+export { DebouncedInput, type DebouncedInputProps } from './form/debounced-input';
 export { FileUpload, type FileUploadProps } from './form/file-upload';
 export { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from './form/form';
 export { ImageUpload, type ImageUploadProps } from './form/image-upload';
