@@ -236,13 +236,18 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 		sql = s.replacePlaceholder(sql, "@"+key, fmt.Sprintf("'%s'", s.escapeSQLString(fmt.Sprintf("%v", value))))
 	}
 
+	log.Printf("DEBUG FILTERS RECEIVED: %+v", filters)
+
 	// Replace filter parameters
 	for key, value := range filters {
 		placeholder := "@" + key
-		if !s.hasPlaceholder(sql, placeholder) {
+		has := s.hasPlaceholder(sql, placeholder)
+		log.Printf("DEBUG placeholder: %s, has: %v, val: %v", placeholder, has, value)
+		if !has {
 			continue
 		}
 		sql = s.replaceFilterValue(sql, placeholder, value)
+		log.Printf("DEBUG SQL AFTER %s: %s", placeholder, sql)
 	}
 
 	// Handle @IDUser and @UserID
@@ -252,6 +257,14 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 	} else {
 		sql = s.replacePlaceholder(sql, "@IDUser", "''")
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
+	}
+
+	// Fallback for known hidden/optional filters that might be omitted by frontend
+	knownOptional := []string{"@filter_teks", "@status_otorisasi", "@iskp", "@tipe_ppn", "@v_filter_teks", "@v_status_otorisasi", "@v_iskp", "@v_tipe_ppn"}
+	for _, opt := range knownOptional {
+		if s.hasPlaceholder(sql, opt) {
+			sql = s.replacePlaceholder(sql, opt, "''")
+		}
 	}
 
 	// For EXEC SP queries that have a known sp_signature in config_json,
@@ -265,28 +278,16 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 	}
 
 	// NOTE: buildSPQuery returned original SQL (SP not handled by switch case)
-	// Replace remaining @placeholders with NULL for any SP calls that weren't handled
-	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
-		sql = s.replaceRemainingPlaceholders(sql)
-		// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
-		sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
-	}
-
-	// Strip residual placeholders in SELECT queries (fallback safety)
-	if matched, _ := regexp.MatchString(`(?i)^\s*SELECT`, sql); matched {
-		if hasRemaining, _ := regexp.MatchString(`(?i)@\w+`, sql); hasRemaining {
-			// Remove WHERE clause with residual placeholders
-			sql = regexp.MustCompile(`(?i)\s*WHERE\s+.*?(ORDER|GROUP|HAVING|OPTION|$)`).ReplaceAllString(sql, " $1")
-			sql = strings.TrimSpace(sql)
-			// Clean dangling AND/OR
-			sql = regexp.MustCompile(`(?i)^\s*(AND|OR)\s+`).ReplaceAllString(sql, "")
-		}
-	}
+	// Replace remaining @placeholders with NULL for any queries that weren't handled
+	// This safely handles EXEC, DECLARE, and SELECT queries without deleting WHERE clauses
+	sql = s.replaceRemainingPlaceholders(sql)
+	// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
+	sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
 
 	log.Printf("DEBUG EXECUTE DATASET %s: %s", dataset.NamaDataset, sql)
 
 	// Reject placeholder / unconfigured queries to surface configuration issues early
-	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") {
+	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") || strings.Contains(strings.ToUpper(sql), "UNKNOWN_SP") {
 		return nil, fmt.Errorf("report dataset %q has not been configured yet (missing SP mapping)", dataset.NamaDataset)
 	}
 
@@ -328,6 +329,14 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
 	}
 
+	// Fallback for known hidden/optional filters that might be omitted by frontend
+	knownOptional := []string{"@filter_teks", "@status_otorisasi", "@iskp", "@tipe_ppn", "@v_filter_teks", "@v_status_otorisasi", "@v_iskp", "@v_tipe_ppn"}
+	for _, opt := range knownOptional {
+		if s.hasPlaceholder(sql, opt) {
+			sql = s.replacePlaceholder(sql, opt, "''")
+		}
+	}
+
 	// For EXEC SP queries that have a known sp_signature in config_json,
 	// use ExecuteSPReport to build the properly parameterized SQL.
 	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
@@ -349,17 +358,16 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 		}
 	}
 
-	// Replace remaining @placeholders with NULL for any SP calls that weren't handled
-	if matched, _ := regexp.MatchString(`^\s*EXEC\s+`, sql); matched {
-		sql = s.replaceRemainingPlaceholders(sql)
-		// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
-		sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
-	}
+	// Replace remaining @placeholders with NULL for any queries that weren't handled
+	// This safely handles EXEC, DECLARE, and SELECT queries
+	sql = s.replaceRemainingPlaceholders(sql)
+	// Clean up any trailing commas from NULL replacement (e.g., ",:3" -> ":3")
+	sql = strings.TrimRight(strings.TrimRight(sql, ","), " ")
 
 	log.Printf("DEBUG EXECUTE MULTI %s: %s", dataset.NamaDataset, sql)
 
 	// Reject placeholder / unconfigured queries
-	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") {
+	if strings.TrimSpace(sql) == "" || strings.Contains(strings.ToUpper(sql), "TO BE CONFIGURED") || strings.Contains(strings.ToUpper(sql), "UNKNOWN_SP") {
 		return nil, fmt.Errorf("report dataset %q has not been configured yet (missing SP mapping)", dataset.NamaDataset)
 	}
 
@@ -719,9 +727,18 @@ func (s *SReportExecutionService) replaceFilterValue(sql, placeholder string, va
 // replaceRemainingPlaceholders replaces all remaining @placeholders with NULL for SP calls
 // Also handles :0, :1, :2 style positional parameters (replace with NULL)
 func (s *SReportExecutionService) replaceRemainingPlaceholders(sql string) string {
-	// Replace @param style placeholders
-	re := regexp.MustCompile(`(?i)@[A-Za-z_]\w*`)
-	sql = re.ReplaceAllString(sql, "NULL")
+	// Replace @param style placeholders, but preserve named parameter assignments (@param =)
+	// and preserve DECLARE variables.
+	// Since Golang regexp doesn't support negative lookahead, we match a broader pattern and filter.
+	// We match an optional DECLARE, the @param, and an optional '='.
+	re := regexp.MustCompile(`(?i)(DECLARE\s+)?@[A-Za-z_]\w*\s*=?`)
+	sql = re.ReplaceAllStringFunc(sql, func(match string) string {
+		upperMatch := strings.ToUpper(match)
+		if strings.Contains(upperMatch, "DECLARE ") || strings.Contains(match, "=") {
+			return match // Leave DECLARE and named parameters unchanged
+		}
+		return "NULL" // Replace dangling placeholders
+	})
 
 	// Replace :0, :1, :2 etc style positional parameters
 	re2 := regexp.MustCompile(`:\d+`)
