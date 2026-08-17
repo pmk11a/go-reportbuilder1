@@ -27,6 +27,7 @@ type SCreateReportRequest struct {
 	NamaLaporan string          `json:"nama_laporan" binding:"required"`
 	Deskripsi   *string         `json:"deskripsi"`
 	FooterBands json.RawMessage `json:"footer_bands"`
+	PaperConfig json.RawMessage `json:"paperConfig,omitempty"`
 	StatusAktif *bool           `json:"status_aktif"`
 	Komponen    []SKomponenRequest `json:"komponen"`
 }
@@ -36,6 +37,7 @@ type SUpdateReportRequest struct {
 	NamaLaporan *string         `json:"nama_laporan"`
 	Deskripsi   *string         `json:"deskripsi"`
 	FooterBands json.RawMessage `json:"footer_bands"`
+	PaperConfig json.RawMessage `json:"paperConfig,omitempty"`
 	StatusAktif *bool            `json:"status_aktif"`
 	Komponen    []SKomponenRequest `json:"komponen"`
 }
@@ -174,6 +176,7 @@ type SReportResponse struct {
 	Deskripsi  *string          `json:"deskripsi"`
 	StatusAktif bool            `json:"status_aktif"`
 	FooterBands json.RawMessage `json:"footer_bands"`
+	PaperConfig json.RawMessage `json:"paperConfig,omitempty"`
 	Keterangan *string          `json:"Keterangan,omitempty"`
 	L0         *int             `json:"L0,omitempty"`
 	Icon       *string          `json:"icon,omitempty"`
@@ -186,11 +189,12 @@ type SReportDetailResponse struct {
 	IDLaporan   int                         `json:"id_laporan"`
 	KODEMENU   string                       `json:"KODEMENU"`
 	NamaLaporan string                       `json:"nama_laporan"`
-	Deskripsi  *string                       `json:"deskripsi"`
+	Deskripsi  *string                      `json:"deskripsi"`
 	StatusAktif bool                        `json:"status_aktif"`
-	FooterBands json.RawMessage              `json:"footer_bands"`
-	Keterangan *string                       `json:"Keterangan,omitempty"`
-	L0         *int                          `json:"L0,omitempty"`
+	FooterBands json.RawMessage             `json:"footer_bands"`
+	PaperConfig json.RawMessage             `json:"paperConfig,omitempty"`
+	Keterangan *string                      `json:"Keterangan,omitempty"`
+	L0         *int                         `json:"L0,omitempty"`
 	Filters     []SFilterResponse            `json:"filters"`
 	Datasets    []SDatasetResponse           `json:"datasets"`
 	Columns     map[string][]SColumnResponse  `json:"columns"`

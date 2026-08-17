@@ -145,6 +145,7 @@ func (s *reportsService) CreateReport(ctx context.Context, req *SCreateReportReq
 		Deskripsi:   req.Deskripsi,
 		StatusAktif: statusAktif,
 		FooterBands: func() *string { s := string(footerJSON); return &s }(),
+		PaperConfig: func() *string { if req.PaperConfig != nil && len(req.PaperConfig) > 0 { s := string(req.PaperConfig); return &s }; return nil }(),
 	}
 
 	id, err := s.repo.CreateReport(ctx, entity)
@@ -202,6 +203,9 @@ func (s *reportsService) UpdateReport(ctx context.Context, id int, req *SUpdateR
 	}
 	if req.FooterBands != nil {
 		report.FooterBands = func() *string { if req.FooterBands != nil && len(req.FooterBands) > 0 { s := string(req.FooterBands); return &s }; return nil }()
+	}
+	if req.PaperConfig != nil {
+		report.PaperConfig = func() *string { if req.PaperConfig != nil && len(req.PaperConfig) > 0 { s := string(req.PaperConfig); return &s }; return nil }()
 	}
 
 	if err := s.repo.UpdateReport(ctx, id, report); err != nil {
@@ -787,18 +791,24 @@ func (s *reportsService) PreviewQuery(ctx context.Context, req *SPreviewQueryReq
 // ============================================================================
 
 func mapReportToResponse(r *SDBMasterLaporan) SReportResponse {
-	var footerBands json.RawMessage
-	if r.FooterBands != nil && *r.FooterBands != "" {
-		footerBands = json.RawMessage(*r.FooterBands)
-	}
-
 	return SReportResponse{
 		IDLaporan:   r.IDLaporan,
 		KODEMENU:    r.KODEMENU,
 		NamaLaporan: r.NamaLaporan,
 		Deskripsi:   r.Deskripsi,
 		StatusAktif: r.StatusAktif,
-		FooterBands: footerBands,
+		FooterBands: func() json.RawMessage {
+			if r.FooterBands != nil && len(*r.FooterBands) > 0 {
+				return json.RawMessage(*r.FooterBands)
+			}
+			return nil
+		}(),
+		PaperConfig: func() json.RawMessage {
+			if r.PaperConfig != nil && len(*r.PaperConfig) > 0 {
+				return json.RawMessage(*r.PaperConfig)
+			}
+			return nil
+		}(),
 		Keterangan:  r.Keterangan,
 		L0:          r.L0,
 		Icon:        r.Icon,
@@ -827,6 +837,12 @@ func mapReportToDetailResponse(
 		Deskripsi:   r.Deskripsi,
 		StatusAktif: r.StatusAktif,
 		FooterBands: footerBands,
+		PaperConfig: func() json.RawMessage {
+			if r.PaperConfig != nil && len(*r.PaperConfig) > 0 {
+				return json.RawMessage(*r.PaperConfig)
+			}
+			return nil
+		}(),
 		Datasets:    datasetResponses,
 		Access:      access,
 	}

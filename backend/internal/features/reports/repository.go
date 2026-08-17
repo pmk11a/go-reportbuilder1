@@ -91,7 +91,7 @@ func (r *reportsRepository) ListReports(ctx context.Context, search string, page
 	var reports []SDBMasterLaporan
 	baseSQL := `
 		SELECT m.[id_laporan], m.[KODEMENU], m.[nama_laporan], m.[deskripsi],
-			   m.[status_aktif], m.[footer_bands], m.[created_at], m.[updated_at],
+			   m.[status_aktif], m.[footer_bands], m.[paper_config], m.[created_at], m.[updated_at],
 			   menu.[Keterangan], menu.[L0]
 		FROM dbmasterlaporan m
 		LEFT JOIN DBMENUREPORT menu ON menu.[KODEMENU] = m.[KODEMENU]`
@@ -122,7 +122,7 @@ func (r *reportsRepository) GetReportByID(ctx context.Context, id int) (*SDBMast
 	var report SDBMasterLaporan
 	err := r.db.WithContext(ctx).Raw(`
 		SELECT m.[id_laporan], m.[KODEMENU], m.[nama_laporan], m.[deskripsi],
-			   m.[status_aktif], m.[footer_bands], m.[created_at], m.[updated_at],
+			   m.[status_aktif], m.[footer_bands], m.[paper_config], m.[created_at], m.[updated_at],
 			   menu.[Keterangan], menu.[L0]
 		FROM dbmasterlaporan m
 		LEFT JOIN DBMENUREPORT menu ON menu.[KODEMENU] = m.[KODEMENU]
@@ -142,7 +142,7 @@ func (r *reportsRepository) GetReportByKodeMenu(ctx context.Context, kodeMenu st
 	var report SDBMasterLaporan
 	err := r.db.WithContext(ctx).Raw(`
 		SELECT m.[id_laporan], m.[KODEMENU], m.[nama_laporan], m.[deskripsi],
-			   m.[status_aktif], m.[footer_bands], m.[created_at], m.[updated_at],
+			   m.[status_aktif], m.[footer_bands], m.[paper_config], m.[created_at], m.[updated_at],
 			   menu.[Keterangan], menu.[L0]
 		FROM dbmasterlaporan m
 		LEFT JOIN DBMENUREPORT menu ON menu.[KODEMENU] = m.[KODEMENU]
@@ -166,9 +166,9 @@ func (r *reportsRepository) CreateReport(ctx context.Context, data *SDBMasterLap
 func (r *reportsRepository) UpdateReport(ctx context.Context, id int, data *SDBMasterLaporan) error {
 	return r.db.WithContext(ctx).Exec(`
 		UPDATE dbmasterlaporan
-		SET [nama_laporan] = ?, [deskripsi] = ?, [status_aktif] = ?, [footer_bands] = ?, [updated_at] = GETDATE()
+		SET [nama_laporan] = ?, [deskripsi] = ?, [status_aktif] = ?, [footer_bands] = ?, [paper_config] = ?, [updated_at] = GETDATE()
 		WHERE [id_laporan] = ?`,
-		data.NamaLaporan, data.Deskripsi, data.StatusAktif, data.FooterBands, id,
+		data.NamaLaporan, data.Deskripsi, data.StatusAktif, data.FooterBands, data.PaperConfig, id,
 	).Error
 }
 

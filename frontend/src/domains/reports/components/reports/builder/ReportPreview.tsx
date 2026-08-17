@@ -354,7 +354,7 @@ export function ReportPreview({
                                           <h4 className="font-bold text-sm mb-2">{col.table?.title}</h4>
                                         </Show>
                                         <table 
-                                          className={`w-full text-sm border-collapse ${col.table?.showBorder !== false ? 'border border-gray-300' : ''}`}
+                                          className={`w-full text-[10px] border-collapse ${col.table?.showBorder !== false ? 'border border-gray-300' : ''}`}
                                           style={{ 
                                             ...(col.table?.tableLayout ? { tableLayout: col.table.tableLayout as any } : {}),
                                             wordBreak: 'break-word'
@@ -418,7 +418,7 @@ export function ReportPreview({
                                                         <Fragment key={gIdx}>
                                                           {groupByFields.length > 0 && (
                                                             <tr className="bg-slate-50 text-slate-700 ">
-                                                              <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-xs font-bold bg-gray-50 whitespace-normal break-words">
+                                                              <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-[10px] font-bold bg-gray-50 whitespace-normal break-words">
                                                                 [Group: {group.key}]
                                                               </td>
                                                             </tr>
@@ -462,7 +462,7 @@ export function ReportPreview({
                                                                   const isLabelCell = dCIdx === 0;
                                                                   const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
                                                                   return (
-                                                                    <td key={`sub-${dCIdx}`} className="border border-gray-300 p-2 bg-gray-100 text-xs whitespace-normal break-words" colSpan={isLabelCell ? labelColspan : 1} style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}>
+                                                                    <td key={`sub-${dCIdx}`} className="border border-gray-300 p-2 bg-gray-100 text-[10px] whitespace-normal break-words" colSpan={isLabelCell ? labelColspan : 1} style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}>
                                                                       {isSummed ? (datasets === undefined ? "999,999" : formatCell(group.rows.reduce((acc: number, rowVal: any) => acc + (parseFloat(rowVal[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? (col.table?.grouping?.subtotalLabel || 'Sub Total') : "")}
                                                                     </td>
                                                                   );
@@ -482,7 +482,7 @@ export function ReportPreview({
                                                             const isLabelCell = dCIdx === 0;
                                                             const formatToUse = (dCol.format === 'currency' || dCol.format === 'number') ? dCol.format : 'number';
                                                             return (
-                                                              <td key={`grand-${dCIdx}`} className="border border-gray-300 p-2 text-xs whitespace-normal break-words" colSpan={isLabelCell ? labelColspan : 1} style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}>
+                                                              <td key={`grand-${dCIdx}`} className="border border-gray-300 p-2 text-[10px] whitespace-normal break-words" colSpan={isLabelCell ? labelColspan : 1} style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}>
                                                                 {isSummed ? (datasets === undefined ? "9,999,999" : formatCell(realData.reduce((acc: number, rowVal: any) => acc + (parseFloat(rowVal[dCol.field]) || 0), 0), formatToUse as any)) : (isLabelCell ? "Grand Total" : "")}
                                                               </td>
                                                             );
@@ -581,7 +581,7 @@ export function ReportPreview({
                                         <h4 className="font-bold text-sm mb-2">{col.table?.title}</h4>
                                       </Show>
                                       <table 
-                                        className={`w-full text-sm border-collapse ${col.table?.showBorder !== false ? 'border border-gray-300' : ''}`}
+                                        className={`w-full text-[10px] border-collapse ${col.table?.showBorder !== false ? 'border border-gray-300' : ''}`}
                                         style={{ 
                                           ...(col.table?.tableLayout ? { tableLayout: col.table.tableLayout as any } : {}),
                                           wordBreak: 'break-word'
@@ -650,7 +650,7 @@ export function ReportPreview({
                                                         {/* Group Header */}
                                                         {groupByFields.length > 0 && (
                                                           <tr className="bg-slate-50 text-slate-700 ">
-                                                            <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-xs font-bold bg-gray-50">
+                                                            <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-[10px] font-bold bg-gray-50">
                                                               [Group: {group.key}]
                                                             </td>
                                                           </tr>
@@ -708,7 +708,7 @@ export function ReportPreview({
                                                                 return (
                                                                   <td 
                                                                     key={`sub-${dCIdx}`} 
-                                                                    className="border border-gray-300 p-2 bg-gray-100 text-xs"
+                                                                    className="border border-gray-300 p-2 bg-gray-100 text-[10px]"
                                                                     colSpan={isLabelCell ? labelColspan : 1}
                                                                     style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
                                                                   >
@@ -735,7 +735,7 @@ export function ReportPreview({
                                                           return (
                                                             <td 
                                                               key={`grand-${dCIdx}`} 
-                                                              className="border border-gray-300 p-2 text-xs"
+                                                              className="border border-gray-300 p-2 text-[10px]"
                                                               colSpan={isLabelCell ? labelColspan : 1}
                                                               style={{ textAlign: isSummed ? 'right' : (isLabelCell && labelColspan > 1 ? 'right' : dCol.align || 'left') }}
                                                             >

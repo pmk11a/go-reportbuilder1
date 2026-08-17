@@ -259,11 +259,22 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
 	}
 
-	// Fallback for known hidden/optional filters that might be omitted by frontend
-	knownOptional := []string{"@filter_teks", "@status_otorisasi", "@iskp", "@tipe_ppn", "@v_filter_teks", "@v_status_otorisasi", "@v_iskp", "@v_tipe_ppn"}
-	for _, opt := range knownOptional {
-		if s.hasPlaceholder(sql, opt) {
-			sql = s.replacePlaceholder(sql, opt, "''")
+	// Fallback for optional filters (wajib_isi = 0) that might be omitted by frontend
+	if filtersDef, err := s.repo.GetFilters(ctx, dataset.IDLaporan); err == nil {
+		for _, fd := range filtersDef {
+			if !fd.WajibIsi {
+				opt := "@" + strings.TrimSpace(fd.NamaFilter)
+				// If not provided in frontend payload, default to NilaiDefault or NULL
+				if _, exists := filters[strings.TrimSpace(fd.NamaFilter)]; !exists {
+					if s.hasPlaceholder(sql, opt) {
+						if fd.NilaiDefault != nil {
+							sql = s.replaceFilterValue(sql, opt, *fd.NilaiDefault)
+						} else {
+							sql = s.replacePlaceholder(sql, opt, "NULL")
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -329,11 +340,22 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 		sql = s.replacePlaceholder(sql, "@UserID", "''")
 	}
 
-	// Fallback for known hidden/optional filters that might be omitted by frontend
-	knownOptional := []string{"@filter_teks", "@status_otorisasi", "@iskp", "@tipe_ppn", "@v_filter_teks", "@v_status_otorisasi", "@v_iskp", "@v_tipe_ppn"}
-	for _, opt := range knownOptional {
-		if s.hasPlaceholder(sql, opt) {
-			sql = s.replacePlaceholder(sql, opt, "''")
+	// Fallback for optional filters (wajib_isi = 0) that might be omitted by frontend
+	if filtersDef, err := s.repo.GetFilters(ctx, dataset.IDLaporan); err == nil {
+		for _, fd := range filtersDef {
+			if !fd.WajibIsi {
+				opt := "@" + strings.TrimSpace(fd.NamaFilter)
+				// If not provided in frontend payload, default to NilaiDefault or NULL
+				if _, exists := filters[strings.TrimSpace(fd.NamaFilter)]; !exists {
+					if s.hasPlaceholder(sql, opt) {
+						if fd.NilaiDefault != nil {
+							sql = s.replaceFilterValue(sql, opt, *fd.NilaiDefault)
+						} else {
+							sql = s.replacePlaceholder(sql, opt, "NULL")
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -714,7 +736,7 @@ func (s *SReportExecutionService) replaceFilterValue(sql, placeholder string, va
 		return s.replacePlaceholder(sql, placeholder, strings.Join(parts, ","))
 	case string:
 		if v == "" {
-			return s.replacePlaceholder(sql, placeholder, "NULL")
+			return s.replacePlaceholder(sql, placeholder, "''")
 		}
 		return s.replacePlaceholder(sql, placeholder, fmt.Sprintf("'%s'", s.escapeSQLString(v)))
 	case nil:
@@ -727,22 +749,33 @@ func (s *SReportExecutionService) replaceFilterValue(sql, placeholder string, va
 // replaceRemainingPlaceholders replaces all remaining @placeholders with NULL for SP calls
 // Also handles :0, :1, :2 style positional parameters (replace with NULL)
 func (s *SReportExecutionService) replaceRemainingPlaceholders(sql string) string {
-	// Replace @param style placeholders, but preserve named parameter assignments (@param =)
-	// and preserve DECLARE variables.
-	// Since Golang regexp doesn't support negative lookahead, we match a broader pattern and filter.
-	// We match an optional DECLARE, the @param, and an optional '='.
-	re := regexp.MustCompile(`(?i)(DECLARE\s+)?@[A-Za-z_]\w*\s*=?`)
-	sql = re.ReplaceAllStringFunc(sql, func(match string) string {
-		upperMatch := strings.ToUpper(match)
-		if strings.Contains(upperMatch, "DECLARE ") || strings.Contains(match, "=") {
-			return match // Leave DECLARE and named parameters unchanged
+	// Find all DECLARE @var (local variables in T-SQL)
+	declaredVars := make(map[string]bool)
+	declareRe := regexp.MustCompile(`(?i)DECLARE\s+(@[A-Za-z_]\w*)`)
+	matches := declareRe.FindAllStringSubmatch(sql, -1)
+	for _, m := range matches {
+		if len(m) > 1 {
+			declaredVars[strings.ToLower(m[1])] = true
 		}
-		return "NULL" // Replace dangling placeholders
+	}
+
+	// Replace @param style placeholders if they are not locally declared variables
+	// Also preserve named parameter assignments (e.g. @param =)
+	re := regexp.MustCompile(`(?i)@[A-Za-z_]\w*\s*=?`)
+	sql = re.ReplaceAllStringFunc(sql, func(match string) string {
+		if strings.Contains(match, "=") {
+			return match // Keep named parameter assignments unchanged
+		}
+		
+		varName := strings.TrimSpace(match)
+		if declaredVars[strings.ToLower(varName)] {
+			return match // Keep local variables unchanged
+		}
+		return "NULL"
 	})
 
 	// Replace :0, :1, :2 etc style positional parameters
-	re2 := regexp.MustCompile(`:\d+`)
-	sql = re2.ReplaceAllString(sql, "NULL")
+	sql = regexp.MustCompile(`:\d+`).ReplaceAllString(sql, "NULL")
 
 	return sql
 }

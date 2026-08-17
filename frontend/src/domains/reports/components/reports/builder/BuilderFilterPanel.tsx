@@ -178,7 +178,7 @@ function FilterFieldRenderer({ kodeMenu, filter, config }: FilterFieldRendererPr
         filter={filter}
         resolved={config}
         value={value}
-        onChange={(v) => setFilterValue(kodeMenu, filter.nama_filter, v)}
+        onChange={(v) => setFilterValue(filter.nama_filter, v)}
         isDark={isDark}
       />
     </div>

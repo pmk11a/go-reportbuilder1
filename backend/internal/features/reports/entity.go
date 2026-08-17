@@ -10,6 +10,7 @@ type SDBMasterLaporan struct {
 	Deskripsi   *string    `gorm:"column:deskripsi;type:text" json:"deskripsi"`
 	FooterBands *string    `gorm:"column:footer_bands;type:text" json:"footer_bands"`
 	StatusAktif bool       `gorm:"column:status_aktif;default:true" json:"status_aktif"`
+	PaperConfig *string    `gorm:"column:paper_config;type:text" json:"paperConfig"`
 	CreatedAt   *time.Time `gorm:"column:created_at;type:datetime" json:"created_at"`
 	UpdatedAt   *time.Time `gorm:"column:updated_at;type:datetime" json:"updated_at"`
 

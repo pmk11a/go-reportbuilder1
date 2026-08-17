@@ -73,6 +73,24 @@ func RunMigrations(database *gorm.DB) {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
+	// Add 'icon' and 'routename' columns to legacy DBMENU table if they do not exist
+	database.Exec(`
+		IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'icon' AND Object_ID = Object_ID(N'DBMENU'))
+		BEGIN
+			ALTER TABLE DBMENU ADD icon VARCHAR(50) NULL
+		END
+
+		IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'routename' AND Object_ID = Object_ID(N'DBMENU'))
+		BEGIN
+			ALTER TABLE DBMENU ADD routename VARCHAR(255) NULL
+		END
+
+		IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'paper_config' AND Object_ID = Object_ID(N'dbmasterlaporan'))
+		BEGIN
+			ALTER TABLE dbmasterlaporan ADD paper_config NVARCHAR(MAX) NULL
+		END
+	`)
+
 	// Create report tables with raw SQL (GORM AutoMigrate has issues with existing tables)
 	runReportMigrations(database)
 
@@ -91,6 +109,7 @@ func runReportMigrations(db *gorm.DB) {
 			[nama_laporan] NVARCHAR(200) NOT NULL,
 			[deskripsi] NVARCHAR(MAX) NULL,
 			[footer_bands] NVARCHAR(MAX) NULL,
+			[paper_config] NVARCHAR(MAX) NULL,
 			[status_aktif] BIT NOT NULL DEFAULT 1,
 			[created_at] DATETIME NULL,
 			[updated_at] DATETIME NULL
