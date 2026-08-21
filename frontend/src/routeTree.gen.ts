@@ -9,63 +9,53 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as R500RouteImport } from './routes/500'
-import { Route as R404RouteImport } from './routes/404'
-import { Route as R400RouteImport } from './routes/400'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as KaryawanLayoutRouteImport } from './routes/karyawan/_layout'
-import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
+import { Route as R400RouteImport } from './routes/400'
+import { Route as R404RouteImport } from './routes/404'
+import { Route as R500RouteImport } from './routes/500'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as publicDocsRouteImport } from './routes/(public)/docs'
+import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
+import { Route as KaryawanLayoutRouteImport } from './routes/karyawan/_layout'
 import { Route as publicDocsIndexRouteImport } from './routes/(public)/docs/index'
-import { Route as publicDocsThemeRouteImport } from './routes/(public)/docs/theme'
-import { Route as publicDocsOverlayRouteImport } from './routes/(public)/docs/overlay'
-import { Route as publicDocsNavigationRouteImport } from './routes/(public)/docs/navigation'
-import { Route as publicDocsLayoutRouteImport } from './routes/(public)/docs/layout'
-import { Route as publicDocsFormRouteImport } from './routes/(public)/docs/form'
-import { Route as publicDocsFeedbackRouteImport } from './routes/(public)/docs/feedback'
 import { Route as publicDocsDataRouteImport } from './routes/(public)/docs/data'
-import { Route as KaryawanLayoutDashboardIndexRouteImport } from './routes/karyawan/_layout/dashboard/index'
-import { Route as AdminLayoutDocumentsIndexRouteImport } from './routes/admin/_layout/documents/index'
-import { Route as AdminLayoutDashboardIndexRouteImport } from './routes/admin/_layout/dashboard/index'
-import { Route as publicauthRegisterIndexRouteImport } from './routes/(public)/(auth)/register/index'
+import { Route as publicDocsFeedbackRouteImport } from './routes/(public)/docs/feedback'
+import { Route as publicDocsFormRouteImport } from './routes/(public)/docs/form'
+import { Route as publicDocsLayoutRouteImport } from './routes/(public)/docs/layout'
+import { Route as publicDocsNavigationRouteImport } from './routes/(public)/docs/navigation'
+import { Route as publicDocsOverlayRouteImport } from './routes/(public)/docs/overlay'
+import { Route as publicDocsThemeRouteImport } from './routes/(public)/docs/theme'
 import { Route as publicauthLoginIndexRouteImport } from './routes/(public)/(auth)/login/index'
-import { Route as AdminLayoutReportsLaporanRouteImport } from './routes/admin/_layout/reports/laporan'
-import { Route as AdminLayoutReportsBuilderRouteImport } from './routes/admin/_layout/reports/builder'
-import { Route as AdminLayoutBerkasPerusahaanRouteImport } from './routes/admin/_layout/berkas/perusahaan'
+import { Route as publicauthRegisterIndexRouteImport } from './routes/(public)/(auth)/register/index'
 import { Route as AdminLayoutBerkasMenuRouteImport } from './routes/admin/_layout/berkas/menu'
-import { Route as KaryawanLayoutBerkasLaporanDinamisIndexRouteImport } from './routes/karyawan/_layout/berkas/laporan-dinamis/index'
-import { Route as AdminLayoutReportsPermissionReportIndexRouteImport } from './routes/admin/_layout/reports/permission-report/index'
-import { Route as AdminLayoutReportsLaporanIndexRouteImport } from './routes/admin/_layout/reports/laporan/index'
-import { Route as AdminLayoutReportsBuilderIndexRouteImport } from './routes/admin/_layout/reports/builder/index'
-import { Route as AdminLayoutMasterDataUsersIndexRouteImport } from './routes/admin/_layout/master-data/users/index'
-import { Route as AdminLayoutMasterDataLaporanDinamisIndexRouteImport } from './routes/admin/_layout/master-data/laporan-dinamis/index'
-import { Route as AdminLayoutMasterDataDynamicBrowseIndexRouteImport } from './routes/admin/_layout/master-data/dynamic-browse/index'
-import { Route as AdminLayoutMasterDataConfigLogsIndexRouteImport } from './routes/admin/_layout/master-data/config-logs/index'
-import { Route as AdminLayoutMasterDataActivityLogsIndexRouteImport } from './routes/admin/_layout/master-data/activity-logs/index'
+import { Route as AdminLayoutBerkasPerusahaanRouteImport } from './routes/admin/_layout/berkas/perusahaan'
+import { Route as AdminLayoutDashboardIndexRouteImport } from './routes/admin/_layout/dashboard/index'
+import { Route as AdminLayoutDocumentsIndexRouteImport } from './routes/admin/_layout/documents/index'
+import { Route as AdminLayoutReportsBuilderRouteImport } from './routes/admin/_layout/reports/builder'
+import { Route as AdminLayoutReportsLaporanRouteImport } from './routes/admin/_layout/reports/laporan'
+import { Route as KaryawanLayoutDashboardIndexRouteImport } from './routes/karyawan/_layout/dashboard/index'
 import { Route as AdminLayoutAccountingKasbankIndexRouteImport } from './routes/admin/_layout/accounting/kasbank/index'
-import { Route as KaryawanLayoutBerkasLaporanDinamisKodeRouteImport } from './routes/karyawan/_layout/berkas/laporan-dinamis/$kode'
-import { Route as AdminLayoutReportsLaporanKodeMenuRouteImport } from './routes/admin/_layout/reports/laporan/$kodeMenu'
 import { Route as AdminLayoutAccountingKasbankNobuktiRouteImport } from './routes/admin/_layout/accounting/kasbank/$nobukti'
-import { Route as AdminLayoutMasterDataUsersNewIndexRouteImport } from './routes/admin/_layout/master-data/users/new/index'
+import { Route as AdminLayoutMasterDataActivityLogsIndexRouteImport } from './routes/admin/_layout/master-data/activity-logs/index'
+import { Route as AdminLayoutMasterDataConfigLogsIndexRouteImport } from './routes/admin/_layout/master-data/config-logs/index'
+import { Route as AdminLayoutMasterDataDynamicBrowseIndexRouteImport } from './routes/admin/_layout/master-data/dynamic-browse/index'
+import { Route as AdminLayoutMasterDataLaporanDinamisIndexRouteImport } from './routes/admin/_layout/master-data/laporan-dinamis/index'
+import { Route as AdminLayoutMasterDataUsersIndexRouteImport } from './routes/admin/_layout/master-data/users/index'
+import { Route as AdminLayoutReportsBuilderIndexRouteImport } from './routes/admin/_layout/reports/builder/index'
+import { Route as AdminLayoutReportsLaporanIndexRouteImport } from './routes/admin/_layout/reports/laporan/index'
+import { Route as AdminLayoutReportsLaporanKodeMenuRouteImport } from './routes/admin/_layout/reports/laporan/$kodeMenu'
+import { Route as AdminLayoutReportsPermissionReportIndexRouteImport } from './routes/admin/_layout/reports/permission-report/index'
+import { Route as KaryawanLayoutBerkasLaporanDinamisIndexRouteImport } from './routes/karyawan/_layout/berkas/laporan-dinamis/index'
+import { Route as KaryawanLayoutBerkasLaporanDinamisKodeRouteImport } from './routes/karyawan/_layout/berkas/laporan-dinamis/$kode'
 import { Route as AdminLayoutMasterDataUsersIdIndexRouteImport } from './routes/admin/_layout/master-data/users/$id/index'
-import { Route as AdminLayoutReportsBuilderKodemenuGenerateRouteImport } from './routes/admin/_layout/reports/builder/$kodemenu/generate'
+import { Route as AdminLayoutMasterDataUsersNewIndexRouteImport } from './routes/admin/_layout/master-data/users/new/index'
 import { Route as AdminLayoutReportsBuilderKodemenuEditRouteImport } from './routes/admin/_layout/reports/builder/$kodemenu/edit'
+import { Route as AdminLayoutReportsBuilderKodemenuGenerateRouteImport } from './routes/admin/_layout/reports/builder/$kodemenu/generate'
 import { Route as AdminLayoutMasterDataUsersIdEditIndexRouteImport } from './routes/admin/_layout/master-data/users/$id/edit/index'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const R500Route = R500RouteImport.update({
-  id: '/500',
-  path: '/500',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const R404Route = R404RouteImport.update({
-  id: '/404',
-  path: '/404',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R400Route = R400RouteImport.update({
@@ -73,19 +63,19 @@ const R400Route = R400RouteImport.update({
   path: '/400',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
   getParentRoute: () => rootRouteImport,
 } as any)
-const KaryawanLayoutRoute = KaryawanLayoutRouteImport.update({
-  id: '/karyawan/_layout',
-  path: '/karyawan',
+const R500Route = R500RouteImport.update({
+  id: '/500',
+  path: '/500',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminLayoutRoute = AdminLayoutRouteImport.update({
-  id: '/admin/_layout',
-  path: '/admin',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const publicDocsRoute = publicDocsRouteImport.update({
@@ -93,39 +83,19 @@ const publicDocsRoute = publicDocsRouteImport.update({
   path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLayoutRoute = AdminLayoutRouteImport.update({
+  id: '/admin/_layout',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KaryawanLayoutRoute = KaryawanLayoutRouteImport.update({
+  id: '/karyawan/_layout',
+  path: '/karyawan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const publicDocsIndexRoute = publicDocsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsThemeRoute = publicDocsThemeRouteImport.update({
-  id: '/theme',
-  path: '/theme',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsOverlayRoute = publicDocsOverlayRouteImport.update({
-  id: '/overlay',
-  path: '/overlay',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsNavigationRoute = publicDocsNavigationRouteImport.update({
-  id: '/navigation',
-  path: '/navigation',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsLayoutRoute = publicDocsLayoutRouteImport.update({
-  id: '/layout',
-  path: '/layout',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsFormRoute = publicDocsFormRouteImport.update({
-  id: '/form',
-  path: '/form',
-  getParentRoute: () => publicDocsRoute,
-} as any)
-const publicDocsFeedbackRoute = publicDocsFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
   getParentRoute: () => publicDocsRoute,
 } as any)
 const publicDocsDataRoute = publicDocsDataRouteImport.update({
@@ -133,16 +103,55 @@ const publicDocsDataRoute = publicDocsDataRouteImport.update({
   path: '/data',
   getParentRoute: () => publicDocsRoute,
 } as any)
-const KaryawanLayoutDashboardIndexRoute =
-  KaryawanLayoutDashboardIndexRouteImport.update({
-    id: '/dashboard/',
-    path: '/dashboard/',
-    getParentRoute: () => KaryawanLayoutRoute,
-  } as any)
-const AdminLayoutDocumentsIndexRoute =
-  AdminLayoutDocumentsIndexRouteImport.update({
-    id: '/documents/',
-    path: '/documents/',
+const publicDocsFeedbackRoute = publicDocsFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicDocsFormRoute = publicDocsFormRouteImport.update({
+  id: '/form',
+  path: '/form',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicDocsLayoutRoute = publicDocsLayoutRouteImport.update({
+  id: '/layout',
+  path: '/layout',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicDocsNavigationRoute = publicDocsNavigationRouteImport.update({
+  id: '/navigation',
+  path: '/navigation',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicDocsOverlayRoute = publicDocsOverlayRouteImport.update({
+  id: '/overlay',
+  path: '/overlay',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicDocsThemeRoute = publicDocsThemeRouteImport.update({
+  id: '/theme',
+  path: '/theme',
+  getParentRoute: () => publicDocsRoute,
+} as any)
+const publicauthLoginIndexRoute = publicauthLoginIndexRouteImport.update({
+  id: '/(public)/(auth)/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicauthRegisterIndexRoute = publicauthRegisterIndexRouteImport.update({
+  id: '/(public)/(auth)/register/',
+  path: '/register/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLayoutBerkasMenuRoute = AdminLayoutBerkasMenuRouteImport.update({
+  id: '/berkas/menu',
+  path: '/berkas/menu',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
+const AdminLayoutBerkasPerusahaanRoute =
+  AdminLayoutBerkasPerusahaanRouteImport.update({
+    id: '/berkas/perusahaan',
+    path: '/berkas/perusahaan',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
 const AdminLayoutDashboardIndexRoute =
@@ -151,20 +160,10 @@ const AdminLayoutDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const publicauthRegisterIndexRoute = publicauthRegisterIndexRouteImport.update({
-  id: '/(public)/(auth)/register/',
-  path: '/register/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const publicauthLoginIndexRoute = publicauthLoginIndexRouteImport.update({
-  id: '/(public)/(auth)/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLayoutReportsLaporanRoute =
-  AdminLayoutReportsLaporanRouteImport.update({
-    id: '/reports/laporan',
-    path: '/reports/laporan',
+const AdminLayoutDocumentsIndexRoute =
+  AdminLayoutDocumentsIndexRouteImport.update({
+    id: '/documents/',
+    path: '/documents/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
 const AdminLayoutReportsBuilderRoute =
@@ -173,63 +172,28 @@ const AdminLayoutReportsBuilderRoute =
     path: '/reports/builder',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const AdminLayoutBerkasPerusahaanRoute =
-  AdminLayoutBerkasPerusahaanRouteImport.update({
-    id: '/berkas/perusahaan',
-    path: '/berkas/perusahaan',
+const AdminLayoutReportsLaporanRoute =
+  AdminLayoutReportsLaporanRouteImport.update({
+    id: '/reports/laporan',
+    path: '/reports/laporan',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const AdminLayoutBerkasMenuRoute = AdminLayoutBerkasMenuRouteImport.update({
-  id: '/berkas/menu',
-  path: '/berkas/menu',
-  getParentRoute: () => AdminLayoutRoute,
-} as any)
-const KaryawanLayoutBerkasLaporanDinamisIndexRoute =
-  KaryawanLayoutBerkasLaporanDinamisIndexRouteImport.update({
-    id: '/berkas/laporan-dinamis/',
-    path: '/berkas/laporan-dinamis/',
+const KaryawanLayoutDashboardIndexRoute =
+  KaryawanLayoutDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
     getParentRoute: () => KaryawanLayoutRoute,
   } as any)
-const AdminLayoutReportsPermissionReportIndexRoute =
-  AdminLayoutReportsPermissionReportIndexRouteImport.update({
-    id: '/reports/permission-report/',
-    path: '/reports/permission-report/',
+const AdminLayoutAccountingKasbankIndexRoute =
+  AdminLayoutAccountingKasbankIndexRouteImport.update({
+    id: '/accounting/kasbank/',
+    path: '/accounting/kasbank/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const AdminLayoutReportsLaporanIndexRoute =
-  AdminLayoutReportsLaporanIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AdminLayoutReportsLaporanRoute,
-  } as any)
-const AdminLayoutReportsBuilderIndexRoute =
-  AdminLayoutReportsBuilderIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AdminLayoutReportsBuilderRoute,
-  } as any)
-const AdminLayoutMasterDataUsersIndexRoute =
-  AdminLayoutMasterDataUsersIndexRouteImport.update({
-    id: '/master-data/users/',
-    path: '/master-data/users/',
-    getParentRoute: () => AdminLayoutRoute,
-  } as any)
-const AdminLayoutMasterDataLaporanDinamisIndexRoute =
-  AdminLayoutMasterDataLaporanDinamisIndexRouteImport.update({
-    id: '/master-data/laporan-dinamis/',
-    path: '/master-data/laporan-dinamis/',
-    getParentRoute: () => AdminLayoutRoute,
-  } as any)
-const AdminLayoutMasterDataDynamicBrowseIndexRoute =
-  AdminLayoutMasterDataDynamicBrowseIndexRouteImport.update({
-    id: '/master-data/dynamic-browse/',
-    path: '/master-data/dynamic-browse/',
-    getParentRoute: () => AdminLayoutRoute,
-  } as any)
-const AdminLayoutMasterDataConfigLogsIndexRoute =
-  AdminLayoutMasterDataConfigLogsIndexRouteImport.update({
-    id: '/master-data/config-logs/',
-    path: '/master-data/config-logs/',
+const AdminLayoutAccountingKasbankNobuktiRoute =
+  AdminLayoutAccountingKasbankNobuktiRouteImport.update({
+    id: '/accounting/kasbank/$nobukti',
+    path: '/accounting/kasbank/$nobukti',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
 const AdminLayoutMasterDataActivityLogsIndexRoute =
@@ -238,17 +202,41 @@ const AdminLayoutMasterDataActivityLogsIndexRoute =
     path: '/master-data/activity-logs/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const AdminLayoutAccountingKasbankIndexRoute =
-  AdminLayoutAccountingKasbankIndexRouteImport.update({
-    id: '/accounting/kasbank/',
-    path: '/accounting/kasbank/',
+const AdminLayoutMasterDataConfigLogsIndexRoute =
+  AdminLayoutMasterDataConfigLogsIndexRouteImport.update({
+    id: '/master-data/config-logs/',
+    path: '/master-data/config-logs/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const KaryawanLayoutBerkasLaporanDinamisKodeRoute =
-  KaryawanLayoutBerkasLaporanDinamisKodeRouteImport.update({
-    id: '/berkas/laporan-dinamis/$kode',
-    path: '/berkas/laporan-dinamis/$kode',
-    getParentRoute: () => KaryawanLayoutRoute,
+const AdminLayoutMasterDataDynamicBrowseIndexRoute =
+  AdminLayoutMasterDataDynamicBrowseIndexRouteImport.update({
+    id: '/master-data/dynamic-browse/',
+    path: '/master-data/dynamic-browse/',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
+const AdminLayoutMasterDataLaporanDinamisIndexRoute =
+  AdminLayoutMasterDataLaporanDinamisIndexRouteImport.update({
+    id: '/master-data/laporan-dinamis/',
+    path: '/master-data/laporan-dinamis/',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
+const AdminLayoutMasterDataUsersIndexRoute =
+  AdminLayoutMasterDataUsersIndexRouteImport.update({
+    id: '/master-data/users/',
+    path: '/master-data/users/',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
+const AdminLayoutReportsBuilderIndexRoute =
+  AdminLayoutReportsBuilderIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminLayoutReportsBuilderRoute,
+  } as any)
+const AdminLayoutReportsLaporanIndexRoute =
+  AdminLayoutReportsLaporanIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminLayoutReportsLaporanRoute,
   } as any)
 const AdminLayoutReportsLaporanKodeMenuRoute =
   AdminLayoutReportsLaporanKodeMenuRouteImport.update({
@@ -256,10 +244,28 @@ const AdminLayoutReportsLaporanKodeMenuRoute =
     path: '/$kodeMenu',
     getParentRoute: () => AdminLayoutReportsLaporanRoute,
   } as any)
-const AdminLayoutAccountingKasbankNobuktiRoute =
-  AdminLayoutAccountingKasbankNobuktiRouteImport.update({
-    id: '/accounting/kasbank/$nobukti',
-    path: '/accounting/kasbank/$nobukti',
+const AdminLayoutReportsPermissionReportIndexRoute =
+  AdminLayoutReportsPermissionReportIndexRouteImport.update({
+    id: '/reports/permission-report/',
+    path: '/reports/permission-report/',
+    getParentRoute: () => AdminLayoutRoute,
+  } as any)
+const KaryawanLayoutBerkasLaporanDinamisIndexRoute =
+  KaryawanLayoutBerkasLaporanDinamisIndexRouteImport.update({
+    id: '/berkas/laporan-dinamis/',
+    path: '/berkas/laporan-dinamis/',
+    getParentRoute: () => KaryawanLayoutRoute,
+  } as any)
+const KaryawanLayoutBerkasLaporanDinamisKodeRoute =
+  KaryawanLayoutBerkasLaporanDinamisKodeRouteImport.update({
+    id: '/berkas/laporan-dinamis/$kode',
+    path: '/berkas/laporan-dinamis/$kode',
+    getParentRoute: () => KaryawanLayoutRoute,
+  } as any)
+const AdminLayoutMasterDataUsersIdIndexRoute =
+  AdminLayoutMasterDataUsersIdIndexRouteImport.update({
+    id: '/master-data/users/$id/',
+    path: '/master-data/users/$id/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
 const AdminLayoutMasterDataUsersNewIndexRoute =
@@ -268,22 +274,16 @@ const AdminLayoutMasterDataUsersNewIndexRoute =
     path: '/master-data/users/new/',
     getParentRoute: () => AdminLayoutRoute,
   } as any)
-const AdminLayoutMasterDataUsersIdIndexRoute =
-  AdminLayoutMasterDataUsersIdIndexRouteImport.update({
-    id: '/master-data/users/$id/',
-    path: '/master-data/users/$id/',
-    getParentRoute: () => AdminLayoutRoute,
+const AdminLayoutReportsBuilderKodemenuEditRoute =
+  AdminLayoutReportsBuilderKodemenuEditRouteImport.update({
+    id: '/$kodemenu/edit',
+    path: '/$kodemenu/edit',
+    getParentRoute: () => AdminLayoutReportsBuilderRoute,
   } as any)
 const AdminLayoutReportsBuilderKodemenuGenerateRoute =
   AdminLayoutReportsBuilderKodemenuGenerateRouteImport.update({
     id: '/$kodemenu/generate',
     path: '/$kodemenu/generate',
-    getParentRoute: () => AdminLayoutReportsBuilderRoute,
-  } as any)
-const AdminLayoutReportsBuilderKodemenuEditRoute =
-  AdminLayoutReportsBuilderKodemenuEditRouteImport.update({
-    id: '/$kodemenu/edit',
-    path: '/$kodemenu/edit',
     getParentRoute: () => AdminLayoutReportsBuilderRoute,
   } as any)
 const AdminLayoutMasterDataUsersIdEditIndexRoute =
@@ -576,25 +576,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/500': {
-      id: '/500'
-      path: '/500'
-      fullPath: '/500'
-      preLoaderRoute: typeof R500RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/404': {
-      id: '/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof R404RouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/400': {
@@ -604,25 +590,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R400RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/karyawan/_layout': {
-      id: '/karyawan/_layout'
-      path: '/karyawan'
-      fullPath: '/karyawan'
-      preLoaderRoute: typeof KaryawanLayoutRouteImport
+    '/500': {
+      id: '/500'
+      path: '/500'
+      fullPath: '/500'
+      preLoaderRoute: typeof R500RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/_layout': {
-      id: '/admin/_layout'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminLayoutRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(public)/docs': {
@@ -632,53 +618,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicDocsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_layout': {
+      id: '/admin/_layout'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/karyawan/_layout': {
+      id: '/karyawan/_layout'
+      path: '/karyawan'
+      fullPath: '/karyawan'
+      preLoaderRoute: typeof KaryawanLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(public)/docs/': {
       id: '/(public)/docs/'
       path: '/'
       fullPath: '/docs/'
       preLoaderRoute: typeof publicDocsIndexRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/theme': {
-      id: '/(public)/docs/theme'
-      path: '/theme'
-      fullPath: '/docs/theme'
-      preLoaderRoute: typeof publicDocsThemeRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/overlay': {
-      id: '/(public)/docs/overlay'
-      path: '/overlay'
-      fullPath: '/docs/overlay'
-      preLoaderRoute: typeof publicDocsOverlayRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/navigation': {
-      id: '/(public)/docs/navigation'
-      path: '/navigation'
-      fullPath: '/docs/navigation'
-      preLoaderRoute: typeof publicDocsNavigationRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/layout': {
-      id: '/(public)/docs/layout'
-      path: '/layout'
-      fullPath: '/docs/layout'
-      preLoaderRoute: typeof publicDocsLayoutRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/form': {
-      id: '/(public)/docs/form'
-      path: '/form'
-      fullPath: '/docs/form'
-      preLoaderRoute: typeof publicDocsFormRouteImport
-      parentRoute: typeof publicDocsRoute
-    }
-    '/(public)/docs/feedback': {
-      id: '/(public)/docs/feedback'
-      path: '/feedback'
-      fullPath: '/docs/feedback'
-      preLoaderRoute: typeof publicDocsFeedbackRouteImport
       parentRoute: typeof publicDocsRoute
     }
     '/(public)/docs/data': {
@@ -688,33 +646,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicDocsDataRouteImport
       parentRoute: typeof publicDocsRoute
     }
-    '/karyawan/_layout/dashboard/': {
-      id: '/karyawan/_layout/dashboard/'
-      path: '/dashboard'
-      fullPath: '/karyawan/dashboard/'
-      preLoaderRoute: typeof KaryawanLayoutDashboardIndexRouteImport
-      parentRoute: typeof KaryawanLayoutRoute
+    '/(public)/docs/feedback': {
+      id: '/(public)/docs/feedback'
+      path: '/feedback'
+      fullPath: '/docs/feedback'
+      preLoaderRoute: typeof publicDocsFeedbackRouteImport
+      parentRoute: typeof publicDocsRoute
     }
-    '/admin/_layout/documents/': {
-      id: '/admin/_layout/documents/'
-      path: '/documents'
-      fullPath: '/admin/documents/'
-      preLoaderRoute: typeof AdminLayoutDocumentsIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
+    '/(public)/docs/form': {
+      id: '/(public)/docs/form'
+      path: '/form'
+      fullPath: '/docs/form'
+      preLoaderRoute: typeof publicDocsFormRouteImport
+      parentRoute: typeof publicDocsRoute
     }
-    '/admin/_layout/dashboard/': {
-      id: '/admin/_layout/dashboard/'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard/'
-      preLoaderRoute: typeof AdminLayoutDashboardIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
+    '/(public)/docs/layout': {
+      id: '/(public)/docs/layout'
+      path: '/layout'
+      fullPath: '/docs/layout'
+      preLoaderRoute: typeof publicDocsLayoutRouteImport
+      parentRoute: typeof publicDocsRoute
     }
-    '/(public)/(auth)/register/': {
-      id: '/(public)/(auth)/register/'
-      path: '/register'
-      fullPath: '/register/'
-      preLoaderRoute: typeof publicauthRegisterIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/(public)/docs/navigation': {
+      id: '/(public)/docs/navigation'
+      path: '/navigation'
+      fullPath: '/docs/navigation'
+      preLoaderRoute: typeof publicDocsNavigationRouteImport
+      parentRoute: typeof publicDocsRoute
+    }
+    '/(public)/docs/overlay': {
+      id: '/(public)/docs/overlay'
+      path: '/overlay'
+      fullPath: '/docs/overlay'
+      preLoaderRoute: typeof publicDocsOverlayRouteImport
+      parentRoute: typeof publicDocsRoute
+    }
+    '/(public)/docs/theme': {
+      id: '/(public)/docs/theme'
+      path: '/theme'
+      fullPath: '/docs/theme'
+      preLoaderRoute: typeof publicDocsThemeRouteImport
+      parentRoute: typeof publicDocsRoute
     }
     '/(public)/(auth)/login/': {
       id: '/(public)/(auth)/login/'
@@ -723,18 +695,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicauthLoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/_layout/reports/laporan': {
-      id: '/admin/_layout/reports/laporan'
-      path: '/reports/laporan'
-      fullPath: '/admin/reports/laporan'
-      preLoaderRoute: typeof AdminLayoutReportsLaporanRouteImport
-      parentRoute: typeof AdminLayoutRoute
+    '/(public)/(auth)/register/': {
+      id: '/(public)/(auth)/register/'
+      path: '/register'
+      fullPath: '/register/'
+      preLoaderRoute: typeof publicauthRegisterIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/_layout/reports/builder': {
-      id: '/admin/_layout/reports/builder'
-      path: '/reports/builder'
-      fullPath: '/admin/reports/builder'
-      preLoaderRoute: typeof AdminLayoutReportsBuilderRouteImport
+    '/admin/_layout/berkas/menu': {
+      id: '/admin/_layout/berkas/menu'
+      path: '/berkas/menu'
+      fullPath: '/admin/berkas/menu'
+      preLoaderRoute: typeof AdminLayoutBerkasMenuRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/berkas/perusahaan': {
@@ -744,67 +716,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutBerkasPerusahaanRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/admin/_layout/berkas/menu': {
-      id: '/admin/_layout/berkas/menu'
-      path: '/berkas/menu'
-      fullPath: '/admin/berkas/menu'
-      preLoaderRoute: typeof AdminLayoutBerkasMenuRouteImport
+    '/admin/_layout/dashboard/': {
+      id: '/admin/_layout/dashboard/'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard/'
+      preLoaderRoute: typeof AdminLayoutDashboardIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/karyawan/_layout/berkas/laporan-dinamis/': {
-      id: '/karyawan/_layout/berkas/laporan-dinamis/'
-      path: '/berkas/laporan-dinamis'
-      fullPath: '/karyawan/berkas/laporan-dinamis/'
-      preLoaderRoute: typeof KaryawanLayoutBerkasLaporanDinamisIndexRouteImport
+    '/admin/_layout/documents/': {
+      id: '/admin/_layout/documents/'
+      path: '/documents'
+      fullPath: '/admin/documents/'
+      preLoaderRoute: typeof AdminLayoutDocumentsIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/reports/builder': {
+      id: '/admin/_layout/reports/builder'
+      path: '/reports/builder'
+      fullPath: '/admin/reports/builder'
+      preLoaderRoute: typeof AdminLayoutReportsBuilderRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/reports/laporan': {
+      id: '/admin/_layout/reports/laporan'
+      path: '/reports/laporan'
+      fullPath: '/admin/reports/laporan'
+      preLoaderRoute: typeof AdminLayoutReportsLaporanRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/karyawan/_layout/dashboard/': {
+      id: '/karyawan/_layout/dashboard/'
+      path: '/dashboard'
+      fullPath: '/karyawan/dashboard/'
+      preLoaderRoute: typeof KaryawanLayoutDashboardIndexRouteImport
       parentRoute: typeof KaryawanLayoutRoute
     }
-    '/admin/_layout/reports/permission-report/': {
-      id: '/admin/_layout/reports/permission-report/'
-      path: '/reports/permission-report'
-      fullPath: '/admin/reports/permission-report/'
-      preLoaderRoute: typeof AdminLayoutReportsPermissionReportIndexRouteImport
+    '/admin/_layout/accounting/kasbank/': {
+      id: '/admin/_layout/accounting/kasbank/'
+      path: '/accounting/kasbank'
+      fullPath: '/admin/accounting/kasbank/'
+      preLoaderRoute: typeof AdminLayoutAccountingKasbankIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/admin/_layout/reports/laporan/': {
-      id: '/admin/_layout/reports/laporan/'
-      path: '/'
-      fullPath: '/admin/reports/laporan/'
-      preLoaderRoute: typeof AdminLayoutReportsLaporanIndexRouteImport
-      parentRoute: typeof AdminLayoutReportsLaporanRoute
-    }
-    '/admin/_layout/reports/builder/': {
-      id: '/admin/_layout/reports/builder/'
-      path: '/'
-      fullPath: '/admin/reports/builder/'
-      preLoaderRoute: typeof AdminLayoutReportsBuilderIndexRouteImport
-      parentRoute: typeof AdminLayoutReportsBuilderRoute
-    }
-    '/admin/_layout/master-data/users/': {
-      id: '/admin/_layout/master-data/users/'
-      path: '/master-data/users'
-      fullPath: '/admin/master-data/users/'
-      preLoaderRoute: typeof AdminLayoutMasterDataUsersIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
-    }
-    '/admin/_layout/master-data/laporan-dinamis/': {
-      id: '/admin/_layout/master-data/laporan-dinamis/'
-      path: '/master-data/laporan-dinamis'
-      fullPath: '/admin/master-data/laporan-dinamis/'
-      preLoaderRoute: typeof AdminLayoutMasterDataLaporanDinamisIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
-    }
-    '/admin/_layout/master-data/dynamic-browse/': {
-      id: '/admin/_layout/master-data/dynamic-browse/'
-      path: '/master-data/dynamic-browse'
-      fullPath: '/admin/master-data/dynamic-browse/'
-      preLoaderRoute: typeof AdminLayoutMasterDataDynamicBrowseIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
-    }
-    '/admin/_layout/master-data/config-logs/': {
-      id: '/admin/_layout/master-data/config-logs/'
-      path: '/master-data/config-logs'
-      fullPath: '/admin/master-data/config-logs/'
-      preLoaderRoute: typeof AdminLayoutMasterDataConfigLogsIndexRouteImport
+    '/admin/_layout/accounting/kasbank/$nobukti': {
+      id: '/admin/_layout/accounting/kasbank/$nobukti'
+      path: '/accounting/kasbank/$nobukti'
+      fullPath: '/admin/accounting/kasbank/$nobukti'
+      preLoaderRoute: typeof AdminLayoutAccountingKasbankNobuktiRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/master-data/activity-logs/': {
@@ -814,19 +772,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutMasterDataActivityLogsIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/admin/_layout/accounting/kasbank/': {
-      id: '/admin/_layout/accounting/kasbank/'
-      path: '/accounting/kasbank'
-      fullPath: '/admin/accounting/kasbank/'
-      preLoaderRoute: typeof AdminLayoutAccountingKasbankIndexRouteImport
+    '/admin/_layout/master-data/config-logs/': {
+      id: '/admin/_layout/master-data/config-logs/'
+      path: '/master-data/config-logs'
+      fullPath: '/admin/master-data/config-logs/'
+      preLoaderRoute: typeof AdminLayoutMasterDataConfigLogsIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/karyawan/_layout/berkas/laporan-dinamis/$kode': {
-      id: '/karyawan/_layout/berkas/laporan-dinamis/$kode'
-      path: '/berkas/laporan-dinamis/$kode'
-      fullPath: '/karyawan/berkas/laporan-dinamis/$kode'
-      preLoaderRoute: typeof KaryawanLayoutBerkasLaporanDinamisKodeRouteImport
-      parentRoute: typeof KaryawanLayoutRoute
+    '/admin/_layout/master-data/dynamic-browse/': {
+      id: '/admin/_layout/master-data/dynamic-browse/'
+      path: '/master-data/dynamic-browse'
+      fullPath: '/admin/master-data/dynamic-browse/'
+      preLoaderRoute: typeof AdminLayoutMasterDataDynamicBrowseIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/master-data/laporan-dinamis/': {
+      id: '/admin/_layout/master-data/laporan-dinamis/'
+      path: '/master-data/laporan-dinamis'
+      fullPath: '/admin/master-data/laporan-dinamis/'
+      preLoaderRoute: typeof AdminLayoutMasterDataLaporanDinamisIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/master-data/users/': {
+      id: '/admin/_layout/master-data/users/'
+      path: '/master-data/users'
+      fullPath: '/admin/master-data/users/'
+      preLoaderRoute: typeof AdminLayoutMasterDataUsersIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/admin/_layout/reports/builder/': {
+      id: '/admin/_layout/reports/builder/'
+      path: '/'
+      fullPath: '/admin/reports/builder/'
+      preLoaderRoute: typeof AdminLayoutReportsBuilderIndexRouteImport
+      parentRoute: typeof AdminLayoutReportsBuilderRoute
+    }
+    '/admin/_layout/reports/laporan/': {
+      id: '/admin/_layout/reports/laporan/'
+      path: '/'
+      fullPath: '/admin/reports/laporan/'
+      preLoaderRoute: typeof AdminLayoutReportsLaporanIndexRouteImport
+      parentRoute: typeof AdminLayoutReportsLaporanRoute
     }
     '/admin/_layout/reports/laporan/$kodeMenu': {
       id: '/admin/_layout/reports/laporan/$kodeMenu'
@@ -835,11 +821,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutReportsLaporanKodeMenuRouteImport
       parentRoute: typeof AdminLayoutReportsLaporanRoute
     }
-    '/admin/_layout/accounting/kasbank/$nobukti': {
-      id: '/admin/_layout/accounting/kasbank/$nobukti'
-      path: '/accounting/kasbank/$nobukti'
-      fullPath: '/admin/accounting/kasbank/$nobukti'
-      preLoaderRoute: typeof AdminLayoutAccountingKasbankNobuktiRouteImport
+    '/admin/_layout/reports/permission-report/': {
+      id: '/admin/_layout/reports/permission-report/'
+      path: '/reports/permission-report'
+      fullPath: '/admin/reports/permission-report/'
+      preLoaderRoute: typeof AdminLayoutReportsPermissionReportIndexRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
+    '/karyawan/_layout/berkas/laporan-dinamis/': {
+      id: '/karyawan/_layout/berkas/laporan-dinamis/'
+      path: '/berkas/laporan-dinamis'
+      fullPath: '/karyawan/berkas/laporan-dinamis/'
+      preLoaderRoute: typeof KaryawanLayoutBerkasLaporanDinamisIndexRouteImport
+      parentRoute: typeof KaryawanLayoutRoute
+    }
+    '/karyawan/_layout/berkas/laporan-dinamis/$kode': {
+      id: '/karyawan/_layout/berkas/laporan-dinamis/$kode'
+      path: '/berkas/laporan-dinamis/$kode'
+      fullPath: '/karyawan/berkas/laporan-dinamis/$kode'
+      preLoaderRoute: typeof KaryawanLayoutBerkasLaporanDinamisKodeRouteImport
+      parentRoute: typeof KaryawanLayoutRoute
+    }
+    '/admin/_layout/master-data/users/$id/': {
+      id: '/admin/_layout/master-data/users/$id/'
+      path: '/master-data/users/$id'
+      fullPath: '/admin/master-data/users/$id/'
+      preLoaderRoute: typeof AdminLayoutMasterDataUsersIdIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
     '/admin/_layout/master-data/users/new/': {
@@ -849,25 +856,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutMasterDataUsersNewIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
-    '/admin/_layout/master-data/users/$id/': {
-      id: '/admin/_layout/master-data/users/$id/'
-      path: '/master-data/users/$id'
-      fullPath: '/admin/master-data/users/$id/'
-      preLoaderRoute: typeof AdminLayoutMasterDataUsersIdIndexRouteImport
-      parentRoute: typeof AdminLayoutRoute
+    '/admin/_layout/reports/builder/$kodemenu/edit': {
+      id: '/admin/_layout/reports/builder/$kodemenu/edit'
+      path: '/$kodemenu/edit'
+      fullPath: '/admin/reports/builder/$kodemenu/edit'
+      preLoaderRoute: typeof AdminLayoutReportsBuilderKodemenuEditRouteImport
+      parentRoute: typeof AdminLayoutReportsBuilderRoute
     }
     '/admin/_layout/reports/builder/$kodemenu/generate': {
       id: '/admin/_layout/reports/builder/$kodemenu/generate'
       path: '/$kodemenu/generate'
       fullPath: '/admin/reports/builder/$kodemenu/generate'
       preLoaderRoute: typeof AdminLayoutReportsBuilderKodemenuGenerateRouteImport
-      parentRoute: typeof AdminLayoutReportsBuilderRoute
-    }
-    '/admin/_layout/reports/builder/$kodemenu/edit': {
-      id: '/admin/_layout/reports/builder/$kodemenu/edit'
-      path: '/$kodemenu/edit'
-      fullPath: '/admin/reports/builder/$kodemenu/edit'
-      preLoaderRoute: typeof AdminLayoutReportsBuilderKodemenuEditRouteImport
       parentRoute: typeof AdminLayoutReportsBuilderRoute
     }
     '/admin/_layout/master-data/users/$id/edit/': {

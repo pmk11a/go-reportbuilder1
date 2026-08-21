@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ReportPreview } from '@/domains/reports/components/reports/builder/ReportPreview'
 import { useGetTabGeneral, useGetTabFilters, useGetTabKomponen } from '@/domains/reports/hooks/useReportBuilder'
 import { useReports, useExecuteReport } from '@/domains/reports/hooks/useReport'
@@ -50,6 +50,8 @@ function ReportGeneratorPage() {
       parseSection('FooterLayout', 'footer'),
     ];
   }, [komponenData]);
+
+  const hasLayout = layoutConfig.some(section => section.rows && section.rows.length > 0);
 
   const executeReport = useExecuteReport(kodemenu)
   const filterValues = useReportStore((s) => s.filterValues)
@@ -202,6 +204,19 @@ function ReportGeneratorPage() {
             ) : executeReport.isError ? (
               <div className="flex-1 flex items-center justify-center p-12 bg-red-50 dark:bg-red-500/10 rounded-3xl border border-red-100 dark:border-red-500/20 text-red-600 min-h-[300px]">
                 Gagal memuat laporan: {executeReport.error?.message}
+              </div>
+            ) : !hasLayout ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-12 bg-orange-50 dark:bg-orange-500/10 rounded-3xl border border-orange-100 dark:border-orange-500/20 min-h-[300px]">
+                <div className="p-4 rounded-full bg-orange-100 dark:bg-orange-500/20 mb-4">
+                  <FileText className="w-8 h-8 text-orange-500" />
+                </div>
+                <p className="font-medium mb-1 text-orange-700 dark:text-orange-400">Layout Belum Dikonfigurasi</p>
+                <p className="text-sm text-center max-w-md mb-6 text-orange-600/80 dark:text-orange-400/80">
+                  Data laporan berhasil diambil, namun layout untuk laporan ini belum dirancang. Silakan kembali ke tab "Desain Layout" untuk merancang tampilan laporan.
+                </p>
+                <Link to="/admin/reports/builder/$kodemenu/edit" params={{ kodemenu }} className="px-4 py-2 bg-orange-500 text-white hover:bg-orange-600 transition-colors rounded-lg font-medium text-sm shadow-sm hover:shadow">
+                  Ke Desain Layout
+                </Link>
               </div>
             ) : (
               <div className="bg-slate-100 dark:bg-slate-950 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden h-[calc(100vh-350px)] relative">

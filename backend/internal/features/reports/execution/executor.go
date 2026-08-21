@@ -238,6 +238,11 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 
 	log.Printf("DEBUG FILTERS RECEIVED: %+v", filters)
 
+	// Detect if this is a "simple positional EXEC" query:
+	// e.g., EXEC [SP] 'val', @param1, @param2, @param3;
+	// These have no DECLARE block. The SPs internally use EXEC() dynamic SQL
+	// which concatenates @tgl1/@tgl2 directly into a SQL string, so date values
+	// must arrive with embedded quotes: '''2022-01-01''' instead of '2022-01-01'.
 	// Replace filter parameters
 	for key, value := range filters {
 		placeholder := "@" + key
@@ -270,7 +275,11 @@ func (s *SReportExecutionService) ExecuteDatasetQuery(ctx context.Context, datas
 						if fd.NilaiDefault != nil {
 							sql = s.replaceFilterValue(sql, opt, *fd.NilaiDefault)
 						} else {
-							sql = s.replacePlaceholder(sql, opt, "NULL")
+							if strings.EqualFold(opt, "@isilist") {
+								sql = s.replacePlaceholder(sql, opt, "''")
+							} else {
+								sql = s.replacePlaceholder(sql, opt, "NULL")
+							}
 						}
 					}
 				}
@@ -322,6 +331,7 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 		paramsFilters[key] = value
 	}
 
+	// Detect simple positional EXEC queries (same logic as ExecuteDatasetQuery)
 	// Replace filter parameters
 	for key, value := range filters {
 		placeholder := "@" + key
@@ -351,7 +361,11 @@ func (s *SReportExecutionService) ExecuteDatasetQueryMulti(ctx context.Context, 
 						if fd.NilaiDefault != nil {
 							sql = s.replaceFilterValue(sql, opt, *fd.NilaiDefault)
 						} else {
-							sql = s.replacePlaceholder(sql, opt, "NULL")
+							if strings.EqualFold(opt, "@isilist") {
+								sql = s.replacePlaceholder(sql, opt, "''")
+							} else {
+								sql = s.replacePlaceholder(sql, opt, "NULL")
+							}
 						}
 					}
 				}
@@ -449,7 +463,14 @@ func (s *SReportExecutionService) buildSPQuery(ctx context.Context, dataset *rep
 	}
 
 	if spSignature == "" {
-		return sql, nil
+		parts := strings.Fields(sql)
+		if len(parts) >= 2 && strings.ToUpper(parts[0]) == "EXEC" {
+			spSignature = parts[1]
+			// Strip brackets if any (e.g. [sp_ReportKomisiSales])
+			spSignature = strings.Trim(spSignature, "[]")
+		} else {
+			return sql, nil
+		}
 	}
 
 	// Normalize SP name for matching
@@ -532,17 +553,17 @@ func (s *SReportExecutionService) buildSPQuery(ctx context.Context, dataset *rep
 			}
 		}
 
-		// Format dates - SP expects MM/DD/YYYY format
+		// Format dates - SP expects MM/DD/YYYY format and embedded quotes for dynamic SQL
 		var dateStr1, dateStr2 string
 		if t, ok := parseDate(tglAwal); ok {
-			dateStr1 = fmt.Sprintf("'%s'", t.Format("01/02/2006"))
+			dateStr1 = fmt.Sprintf("'''%s'''", t.Format("01/02/2006"))
 		} else {
-			dateStr1 = "'01/01/2025'"
+			dateStr1 = "'''01/01/2025'''"
 		}
 		if t, ok := parseDate(tglAkhir); ok {
-			dateStr2 = fmt.Sprintf("'%s'", t.Format("01/02/2006"))
+			dateStr2 = fmt.Sprintf("'''%s'''", t.Format("01/02/2006"))
 		} else {
-			dateStr2 = "'12/31/2025'"
+			dateStr2 = "'''12/31/2025'''"
 		}
 
 		// Build SQL: EXEC Sp_ReportOutSODet @SReport='T',@Ordr='N',@tgl1='01/01/2025',@tgl2='12/31/2025',@isiList='',@Id=''
@@ -602,16 +623,16 @@ func (s *SReportExecutionService) buildSPQuery(ctx context.Context, dataset *rep
 		if t, ok := parseDate(tglAwal); ok {
 			dateStr1 = t.Format(dateFmt)
 		} else {
-			dateStr1 = "'2025-01-01'"
+			dateStr1 = "2025-01-01"
 		}
 		if t, ok := parseDate(tglAkhir); ok {
 			dateStr2 = t.Format(dateFmt)
 		} else {
-			dateStr2 = "'2025-12-31'"
+			dateStr2 = "2025-12-31"
 		}
 
 		// Format SQL with escaped values directly to avoid GORM parameter binding issues
-		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','%s','%s','%s',%d",
+		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','''%s''','''%s''','%s',%d",
 			spSignature,
 			sReport,
 			groupType,
@@ -660,22 +681,77 @@ func (s *SReportExecutionService) buildSPQuery(ctx context.Context, dataset *rep
 		if t, ok := parseDate(tglAwal); ok {
 			dateStr1 = t.Format(dateFmt)
 		} else {
-			dateStr1 = "'2025-01-01'"
+			dateStr1 = "2025-01-01"
 		}
 		if t, ok := parseDate(tglAkhir); ok {
 			dateStr2 = t.Format(dateFmt)
 		} else {
-			dateStr2 = "'2025-12-31'"
+			dateStr2 = "2025-12-31"
 		}
 
 		// Format SQL with escaped values directly
-		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','%s','%s','%s'",
+		builtSQL := fmt.Sprintf("EXEC %s '%s','%s','''%s''','''%s''','%s'",
 			spSignature,
 			sReport,
 			groupType,
 			dateStr1,
 			dateStr2,
 			strings.ReplaceAll(listItems, "'", "''"),
+		)
+		log.Printf("DEBUG SP QUERY %s: %s", dataset.NamaDataset, builtSQL)
+		return builtSQL, nil
+
+	case strings.Contains(spUpper, "REPORTKOMISISALES"):
+		// Exec [sp_ReportKomisiSales] :0,:1,:2,:3,:4,:5,:6
+		tglAkhirVal := "12/31/2025"
+		if t, ok := parseDate(tglAkhir); ok {
+			tglAkhirVal = t.Format("01/02/2006")
+		} else if v, ok := filterMap["v_tgl_akhir"]; ok && v != nil {
+			if t, ok := parseDate(fmt.Sprintf("%v", v)); ok {
+				tglAkhirVal = t.Format("01/02/2006")
+			}
+		}
+
+		tipe := 0
+		if v, ok := filterMap["v_jns_laporan"]; ok && v != nil {
+			if val, err := strconv.Atoi(fmt.Sprintf("%v", v)); err == nil {
+				tipe = val
+			}
+		}
+
+		awal := ""
+		if v, ok := filterMap["v_filter_teks"]; ok && v != nil {
+			awal = fmt.Sprintf("%v", v)
+		}
+
+		akhir := ""
+		if v, ok := filterMap["v_filter_teks_akhir"]; ok && v != nil {
+			akhir = fmt.Sprintf("%v", v)
+		}
+
+		devisi := ""
+		if v, ok := filterMap["v_kode_devisi"]; ok && v != nil {
+			devisi = fmt.Sprintf("%v", v)
+		}
+
+		perkiraan := ""
+		if v, ok := filterMap["v_kode_perkiraan"]; ok && v != nil {
+			perkiraan = fmt.Sprintf("%v", v)
+		}
+
+		kodeVls := "IDR"
+		if v, ok := filterMap["v_valas"]; ok && v != nil {
+			kodeVls = fmt.Sprintf("%v", v)
+		}
+
+		builtSQL := fmt.Sprintf("EXEC %s '%s', %d, '%s', '%s', '%s', '%s', '%s'",
+			spSignature,
+			tglAkhirVal, tipe,
+			strings.ReplaceAll(awal, "'", "''"),
+			strings.ReplaceAll(akhir, "'", "''"),
+			strings.ReplaceAll(devisi, "'", "''"),
+			strings.ReplaceAll(perkiraan, "'", "''"),
+			strings.ReplaceAll(kodeVls, "'", "''"),
 		)
 		log.Printf("DEBUG SP QUERY %s: %s", dataset.NamaDataset, builtSQL)
 		return builtSQL, nil
@@ -746,6 +822,8 @@ func (s *SReportExecutionService) replaceFilterValue(sql, placeholder string, va
 	}
 }
 
+
+
 // replaceRemainingPlaceholders replaces all remaining @placeholders with NULL for SP calls
 // Also handles :0, :1, :2 style positional parameters (replace with NULL)
 func (s *SReportExecutionService) replaceRemainingPlaceholders(sql string) string {
@@ -768,10 +846,15 @@ func (s *SReportExecutionService) replaceRemainingPlaceholders(sql string) strin
 		}
 		
 		varName := strings.TrimSpace(match)
+		trailing := match[len(varName):]
+
 		if declaredVars[strings.ToLower(varName)] {
 			return match // Keep local variables unchanged
 		}
-		return "NULL"
+		if strings.EqualFold(varName, "@isilist") {
+			return "''" + trailing
+		}
+		return "NULL" + trailing
 	})
 
 	// Replace :0, :1, :2 etc style positional parameters

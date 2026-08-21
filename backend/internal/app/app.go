@@ -117,8 +117,8 @@ func NewApp(dbConn *gorm.DB, cfg *config.SConfig) *gin.Engine {
 	limiter := middleware.GetRateLimiter(database.RedisClient, rate.Limit(10), 20)
 	engine.Use(limiter.RateLimitMiddleware())
 
-	// Timeout: 60 seconds for the request context.
-	engine.Use(middleware.TimeoutMiddleware(60 * time.Second))
+	// Timeout: 5 minutes (300 seconds) for heavy enterprise reports.
+	engine.Use(middleware.TimeoutMiddleware(300 * time.Second))
 
 	// 7. Wire all routes.
 	routes.SetupRoutes(routes.SRouterConfig{

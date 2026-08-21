@@ -3,6 +3,7 @@ package execution
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/masza1/dapen-backend/internal/features/reports"
 	"gorm.io/gorm"
@@ -102,13 +103,20 @@ func (r *ReportExecutionRepository) GetGroups(ctx context.Context, idLaporan int
 func (r *ReportExecutionRepository) ExecuteQuery(ctx context.Context, sql string, filters map[string]interface{}, userId string) ([]map[string]interface{}, error) {
 	results := make([]map[string]interface{}, 0)
 	
-	// Build params from filters map
-	params := make([]interface{}, 0, len(filters))
-	for _, v := range filters {
-		params = append(params, v)
+	// Only pass params if the SQL still contains ? placeholders.
+	// If the executor has already substituted all placeholders with literal values,
+	// passing extra params causes the mssql driver to corrupt the query by
+	// trying to bind them to @-prefixed tokens (like @tgl1_Quoted, @SReport, etc.)
+	var err error
+	if strings.Contains(sql, "?") {
+		params := make([]interface{}, 0, len(filters))
+		for _, v := range filters {
+			params = append(params, v)
+		}
+		err = r.db.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
+	} else {
+		err = r.db.WithContext(ctx).Raw(sql).Scan(&results).Error
 	}
-	
-	err := r.db.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
 
 	if err == nil {
 		for i := range results {

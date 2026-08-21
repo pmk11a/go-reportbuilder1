@@ -18,7 +18,7 @@ import (
 // @title DAPEN System API
 // @version 1.0
 // @description Backend API for DAPEN management of employee retirement funds
-// @host localhost:8080
+// @host localhost:8081
 // @BasePath /api
 
 func main() {
@@ -64,8 +64,8 @@ func main() {
 	engine := app.NewApp(dbConn, cfg)
 
 	// 10. Start server
-	log.Printf("Starting server on port 8080...")
-	if err := engine.Run(":8080"); err != nil {
+	log.Printf("Starting server on port 8081...")
+	if err := engine.Run(":8081"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
