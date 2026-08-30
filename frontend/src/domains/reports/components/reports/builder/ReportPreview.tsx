@@ -419,7 +419,7 @@ export function ReportPreview({
                                                           {groupByFields.length > 0 && (
                                                             <tr className="bg-slate-50 text-slate-700 ">
                                                               <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-[10px] font-bold bg-gray-50 whitespace-normal break-words">
-                                                                [Group: {group.key}]
+                                                                {group.key}
                                                               </td>
                                                             </tr>
                                                           )}
@@ -510,7 +510,7 @@ export function ReportPreview({
                                                     <>
                                                       <tr className="bg-slate-50 text-slate-700">
                                                         <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-xs font-bold bg-gray-50 whitespace-normal break-words">
-                                                          [Group: {col.table.grouping.groupBy}]
+                                                          {col.table.grouping.groupBy}
                                                         </td>
                                                       </tr>
                                                       <Each of={[1, 2]}>
@@ -651,7 +651,7 @@ export function ReportPreview({
                                                         {groupByFields.length > 0 && (
                                                           <tr className="bg-slate-50 text-slate-700 ">
                                                             <td colSpan={col.table?.dataColumns?.length || 1} className="border border-gray-300 p-2 text-left text-[10px] font-bold bg-gray-50">
-                                                              [Group: {group.key}]
+                                                              {group.key}
                                                             </td>
                                                           </tr>
                                                         )}
