@@ -32,7 +32,7 @@ import (
 //
 // Domain-Based DI: each domain package owns its repository + service + handler constructors.
 // Shared infrastructure (config, database connection, redis) is injected once and passed down.
-func NewApp(dbConn *gorm.DB, cfg *config.SConfig) *gin.Engine {
+func NewApp(dbConn *gorm.DB, prodDbConn *gorm.DB, cfg *config.SConfig) *gin.Engine {
 	// 1. Initialize Identity domain (auth + user + permission).
 	userRepo := user.NewUserRepository(dbConn)
 	authService := auth.NewAuthService(userRepo, cfg)
@@ -100,7 +100,7 @@ func NewApp(dbConn *gorm.DB, cfg *config.SConfig) *gin.Engine {
 	reportsRepo := reports.NewReportsRepository(dbConn)
 	reportsService := reports.NewReportsService(reportsRepo)
 	reportsHandler := reports.NewReportsHandler(reportsService)
-	reportExecRepo := execution.NewReportExecutionRepository(dbConn)
+	reportExecRepo := execution.NewReportExecutionRepository(dbConn, prodDbConn)
 	reportExecService := execution.NewReportExecutionService(reportExecRepo)
 	reportExecHandler := execution.NewReportExecutionHandler(reportExecService, reportsService)
 	reportExportHandler := reports.NewReportExportHandler(reportExecRepo)

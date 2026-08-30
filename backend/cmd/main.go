@@ -43,6 +43,7 @@ func main() {
 
 	// 2. Initialize Database Connection
 	dbConn := database.InitDB(cfg)
+	prodDbConn := database.InitProdDB(cfg)
 
 	// 3. Initialize Redis Connection (for BFF session storage)
 	database.InitRedis(cfg)
@@ -61,7 +62,7 @@ func main() {
 	}
 
 	// 5. Initialize Server (DI & Routing)
-	engine := app.NewApp(dbConn, cfg)
+	engine := app.NewApp(dbConn, prodDbConn, cfg)
 
 	// 10. Start server
 	log.Printf("Starting server on port 8081...")

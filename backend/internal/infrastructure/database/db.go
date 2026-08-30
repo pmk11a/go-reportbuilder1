@@ -14,6 +14,7 @@ import (
 )
 
 var DB *gorm.DB
+var ProdDB *gorm.DB
 
 // fetchNextPattern matches the LIMIT clause fragment GORM's sqlserver dialect
 // emits for paginated / probe queries:
@@ -79,6 +80,31 @@ func rewriteSQL2008(sql string) string {
 	return prefix + " TOP " + n + head + tail
 }
 
+func InitProdDB(cfg *config.SConfig) *gorm.DB {
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s&encrypt=%s&trustServerCertificate=%s",
+		cfg.DBProdUsername,
+		cfg.DBProdPassword,
+		cfg.DBProdHost,
+		cfg.DBProdPort,
+		cfg.DBProdDatabase,
+		cfg.DBEncrypt,
+		cfg.DBTrustCert,
+	)
+
+	var err error
+	ProdDB, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
+	if err != nil {
+		log.Fatalf("Failed to connect to production database: %v", err)
+	}
+
+	installSQL2008Shim(ProdDB)
+	log.Printf("Production database connection established %s:%s/%s", cfg.DBProdHost, cfg.DBProdPort, cfg.DBProdDatabase)
+	return ProdDB
+}
+
 func InitDB(cfg *config.SConfig) *gorm.DB {
 	// Build connection string
 	// sqlserver://username:password@localhost:1433?database=dbname
@@ -105,6 +131,13 @@ func InitDB(cfg *config.SConfig) *gorm.DB {
 	// Loads activity_log_config from DB and registers GORM callbacks
 	activity.RegisterActivityLogPlugin(DB)
 
+	installSQL2008Shim(DB)
+	log.Printf("Database connection established %s:%s/%s", cfg.DBHost, cfg.DBPort, cfg.DBDatabase)
+	log.Println("Activity logging plugin registered")
+	return DB
+}
+
+func installSQL2008Shim(dbConn *gorm.DB) {
 	// SQL Server 2008 R2 compatibility shim.
 	//
 	// GORM's sqlserver dialect always emits `OFFSET ... FETCH NEXT ... ROWS ONLY`
@@ -124,11 +157,11 @@ func InitDB(cfg *config.SConfig) *gorm.DB {
 	// but the actual `ConnPool.QueryContext` is skipped. We capture the
 	// assembled SQL, rewrite it for SQL Server 2008, and then send it
 	// ourselves with `ConnPool.QueryContext` / Scan.
-	originalQuery := DB.Callback().Query().Get("gorm:query")
+	originalQuery := dbConn.Callback().Query().Get("gorm:query")
 	if originalQuery == nil {
 		log.Fatalf("SQL Server 2008 compatibility shim: gorm:query handler not found")
 	}
-	if err := DB.Callback().Query().Replace("gorm:query", func(tx *gorm.DB) {
+	if err := dbConn.Callback().Query().Replace("gorm:query", func(tx *gorm.DB) {
 		if tx.Error != nil {
 			return
 		}
@@ -198,11 +231,11 @@ func InitDB(cfg *config.SConfig) *gorm.DB {
 	// as the sqlserver driver's column-probe query
 	//   `db.Table(...).Limit(1).Rows()`
 	// which is what AutoMigrate issues while checking existing schema.
-	originalRow := DB.Callback().Row().Get("gorm:row")
+	originalRow := dbConn.Callback().Row().Get("gorm:row")
 	if originalRow == nil {
 		log.Fatalf("SQL Server 2008 compatibility shim: gorm:row handler not found")
 	}
-	if err := DB.Callback().Row().Replace("gorm:row", func(tx *gorm.DB) {
+	if err := dbConn.Callback().Row().Replace("gorm:row", func(tx *gorm.DB) {
 		// Mirror the Query shim: build via the original handler in DryRun
 		// mode so all of BuildQuerySQL's Schema-aware logic still runs,
 		// then rewrite the assembled SQL to be SQL Server 2008-friendly,
@@ -257,8 +290,5 @@ func InitDB(cfg *config.SConfig) *gorm.DB {
 		log.Fatalf("Failed to install SQL Server 2008 compatibility shim (row): %v", err)
 	}
 
-	log.Printf("Database connection established %s:%s/%s", cfg.DBHost, cfg.DBPort, cfg.DBDatabase)
-	log.Println("Activity logging plugin registered")
 	log.Println("SQL Server 2008 compatibility shim enabled (OFFSET...FETCH -> TOP)")
-	return DB
 }

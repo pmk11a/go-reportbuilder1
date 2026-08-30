@@ -11,12 +11,13 @@ import (
 
 // ReportExecutionRepository implements IReportExecutionRepository for report execution
 type ReportExecutionRepository struct {
-	db *gorm.DB
+	db     *gorm.DB
+	prodDb *gorm.DB
 }
 
 // NewReportExecutionRepository constructs the report execution repository
-func NewReportExecutionRepository(db *gorm.DB) IReportExecutionRepository {
-	return &ReportExecutionRepository{db: db}
+func NewReportExecutionRepository(db *gorm.DB, prodDb *gorm.DB) IReportExecutionRepository {
+	return &ReportExecutionRepository{db: db, prodDb: prodDb}
 }
 
 func (r *ReportExecutionRepository) GetReportByID(ctx context.Context, id int) (*reports.SDBMasterLaporan, error) {
@@ -113,9 +114,9 @@ func (r *ReportExecutionRepository) ExecuteQuery(ctx context.Context, sql string
 		for _, v := range filters {
 			params = append(params, v)
 		}
-		err = r.db.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
+		err = r.prodDb.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
 	} else {
-		err = r.db.WithContext(ctx).Raw(sql).Scan(&results).Error
+		err = r.prodDb.WithContext(ctx).Raw(sql).Scan(&results).Error
 	}
 
 	if err == nil {
@@ -134,7 +135,7 @@ func (r *ReportExecutionRepository) ExecuteQuery(ctx context.Context, sql string
 // ExecuteQueryMulti executes a stored procedure and returns ALL result sets
 // as a slice of per-result-set arrays. Used for SPs that return multiple result sets (e.g. sp_LapBankHarian).
 func (r *ReportExecutionRepository) ExecuteQueryMulti(ctx context.Context, sql string) ([][]map[string]interface{}, error) {
-	rows, err := r.db.WithContext(ctx).Raw(sql).Rows()
+	rows, err := r.prodDb.WithContext(ctx).Raw(sql).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +193,7 @@ func (r *ReportExecutionRepository) ExecuteQueryMulti(ctx context.Context, sql s
 // ExecuteQueryWithParams executes a stored procedure with explicit parameters
 func (r *ReportExecutionRepository) ExecuteQueryWithParams(ctx context.Context, sql string, params []interface{}) ([]map[string]interface{}, error) {
 	results := make([]map[string]interface{}, 0)
-	err := r.db.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
+	err := r.prodDb.WithContext(ctx).Raw(sql, params...).Scan(&results).Error
 
 	if err == nil {
 		for i := range results {
@@ -213,7 +214,7 @@ func (r *ReportExecutionRepository) ExecuteQueryWithParams(ctx context.Context, 
 func (r *ReportExecutionRepository) ExecuteSPQuery(ctx context.Context, sql string) ([]map[string]interface{}, error) {
 	results := make([]map[string]interface{}, 0)
 
-	rows, err := r.db.WithContext(ctx).Raw(sql).Rows()
+	rows, err := r.prodDb.WithContext(ctx).Raw(sql).Rows()
 	if err != nil {
 		return results, err
 	}

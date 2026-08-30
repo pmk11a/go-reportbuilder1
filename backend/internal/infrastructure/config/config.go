@@ -19,6 +19,12 @@ type SConfig struct {
 	DBEncrypt    string
 	DBTrustCert  string
 
+	DBProdHost     string
+	DBProdPort     string
+	DBProdDatabase string
+	DBProdUsername string
+	DBProdPassword string
+
 	JWTSecret          string
 	JWTExpiration      string
 	RefreshTokenSecret string
@@ -48,13 +54,19 @@ func LoadConfig() *SConfig {
 
 	return &SConfig{
 		DBConnection: getEnv("DB_CONNECTION", "sqlsrv"),
-		DBHost:       getEnv("DB_HOST", "127.0.0.1"),
-		DBPort:       getEnv("DB_PORT", "1433"),
-		DBDatabase:   getEnv("DB_DATABASE", "DbDapenka"),
-		DBUsername:   getEnv("DB_USERNAME", "sa"),
-		DBPassword:   getEnv("DB_PASSWORD", ""),
+		DBHost:       getEnv("DB_REPORT_HOST", "127.0.0.1"),
+		DBPort:       getEnv("DB_REPORT_PORT", "1433"),
+		DBDatabase:   getEnv("DB_REPORT_DATABASE", "DbDapenka"),
+		DBUsername:   getEnv("DB_REPORT_USERNAME", "sa"),
+		DBPassword:   getEnv("DB_REPORT_PASSWORD", ""),
 		DBEncrypt:    getEnv("DB_ENCRYPT", "disable"),
 		DBTrustCert:  getEnv("DB_TRUST_SERVER_CERTIFICATE", "true"),
+
+		DBProdHost:     getEnv("DB_HOST", "36.93.24.50"),
+		DBProdPort:     getEnv("DB_PORT", "1433"),
+		DBProdDatabase: getEnv("DB_DATABASE", "dbbcagroup"),
+		DBProdUsername: getEnv("DB_USERNAME", "sa"),
+		DBProdPassword: getEnv("DB_PASSWORD", ""),
 
 		JWTSecret:          getEnv("JWT_SECRET", "secret"),
 		JWTExpiration:      getEnv("JWT_EXPIRATION", "15m"),

@@ -211,3 +211,45 @@ func ExecuteSPReport(config SPExecutionConfig) *SPExecutionResult {
 - Database Legacy: Query `dbparameterlaporan` dan `dbmasterlaporan`
 - Seed File: `seed_dynamic_reports.sql`
 - Rules: `RULES_KODEMENU.md`
+
+---
+
+## 🔥 QUICK DEBUG: Report Error / Blank / 0 Rows
+
+### Error Quick Reference:
+
+| Error Message | Penyebab | Fix Cepat |
+|---------------|----------|-----------|
+| `Incorrect syntax near '+'` | Ekspresi `+` inline di param `EXEC` | Pre-compute ke `DECLARE @dt1 = ...; EXEC ... @Tgl1 = @dt1` |
+| `STRING_AGG is not recognized` | Fungsi SQL 2017+ di SQL 2008 | Ganti `STRING_AGG(...)` → `REPLACE(@var, ',', ''',''')` |
+| `STRING_SPLIT is not recognized` | Fungsi SQL 2016+ di SQL 2008 | Ganti dengan `REPLACE()` (lihat contoh di bawah) |
+| `Incorrect syntax near 'order'` / `'and'` | Reserved keyword tanpa quote | Wrap keyword: `[order]`, `[and]` |
+| `[rows:0]` padahal ada data | Filter kosong `''` vs `NULL` | Default filter ke `'(KODECUSTSUPP)'` atau `'(KodeSls)'` |
+| Data ada tapi UI putih | Column mismatch antara SP dan `dbkomponenlaporan` | Cek kolom SP vs BodyLayout JSON |
+
+### SQL 2008 Cheat Sheet:
+
+```sql
+-- ✅ Format comma-separated list (SQL 2008):
+SET @filter = '(''' + REPLACE(@v_KodeCustSupp, ',', ''',''') + ''')';
+
+-- ✅ Tanggal di-quote untuk SP (SQL 2008):
+DECLARE @dt1 varchar(50) = '''' + ISNULL(@v_tgl1, '') + '''';
+DECLARE @dt2 varchar(50) = '''' + ISNULL(@v_tgl2, '') + '''';
+EXEC Sp_xxx @Tgl1 = @dt1, @Tgl2 = @dt2;
+
+-- ✅ Filter default supaya SP return semua data:
+DECLARE @filter varchar(max) = '(KODECUSTSUPP)';  -- default = semua
+IF @v_KodeCustSupp IS NOT NULL AND LTRIM(RTRIM(@v_KodeCustSupp)) <> ''
+BEGIN
+    SET @filter = '(''' + REPLACE(@v_KodeCustSupp, ',', ''',''') + ''')';
+END
+```
+
+### Debug Workflow:
+1. Lihat error log → identifikasi error pattern dari tabel di atas
+2. `SELECT query_sumber_data FROM dbquerylaporan WHERE id_laporan = [ID]` → lihat query aktual
+3. `SELECT nama_filter FROM dbparameterlaporan WHERE id_laporan = [ID]` → cek parameter mapping
+4. Cross-check dengan Delphi `FrmReportPreview.pas` → pastikan nama field cocok
+5. Fix query, update via `db.Exec("UPDATE dbquerylaporan SET query_sumber_data = ? WHERE id_laporan = ?", newQuery, id)`
+6. Test di sqlcmd → pastikan rows > 0

@@ -308,3 +308,109 @@ name        | type       | default_value
 - Tambahkan ke `SPExecutionConfig`
 - Tambahkan ke `result.Params`
 - Update comment di fungsi
+
+---
+
+## ⚠️ RULE #9: SQL SERVER 2008 COMPATIBILITY (CRITICAL!)
+
+**Database target adalah SQL Server 2008. Fungsi SQL 2012+ TIDAK TERSEDIA!**
+
+### ❌ Fungsi yang TIDAK BOLEH dipakai:
+
+| Fungsi | Versi Min. | Pengganti SQL 2008 |
+|--------|-----------|---------------------|
+| `STRING_AGG()` | SQL 2017 | `STUFF(... FOR XML PATH(''))` atau `REPLACE()` |
+| `STRING_SPLIT()` | SQL 2016 | XML split atau `REPLACE()` |
+| `CONCAT()` | SQL 2012 | `+` (concatenation operator) |
+| `IIF()` | SQL 2012 | `CASE WHEN ... THEN ... ELSE ... END` |
+| `TRY_CONVERT()` | SQL 2012 | `CASE WHEN ISDATE(...) THEN CONVERT(...) END` |
+| `FORMAT()` | SQL 2012 | `CONVERT()` dengan style codes |
+| `OFFSET...FETCH` | SQL 2012 | `TOP` (sudah ada shim di db.go) |
+
+### ✅ Pattern untuk Comma-Separated List (SQL 2008):
+
+**Skenario:** User memilih beberapa customer dari dropdown, dikirim sebagai `CUST01,CUST02,CUST03`.
+SP membutuhkan format `('CUST01','CUST02','CUST03')`.
+
+```sql
+-- ❌ SALAH (SQL 2017):
+SET @filter = '(' + (
+    SELECT STRING_AGG('''' + value + '''', ',')
+    FROM STRING_SPLIT(@v_KodeCustSupp, ',')
+) + ')';
+
+-- ✅ BENAR (SQL 2008 compatible):
+SET @filter = '(''' + REPLACE(@v_KodeCustSupp, ',', ''',''') + ''')';
+-- Input:  'CUST01,CUST02'
+-- Output: '('CUST01','CUST02')'
+```
+
+### ✅ Pattern untuk Tanggal di EXEC params (SQL 2008):
+
+**SQL Server TIDAK mengizinkan ekspresi `+` langsung dalam parameter `EXEC`!**
+
+```sql
+-- ❌ SALAH (syntax error: Incorrect syntax near '+'):
+EXEC Sp_reportSppdet @Tgl1 = '''' + ISNULL(CAST(@v_tgl1 as varchar(50)), '') + '''';
+
+-- ✅ BENAR (pre-compute ke variabel):
+DECLARE @dt1 varchar(50) = '''' + ISNULL(CAST(@v_tgl1 as varchar(50)), '') + '''';
+DECLARE @dt2 varchar(50) = '''' + ISNULL(CAST(@v_tgl2 as varchar(50)), '') + '''';
+EXEC Sp_reportSppdet @Tgl1 = @dt1, @Tgl2 = @dt2;
+```
+
+---
+
+## ⚠️ RULE #10: DEBUGGING dbquerylaporan DYNAMIC SQL (WORKFLOW!)
+
+**Saat laporan mengembalikan 0 rows atau error, ikuti workflow ini:**
+
+### Step 1: Identifikasi Masalah
+```
+-- Error log biasanya berisi:
+-- "mssql: Incorrect syntax near '+'." → Ekspresi inline di EXEC
+-- "mssql: 'STRING_AGG' is not a recognized..." → Fungsi SQL 2017+ di SQL 2008
+-- "[rows:0]" padahal seharusnya ada data → Filter salah / parameter mismatch
+```
+
+### Step 2: Cek Query yang Tersimpan
+```sql
+SELECT id_laporan, query_sumber_data 
+FROM dbquerylaporan WHERE id_laporan = [ID];
+```
+
+### Step 3: Cek Parameter Mapping
+```sql
+SELECT nama_filter FROM dbparameterlaporan WHERE id_laporan = [ID];
+```
+**Cross-check dengan Delphi** — nama parameter di query HARUS cocok dengan nama di `dbparameterlaporan`.
+
+### Step 4: Common Fix Patterns
+
+| Masalah | Gejala | Solusi |
+|---------|--------|--------|
+| **Filter mismatch** | `@v_filter_teks` di query tapi Delphi pakai `KodeCustSupp` | Ganti `@v_filter_teks` → `@v_KodeCustSupp`, update `dbparameterlaporan` |
+| **Empty filter = 0 rows** | SP dengan `@isiList = ''` tidak return data | Default ke `'(KODECUSTSUPP)'` bukan `''` |
+| **Date inline di EXEC** | `Incorrect syntax near '+'` | Pre-compute ke `DECLARE @dt1 = ...` |
+| **SQL 2017 function** | `'STRING_AGG' is not recognized` | Ganti `STRING_AGG` → `REPLACE` |
+| **Unquoted dates** | SP return 0 rows, date evaluated as math | Wrap: `'''' + @v_tgl1 + ''''` |
+
+### Step 5: Verify Fix
+```sql
+-- Test langsung di sqlcmd:
+EXEC Sp_reportSppdet @SReport = 'T', @Ordr = 'C', 
+    @tgl1 = '''2022-01-01''', @tgl2 = '''2022-01-31''', 
+    @isiList = '(KODECUSTSUPP)', @NeedOto = '2', @Id = '';
+-- Harus return rows > 0
+
+-- Test via API (Go):
+-- go run scratch/test_api.go 
+```
+
+### Step 6: Checklist Sebelum Update Query
+- [ ] Semua fungsi SQL 2008 compatible (tidak pakai STRING_AGG, STRING_SPLIT, dll)
+- [ ] Tidak ada ekspresi `+` inline di parameter EXEC
+- [ ] Tanggal di-quote dengan benar (`'''' + @v_tgl1 + ''''`)
+- [ ] Filter default sesuai Delphi (biasanya `'(KODECUSTSUPP)'` atau `'(KodeSls)'`)
+- [ ] Nama parameter di query cocok dengan `dbparameterlaporan.nama_filter`
+- [ ] Test langsung di sqlcmd return rows > 0
